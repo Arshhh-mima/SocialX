@@ -2056,19 +2056,41 @@ let currentUser =
 
 
 function getAccounts(){
-
   try{
+    let accounts = JSON.parse(localStorage.getItem("vibe_accounts") || "[]");
+    if(!Array.isArray(accounts)) accounts = [];
 
-    return JSON.parse(
-      localStorage.getItem("vibe_accounts") || "[]"
-    );
+    /* Migrate accounts from the older shared MicroBlog database. */
+    try{
+      const legacy = JSON.parse(localStorage.getItem("microblog_complete_v3") || "null");
+      if(legacy && Array.isArray(legacy.accounts)){
+        legacy.accounts.forEach(a=>{
+          if(!a || !a.username) return;
+          const exists = accounts.some(x =>
+            String(x.username || "").toLowerCase() === String(a.username).toLowerCase()
+          );
+          if(!exists){
+            accounts.push({
+              id:a.id || Date.now()+Math.random(),
+              name:a.name || a.username,
+              username:String(a.username).trim(),
+              email:a.email || "",
+              dob:a.dob || "",
+              profilePhoto:a.profilePhoto || a.avatar || "",
+              isPrivate:!!a.isPrivate,
+              settings:a.settings || {},
+              createdAt:a.createdAt || new Date().toISOString()
+            });
+          }
+        });
+        localStorage.setItem("vibe_accounts", JSON.stringify(accounts));
+      }
+    }catch(e){}
 
-  }catch{
-
+    return accounts;
+  }catch(e){
     return [];
-
   }
-
 }
 
 
@@ -2181,11 +2203,13 @@ function createAccount(){
       .trim();
 
 
-  const username =
+  let username =
     document
       .getElementById("signupUsername")
       .value
       .trim();
+
+  username = username.replace(/^@+/, "");
 
 
   const email =
@@ -3190,12 +3214,17 @@ function searchPage(){
 
   // Search is USERNAME ONLY. Name is intentionally not searchable.
   // This also supports typing @official_viber.
-  const usernameQuery = query.replace(/^@/, "");
+  const usernameQuery = query.replace(/^@/, "").trim().toLowerCase();
 
-  const matchingAccounts =
-    accounts.filter(account =>
-      account.username.toLowerCase().includes(usernameQuery)
-    );
+  /* Account search is ONLY by username. Exact username is shown first;
+     partial username search is also supported. Display name is never searched. */
+  const matchingAccounts = accounts
+    .filter(account => String(account.username || "").toLowerCase().includes(usernameQuery))
+    .sort((a,b)=>{
+      const au=String(a.username||"").toLowerCase();
+      const bu=String(b.username||"").toLowerCase();
+      return (au===usernameQuery? -1:0) - (bu===usernameQuery? -1:0);
+    });
 
 
   const posts =
@@ -3556,7 +3585,7 @@ function loadProfile(){
 
   const account =
     accounts.find(
-      a => a.username === currentUser
+      a => String(a.username || "").toLowerCase() === String(currentUser || "").toLowerCase()
     );
 
 
