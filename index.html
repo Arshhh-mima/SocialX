@@ -1,142 +1,746 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MicroBlog</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;color:#111}
-nav{position:fixed;width:220px;height:100%;border-right:1px solid #ddd;padding:25px}
-nav h2{margin-bottom:35px}nav button{display:block;width:100%;padding:14px;margin:5px 0;border:0;background:white;text-align:left;font-size:16px;cursor:pointer}
-main{margin-left:220px;max-width:700px;border-right:1px solid #ddd;min-height:100vh}
-header{padding:20px;border-bottom:1px solid #ddd;font-size:20px;font-weight:bold}
-.page{display:none}.active{display:block}
-textarea{width:100%;height:80px;border:0;border-bottom:1px solid #ddd;padding:20px;font-size:16px;resize:none;outline:0}
-.postbtn{float:right;margin:10px;padding:10px 20px;border:0;border-radius:20px;background:#1683e8;color:white}
-.post{clear:both;padding:20px;border-bottom:1px solid #ddd}
-.name{font-weight:bold}.handle{color:#777;font-size:13px}.text{margin:12px 0}
-button{cursor:pointer}.action{border:0;background:white;margin-right:20px;color:#555}
-input{margin:20px;width:calc(100% - 40px);padding:13px;border:1px solid #ddd;border-radius:20px}
-.msg{padding:15px}.right{background:#f5f5f5;padding:20px;margin:20px}
-@media(max-width:600px){nav{width:65px;padding:10px}nav h2{font-size:0}nav h2:after{content:"M";font-size:25px}nav button{font-size:0;text-align:center}main{margin-left:65px}}
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:Arial,sans-serif;
+  color:#111;
+  background:#fff;
+}
+
+.sidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  width:230px;
+  height:100vh;
+  border-right:1px solid #ddd;
+  padding:25px 15px;
+  background:white;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:bold;
+  margin:10px;
+  margin-bottom:35px;
+}
+
+.nav button{
+  display:block;
+  width:100%;
+  padding:14px;
+  margin:5px 0;
+  border:0;
+  border-radius:10px;
+  background:white;
+  text-align:left;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.nav button:hover{
+  background:#f1f5f9;
+}
+
+.nav button.active{
+  background:#e8f3ff;
+  color:#1683e8;
+  font-weight:bold;
+}
+
+.main{
+  margin-left:230px;
+  width:calc(100% - 230px);
+}
+
+.content{
+  width:700px;
+  max-width:100%;
+  min-height:100vh;
+  border-left:1px solid #ddd;
+  border-right:1px solid #ddd;
+  margin:auto;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.header{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.compose{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+textarea{
+  width:100%;
+  height:90px;
+  border:0;
+  outline:0;
+  resize:none;
+  font-size:17px;
+}
+
+.post-button{
+  background:#1683e8;
+  color:white;
+  border:0;
+  border-radius:20px;
+  padding:10px 22px;
+  float:right;
+  cursor:pointer;
+}
+
+.post{
+  clear:both;
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+.avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background:#334155;
+  color:white;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  margin-right:10px;
+}
+
+.name{
+  font-weight:bold;
+}
+
+.handle{
+  color:#777;
+  font-size:14px;
+}
+
+.post-text{
+  margin:12px 0;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+
+.action{
+  border:0;
+  background:white;
+  margin-right:20px;
+  color:#555;
+  cursor:pointer;
+}
+
+.action:hover{
+  color:#1683e8;
+}
+
+.search{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+.search input{
+  width:100%;
+  padding:13px 18px;
+  border:1px solid #ccc;
+  border-radius:25px;
+  outline:none;
+}
+
+.result{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+.notification{
+  padding:20px;
+  border-bottom:1px solid #ddd;
+}
+
+.chat{
+  min-height:450px;
+  padding:20px;
+}
+
+.empty{
+  text-align:center;
+  padding:100px 20px;
+  color:#777;
+}
+
+.message{
+  text-align:right;
+  margin:12px 0;
+}
+
+.message span{
+  display:inline-block;
+  background:#1683e8;
+  color:white;
+  padding:10px 15px;
+  border-radius:18px;
+  max-width:70%;
+  word-break:break-word;
+}
+
+.message-box{
+  position:sticky;
+  bottom:0;
+  background:white;
+  border-top:1px solid #ddd;
+  padding:12px;
+  display:flex;
+  gap:8px;
+}
+
+.message-box input{
+  flex:1;
+  padding:12px 16px;
+  border:1px solid #ccc;
+  border-radius:25px;
+  outline:none;
+}
+
+.send{
+  border:0;
+  background:#1683e8;
+  color:white;
+  border-radius:50%;
+  width:45px;
+  cursor:pointer;
+}
+
+.profile-cover{
+  height:150px;
+  background:#cbd5e1;
+}
+
+.profile{
+  padding:20px;
+}
+
+.profile-avatar{
+  width:90px;
+  height:90px;
+  margin-top:-60px;
+  border:5px solid white;
+  border-radius:50%;
+  background:#334155;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:bold;
+}
+
+.profile h2{
+  margin-top:10px;
+}
+
+.profile p{
+  color:#777;
+  margin-top:5px;
+}
+
+@media(max-width:600px){
+
+  .sidebar{
+    width:65px;
+    padding:15px 5px;
+  }
+
+  .logo{
+    font-size:0;
+    text-align:center;
+  }
+
+  .logo:after{
+    content:"M";
+    font-size:25px;
+  }
+
+  .nav button{
+    font-size:0;
+    text-align:center;
+    padding:15px 5px;
+  }
+
+  .main{
+    margin-left:65px;
+    width:calc(100% - 65px);
+  }
+
+}
 </style>
 </head>
 
 <body>
 
-<nav>
-<h2>MicroBlog</h2>
-<button onclick="page('home')">🏠 Home</button>
-<button onclick="page('search')">🔍 Search</button>
-<button onclick="page('notifications')">🔔 Notifications</button>
-<button onclick="page('messages')">✉️ Messages</button>
-</nav>
+<!-- SIDEBAR -->
+<div class="sidebar">
 
-<main>
+  <div class="logo">MicroBlog</div>
 
-<section id="home" class="page active">
-<header>Home</header>
-<textarea id="txt" placeholder="What's happening?"></textarea>
-<button class="postbtn" onclick="post()">Post</button>
-<div id="posts"></div>
-</section>
+  <div class="nav">
 
-<section id="search" class="page">
-<header>Search</header>
-<input placeholder="Search..." oninput="search(this.value)">
-<div id="results"></div>
-</section>
+    <button class="active" onclick="showPage('home',this)">
+      🏠 Home
+    </button>
 
-<section id="notifications" class="page">
-<header>Notifications</header>
-<div class="post">🔔 Welcome to MicroBlog!</div>
-<div class="post">❤️ Someone liked your post.</div>
-</section>
+    <button onclick="showPage('search',this)">
+      🔍 Search
+    </button>
 
+    <button onclick="showPage('notifications',this)">
+      🔔 Notifications
+    </button>
 
+    <button onclick="showPage('messages',this)">
+      💬 Messages
+    </button>
 
-</main>
+    <button onclick="showPage('profile',this)">
+      👤 Profile
+    </button>
 
-<script>
-<section id="messages" class="page">
-<header>Messages</header>
-
-<div id="chat"></div>
-
-<div style="padding:15px;position:sticky;bottom:0;background:white">
-<input id="msg" placeholder="Write a message..." style="width:75%;margin:0">
-<button onclick="send()" style="padding:12px">Send</button>
+  </div>
 </div>
-</section>
+
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="content">
+
+
+<!-- HOME -->
+<div id="home" class="page active">
+
+  <div class="header">
+    Home
+  </div>
+
+  <div class="compose">
+
+    <textarea
+      id="postText"
+      placeholder="What's happening?">
+    </textarea>
+
+    <button class="post-button" onclick="addPost()">
+      Post
+    </button>
+
+  </div>
+
+  <div id="posts"></div>
+
+</div>
+
+
+<!-- SEARCH -->
+<div id="search" class="page">
+
+  <div class="header">
+    Search
+  </div>
+
+  <div class="search">
+
+    <input
+      id="searchInput"
+      placeholder="Search users..."
+      oninput="searchUser()">
+
+  </div>
+
+  <div id="results"></div>
+
+</div>
+
+
+<!-- NOTIFICATIONS -->
+<div id="notifications" class="page">
+
+  <div class="header">
+    Notifications
+  </div>
+
+  <div class="notification">
+    👋 Welcome to MicroBlog!
+  </div>
+
+  <div class="notification">
+    💡 Start sharing your thoughts.
+  </div>
+
+</div>
+
+
+<!-- MESSAGES -->
+<div id="messages" class="page">
+
+  <div class="header">
+    Messages
+  </div>
+
+  <!-- EMPTY AT START -->
+  <div id="chat" class="chat"></div>
+
+  <div class="message-box">
+
+    <input
+      id="messageInput"
+      placeholder="Write a message..."
+      onkeydown="enterMessage(event)">
+
+    <button class="send" onclick="sendMessage()">
+      ➤
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+
+  <div class="header">
+    Profile
+  </div>
+
+  <div class="profile-cover"></div>
+
+  <div class="profile">
+
+    <div class="profile-avatar">
+      A
+    </div>
+
+    <h2>Arsh</h2>
+
+    <p>@Arshhh</p>
+
+    <p>Welcome to my MicroBlog profile.</p>
+
+  </div>
+
+</div>
+
+
+</div>
+</div>
+
 
 <script>
-let messages=JSON.parse(localStorage.messages||"[]");
 
-function send(){
- let x=document.getElementById("msg");
- if(!x.value.trim())return;
+/* =========================
+   PAGE SWITCHING
+========================= */
 
- messages.push(x.value);
- localStorage.messages=JSON.stringify(messages);
- x.value="";
- showMessages();
+function showPage(pageName, button){
+
+  var pages = document.getElementsByClassName("page");
+
+  for(var i=0;i<pages.length;i++){
+    pages[i].classList.remove("active");
+  }
+
+  document.getElementById(pageName).classList.add("active");
+
+  var buttons = document.querySelectorAll(".nav button");
+
+  for(var i=0;i<buttons.length;i++){
+    buttons[i].classList.remove("active");
+  }
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  if(pageName === "messages"){
+    displayMessages();
+  }
 }
 
-function showMessages(){
- document.getElementById("chat").innerHTML=
- messages.map(x=>`
- <div style="text-align:right;padding:10px">
- <span style="background:#1683e8;color:white;padding:10px 15px;border-radius:18px">
- ${x}
- </span>
- </div>`).join("");
+
+/* =========================
+   POSTS
+========================= */
+
+var posts =
+  JSON.parse(localStorage.getItem("microblogPosts") || "[]");
+
+
+function addPost(){
+
+  var input = document.getElementById("postText");
+
+  var text = input.value.trim();
+
+  if(text === ""){
+    alert("Please write something first.");
+    return;
+  }
+
+  posts.unshift({
+    text:text,
+    likes:0
+  });
+
+  localStorage.setItem(
+    "microblogPosts",
+    JSON.stringify(posts)
+  );
+
+  input.value = "";
+
+  displayPosts();
 }
 
-showMessages();
-</script>
-  
-  let posts=JSON.parse(localStorage.posts||"[]");
 
-function page(x){
- document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
- document.getElementById(x).classList.add("active");
+function displayPosts(){
+
+  var box = document.getElementById("posts");
+
+  if(posts.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">No posts yet.<br>Write your first post!</div>';
+
+    return;
+  }
+
+  var html = "";
+
+  for(var i=0;i<posts.length;i++){
+
+    html +=
+      '<div class="post">' +
+
+      '<div>' +
+      '<span class="avatar">A</span>' +
+      '<span class="name">Arsh</span> ' +
+      '<span class="handle">@Arshhh</span>' +
+      '</div>' +
+
+      '<div class="post-text">' +
+      escapeHTML(posts[i].text) +
+      '</div>' +
+
+      '<button class="action" onclick="likePost('+i+')">' +
+      '❤️ '+posts[i].likes+
+      '</button>' +
+
+      '<button class="action" onclick="deletePost('+i+')">' +
+      '🗑 Delete' +
+      '</button>' +
+
+      '</div>';
+  }
+
+  box.innerHTML = html;
 }
 
-function post(){
- let t=document.getElementById("txt");
- if(!t.value.trim())return;
- posts.unshift({text:t.value,like:0});
- localStorage.posts=JSON.stringify(posts);
- t.value="";
- show();
+
+function likePost(index){
+
+  posts[index].likes++;
+
+  localStorage.setItem(
+    "microblogPosts",
+    JSON.stringify(posts)
+  );
+
+  displayPosts();
 }
 
-function like(i){
- posts[i].like++;
- localStorage.posts=JSON.stringify(posts);
- show();
+
+function deletePost(index){
+
+  posts.splice(index,1);
+
+  localStorage.setItem(
+    "microblogPosts",
+    JSON.stringify(posts)
+  );
+
+  displayPosts();
 }
 
-function show(){
- document.getElementById("posts").innerHTML=posts.map((p,i)=>`
- <div class="post">
- <b>Arsh</b> <span class="handle">@Arshhh</span>
- <div class="text">${p.text}</div>
- <button class="action" onclick="like(${i})">❤️ ${p.like}</button>
- <button class="action" onclick="posts.splice(${i},1);localStorage.posts=JSON.stringify(posts);show()">🗑 Delete</button>
- </div>`).join("");
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchUser(){
+
+  var value =
+    document.getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+  var results =
+    document.getElementById("results");
+
+  if(value === ""){
+
+    results.innerHTML =
+      '<div class="empty">Search for a user.</div>';
+
+    return;
+  }
+
+  if(
+    "arsh".includes(value) ||
+    "@arshhh".includes(value)
+  ){
+
+    results.innerHTML =
+      '<div class="result">' +
+      '<span class="avatar">A</span>' +
+      '<b>Arsh</b><br>' +
+      '<span class="handle">@Arshhh</span>' +
+      '</div>';
+
+  }else{
+
+    results.innerHTML =
+      '<div class="empty">No user found.</div>';
+
+  }
 }
 
-function search(x){
- document.getElementById("results").innerHTML=
- x.toLowerCase().includes("arsh")?
- '<div class="post"><b>Arsh</b><br><span class="handle">@Arshhh</span></div>':
- '<div class="post">No users found.</div>';
+
+/* =========================
+   MESSAGES
+========================= */
+
+/*
+  IMPORTANT:
+  This starts as an EMPTY ARRAY.
+  No Hello.
+  No Hii.
+  No "I am Arsh".
+  No automatic messages.
+*/
+
+var messages =
+  JSON.parse(localStorage.getItem("microblogMessages") || "[]");
+
+
+function sendMessage(){
+
+  var input =
+    document.getElementById("messageInput");
+
+  var text =
+    input.value.trim();
+
+  if(text === ""){
+    return;
+  }
+
+  messages.push(text);
+
+  localStorage.setItem(
+    "microblogMessages",
+    JSON.stringify(messages)
+  );
+
+  input.value = "";
+
+  displayMessages();
 }
 
-show();
+
+function enterMessage(event){
+
+  if(event.key === "Enter"){
+    sendMessage();
+  }
+}
+
+
+function displayMessages(){
+
+  var chat =
+    document.getElementById("chat");
+
+  if(messages.length === 0){
+
+    chat.innerHTML =
+      '<div class="empty">' +
+      '💬<br><br>' +
+      '<b>No messages yet</b><br>' +
+      'Write a message below to start.' +
+      '</div>';
+
+    return;
+  }
+
+  var html = "";
+
+  for(var i=0;i<messages.length;i++){
+
+    html +=
+      '<div class="message">' +
+      '<span>' +
+      escapeHTML(messages[i]) +
+      '</span>' +
+      '</div>';
+
+  }
+
+  chat.innerHTML = html;
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHTML(text){
+
+  var div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+}
+
+
+/* =========================
+   START
+========================= */
+
+displayPosts();
+
+displayMessages();
+
 </script>
 
 </body>
 </html>
-
