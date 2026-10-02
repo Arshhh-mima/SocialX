@@ -1,744 +1,3275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MicroBlog</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroBlog — Social App</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1688ff;
+  --blue2:#5b5ff7;
+  --ink:#101828;
+  --muted:#667085;
+  --line:#e7eaf0;
+  --bg:#f7f8fc;
+  --card:#fff;
+  --danger:#ef4444;
+  --green:#12b76a;
+  --shadow:0 10px 30px rgba(16,24,40,.08)
+}
+
+*{box-sizing:border-box}
 
 body{
-  font-family:Arial,sans-serif;
-  color:#111;
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial;
+  color:var(--ink);
+  background:var(--bg)
+}
+
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+.app{min-height:100vh}
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  background:
+    radial-gradient(circle at 10% 10%,#dcecff,transparent 35%),
+    radial-gradient(circle at 90% 90%,#ece4ff,transparent 35%),
+    #f7f8fc
+}
+
+.auth-card{
+  width:min(440px,100%);
   background:#fff;
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:30px;
+  box-shadow:var(--shadow)
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:23px
+}
+
+.brandmark{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:white;
+  background:linear-gradient(135deg,var(--blue),var(--blue2))
+}
+
+.auth-card h1{
+  margin:25px 0 7px;
+  font-size:27px
+}
+
+.auth-card .sub{
+  margin:0 0 20px;
+  color:var(--muted);
+  font-size:14px
+}
+
+.tabs{
+  display:flex;
+  background:#f2f4f7;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:18px
+}
+
+.tabs button{
+  flex:1;
+  border:0;
+  background:none;
+  padding:9px;
+  border-radius:9px;
+  color:var(--muted);
+  font-weight:700
+}
+
+.tabs button.active{
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 2px 7px #0000000d
+}
+
+.field{margin:11px 0}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin:0 0 6px
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid #d9dee8;
+  border-radius:12px;
+  padding:11px 12px;
+  outline:none;
+  background:#fff
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px #1688ff18
+}
+
+.row{
+  display:flex;
+  gap:10px
+}
+
+.row>*{flex:1}
+
+.primary{
+  border:0;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:#fff;
+  border-radius:12px;
+  padding:11px 17px;
+  font-weight:800
+}
+
+.secondary{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  padding:10px 15px;
+  font-weight:700
+}
+
+.wide{width:100%}
+
+.tiny{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.5
+}
+
+.error{
+  background:#fff0f1;
+  color:#c21d36;
+  border:1px solid #ffd0d7;
+  padding:9px;
+  border-radius:10px;
+  font-size:12px;
+  margin:8px 0
+}
+
+/* APP */
+
+.shell{
+  max-width:1250px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:245px minmax(450px,650px) 300px;
+  min-height:100vh
 }
 
 .sidebar{
-  position:fixed;
-  left:0;
+  position:sticky;
   top:0;
-  width:230px;
   height:100vh;
-  border-right:1px solid #ddd;
-  padding:25px 15px;
-  background:white;
+  padding:20px 14px;
+  border-right:1px solid var(--line);
+  background:#fff
 }
 
-.logo{
-  font-size:25px;
-  font-weight:bold;
-  margin:10px;
-  margin-bottom:35px;
+.side-brand{padding:0 10px 22px}
+
+.nav{
+  display:grid;
+  gap:4px
 }
 
 .nav button{
-  display:block;
-  width:100%;
-  padding:14px;
-  margin:5px 0;
   border:0;
-  border-radius:10px;
-  background:white;
+  background:none;
   text-align:left;
-  font-size:16px;
-  cursor:pointer;
+  border-radius:13px;
+  padding:12px 13px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  font-weight:700;
+  color:#667085
 }
 
-.nav button:hover{
-  background:#f1f5f9;
-}
-
+.nav button:hover,
 .nav button.active{
-  background:#e8f3ff;
-  color:#1683e8;
-  font-weight:bold;
+  background:#f1f6ff;
+  color:var(--blue)
+}
+
+.nav .ico{
+  width:20px;
+  text-align:center;
+  font-size:18px
+}
+
+.newpost{margin-top:18px}
+
+.side-account{
+  position:absolute;
+  bottom:14px;
+  left:14px;
+  right:14px;
+  padding:9px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  gap:9px
+}
+
+.side-account:hover{background:#f7f8fa}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  flex:none;
+  background:linear-gradient(135deg,#111827,#64748b);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  overflow:hidden
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.account-text{min-width:0}
+
+.account-text b,
+.account-text span{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.account-text span{
+  color:var(--muted);
+  font-size:11px
 }
 
 .main{
-  margin-left:230px;
-  width:calc(100% - 230px);
-}
-
-.content{
-  width:700px;
-  max-width:100%;
+  background:#fff;
   min-height:100vh;
-  border-left:1px solid #ddd;
-  border-right:1px solid #ddd;
-  margin:auto;
-}
-
-.page{
-  display:none;
-}
-
-.page.active{
-  display:block;
+  border-right:1px solid var(--line)
 }
 
 .header{
-  padding:20px;
-  border-bottom:1px solid #ddd;
-  font-size:20px;
-  font-weight:bold;
-}
-
-.compose{
-  padding:20px;
-  border-bottom:1px solid #ddd;
-}
-
-textarea{
-  width:100%;
-  height:90px;
-  border:0;
-  outline:0;
-  resize:none;
-  font-size:17px;
-}
-
-.post-button{
-  background:#1683e8;
-  color:white;
-  border:0;
-  border-radius:20px;
-  padding:10px 22px;
-  float:right;
-  cursor:pointer;
-}
-
-.post{
-  clear:both;
-  padding:20px;
-  border-bottom:1px solid #ddd;
-}
-
-.avatar{
-  width:45px;
-  height:45px;
-  border-radius:50%;
-  background:#334155;
-  color:white;
-  display:inline-flex;
+  height:58px;
+  display:flex;
   align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  margin-right:10px;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#fffffff2;
+  backdrop-filter:blur(10px)
 }
 
-.name{
-  font-weight:bold;
+.header h2{
+  font-size:17px;
+  margin:0;
+  padding:0 17px
 }
 
-.handle{
-  color:#777;
-  font-size:14px;
-}
-
-.post-text{
-  margin:12px 0;
-  line-height:1.5;
-  white-space:pre-wrap;
-}
-
-.action{
+.back{
   border:0;
-  background:white;
-  margin-right:20px;
-  color:#555;
-  cursor:pointer;
+  background:none;
+  font-size:22px;
+  width:46px;
+  color:var(--ink)
 }
 
-.action:hover{
-  color:#1683e8;
+.header-spread{justify-content:space-between}
+
+.header-actions{
+  display:flex;
+  gap:5px;
+  padding-right:10px
 }
+
+.circle{
+  width:35px;
+  height:35px;
+  border:0;
+  background:#f2f4f7;
+  border-radius:50%
+}
+
+.right{padding:13px 14px}
 
 .search{
-  padding:20px;
-  border-bottom:1px solid #ddd;
+  height:39px;
+  background:#eef1f5;
+  border-radius:22px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 13px
 }
 
 .search input{
+  border:0;
+  outline:0;
+  background:none;
   width:100%;
-  padding:13px 18px;
-  border:1px solid #ccc;
-  border-radius:25px;
-  outline:none;
+  font-size:12px
 }
 
-.result{
-  padding:20px;
-  border-bottom:1px solid #ddd;
+.r-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  margin-top:12px
 }
 
-.notification{
-  padding:20px;
-  border-bottom:1px solid #ddd;
+.r-card h3{
+  margin:0 0 12px;
+  font-size:15px
 }
 
-.chat{
-  min-height:450px;
-  padding:20px;
+.r-user{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  margin:11px 0
 }
+
+.r-user .grow{
+  flex:1;
+  min-width:0
+}
+
+.r-user b,
+.r-user small{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.r-user small{color:var(--muted)}
+
+.follow{
+  border:1px solid #d9dee8;
+  background:#fff;
+  border-radius:18px;
+  padding:6px 11px;
+  font-size:11px;
+  font-weight:800
+}
+
+.follow.on{
+  background:#111827;
+  color:#fff
+}
+
+/* COMPOSER */
+
+.composer{
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  gap:10px
+}
+
+.composer-body{flex:1}
+
+.composer textarea{
+  width:100%;
+  min-height:55px;
+  resize:none;
+  border:0;
+  outline:0;
+  padding:5px 0;
+  font-size:15px
+}
+
+.composer-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+
+.tools{
+  display:flex;
+  gap:2px
+}
+
+.tools button{
+  border:0;
+  background:none;
+  color:var(--blue);
+  padding:6px;
+  border-radius:8px
+}
+
+.tools button:hover{background:#eef6ff}
+
+/* STORIES */
+
+.storybar{
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  gap:13px;
+  overflow:auto
+}
+
+.story{
+  width:60px;
+  flex:none;
+  text-align:center
+}
+
+.story .avatar{
+  width:52px;
+  height:52px;
+  margin:auto;
+  border:3px solid #fff;
+  outline:2px solid #8b5cf6
+}
+
+.story p{
+  font-size:10px;
+  margin:5px 0 0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.story.add .avatar{
+  outline-color:var(--blue);
+  font-size:22px;
+  background:#edf6ff;
+  color:var(--blue)
+}
+
+/* POSTS */
+
+.post{
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  gap:10px
+}
+
+.post:hover{background:#fcfcfd}
+
+.postbody{
+  min-width:0;
+  flex:1
+}
+
+.posthead{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  font-size:12px
+}
+
+.posthead .muted{color:var(--muted)}
+
+.posttext{
+  font-size:14px;
+  line-height:1.5;
+  margin:6px 0 9px;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+
+.post-media{
+  height:230px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#f0f5ff,#faf4ff);
+  margin:8px 0;
+  color:#667085
+}
+
+.post-actions{
+  display:flex;
+  justify-content:space-between;
+  max-width:470px
+}
+
+.act{
+  border:0;
+  background:none;
+  color:#667085;
+  padding:5px 8px;
+  border-radius:12px;
+  display:flex;
+  gap:5px;
+  align-items:center;
+  font-size:12px
+}
+
+.act:hover{
+  background:#f1f6ff;
+  color:var(--blue)
+}
+
+.act.liked{color:#e11d48}
+.act.reposted{color:#12b76a}
 
 .empty{
   text-align:center;
-  padding:100px 20px;
-  color:#777;
+  padding:65px 25px;
+  color:var(--muted)
 }
 
-.message{
-  text-align:right;
-  margin:12px 0;
+.empty h3{
+  color:var(--ink);
+  margin:8px 0 5px;
+  font-size:17px
 }
 
-.message span{
-  display:inline-block;
-  background:#1683e8;
-  color:white;
-  padding:10px 15px;
-  border-radius:18px;
-  max-width:70%;
-  word-break:break-word;
-}
+.empty p{font-size:12px}
 
-.message-box{
-  position:sticky;
-  bottom:0;
-  background:white;
-  border-top:1px solid #ddd;
-  padding:12px;
-  display:flex;
-  gap:8px;
-}
-
-.message-box input{
-  flex:1;
-  padding:12px 16px;
-  border:1px solid #ccc;
-  border-radius:25px;
-  outline:none;
-}
-
-.send{
-  border:0;
-  background:#1683e8;
-  color:white;
-  border-radius:50%;
-  width:45px;
-  cursor:pointer;
-}
+/* PROFILE */
 
 .profile-cover{
-  height:150px;
-  background:#cbd5e1;
+  height:145px;
+  background:linear-gradient(135deg,#1688ff,#8b5cf6)
 }
 
-.profile{
-  padding:20px;
+.profile-top{
+  padding:0 16px 15px
 }
 
 .profile-avatar{
-  width:90px;
-  height:90px;
-  margin-top:-60px;
-  border:5px solid white;
-  border-radius:50%;
-  background:#334155;
-  color:white;
+  margin-top:-45px;
+  width:88px;
+  height:88px;
+  border:4px solid #fff;
+  font-size:20px
+}
+
+.profile-name{
+  font-size:21px;
+  font-weight:900;
+  margin-top:8px
+}
+
+.profile-bio{
+  font-size:13px;
+  margin:5px 0;
+  color:#475467
+}
+
+.stats{
+  display:flex;
+  gap:20px;
+  font-size:12px;
+  margin-top:10px
+}
+
+.stats b{font-size:13px}
+
+.profile-actions{
+  float:right;
+  margin-top:-35px
+}
+
+.profile-tabs{
+  display:flex;
+  border-bottom:1px solid var(--line)
+}
+
+.profile-tabs button{
+  flex:1;
+  border:0;
+  background:none;
+  padding:12px;
+  color:var(--muted);
+  font-weight:700
+}
+
+.profile-tabs button.active{
+  color:var(--blue);
+  border-bottom:2px solid var(--blue)
+}
+
+/* SEARCH */
+
+.search-page{padding:10px}
+
+.bigsearch{
+  border:1px solid #d9dee8;
+  border-radius:22px;
+  height:42px;
+  padding:0 14px;
   display:flex;
   align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:bold;
+  gap:8px
 }
 
-.profile h2{
-  margin-top:10px;
+.bigsearch input{
+  border:0;
+  outline:0;
+  width:100%
 }
 
-.profile p{
-  color:#777;
-  margin-top:5px;
+.result-user{
+  padding:13px 5px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:10px
 }
 
-@media(max-width:600px){
+.result-user .grow{flex:1}
 
-  .sidebar{
-    width:65px;
-    padding:15px 5px;
+/* SETTINGS */
+
+.settings{padding-bottom:30px}
+
+.setting-group{
+  padding:16px;
+  border-bottom:1px solid var(--line)
+}
+
+.setting-group h3{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 10px
+}
+
+.setting-item{
+  width:100%;
+  border:0;
+  background:none;
+  padding:13px 2px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  text-align:left
+}
+
+.setting-item:hover{background:#fafafa}
+
+.setting-item b{font-size:13px}
+
+.setting-item small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px
+}
+
+.switch{
+  width:40px;
+  height:22px;
+  border-radius:20px;
+  background:#d0d5dd;
+  padding:2px
+}
+
+.switch i{
+  display:block;
+  width:18px;
+  height:18px;
+  background:#fff;
+  border-radius:50%;
+  transition:.2s
+}
+
+.switch.on{background:var(--blue)}
+
+.switch.on i{
+  transform:translateX(18px)
+}
+
+.account-list{
+  display:grid;
+  gap:8px
+}
+
+.account-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:13px
+}
+
+.account-row .grow{flex:1}
+
+.danger{color:var(--danger)}
+
+/* MODAL */
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:#10182880;
+  display:none;
+  place-items:center;
+  z-index:30;
+  padding:18px
+}
+
+.modal{
+  width:min(560px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 30px 80px #0003
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px
+}
+
+.close{
+  border:0;
+  background:#f2f4f7;
+  border-radius:50%;
+  width:32px;
+  height:32px
+}
+
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#111827;
+  color:#fff;
+  padding:10px 15px;
+  border-radius:12px;
+  font-size:12px;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+  z-index:50
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0)
+}
+
+@media(max-width:980px){
+  .shell{
+    grid-template-columns:75px minmax(430px,1fr)
   }
 
-  .logo{
-    font-size:0;
-    text-align:center;
-  }
+  .right{display:none}
 
-  .logo:after{
-    content:"M";
-    font-size:25px;
-  }
+  .sidebar{padding:18px 8px}
+
+  .side-brand{padding-left:8px}
+
+  .side-brand .brandtext{display:none}
 
   .nav button{
-    font-size:0;
-    text-align:center;
-    padding:15px 5px;
+    justify-content:center;
+    font-size:0
   }
+
+  .nav .ico{font-size:20px}
+
+  .newpost{
+    font-size:0;
+    width:45px;
+    padding:12px
+  }
+
+  .side-account .account-text{display:none}
+}
+
+@media(max-width:650px){
+  .shell{display:block}
+
+  .sidebar{
+    position:fixed;
+    bottom:0;
+    top:auto;
+    left:0;
+    right:0;
+    width:100%;
+    height:60px;
+    z-index:20;
+    padding:3px 6px;
+    border-right:0;
+    border-top:1px solid var(--line)
+  }
+
+  .side-brand,
+  .newpost,
+  .side-account{
+    display:none
+  }
+
+  .nav{
+    display:flex;
+    justify-content:space-around;
+    height:100%
+  }
+
+  .nav button{padding:8px 13px}
 
   .main{
-    margin-left:65px;
-    width:calc(100% - 65px);
+    padding-bottom:60px;
+    border:0
   }
 
+  .composer{padding:10px}
+  .storybar{padding-left:10px}
+  .post{padding:11px 10px}
+  .profile-cover{height:125px}
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-
-  <div class="logo">MicroBlog</div>
-
-  <div class="nav">
-
-    <button class="active" onclick="showPage('home',this)">
-      🏠 Home
-    </button>
-
-    <button onclick="showPage('search',this)">
-      🔍 Search
-    </button>
-
-    <button onclick="showPage('notifications',this)">
-      🔔 Notifications
-    </button>
-
-    <button onclick="showPage('messages',this)">
-      💬 Messages
-    </button>
-
-    <button onclick="showPage('profile',this)">
-      👤 Profile
-    </button>
-
-  </div>
-</div>
-
-
-<!-- MAIN -->
-<div class="main">
-
-<div class="content">
-
-
-<!-- HOME -->
-<div id="home" class="page active">
-
-  <div class="header">
-    Home
-  </div>
-
-  <div class="compose">
-
-    <textarea
-      id="postText"
-      placeholder="What's happening?">
-    </textarea>
-
-    <button class="post-button" onclick="addPost()">
-      Post
-    </button>
-
-  </div>
-
-  <div id="posts"></div>
-
-</div>
-
-
-<!-- SEARCH -->
-<div id="search" class="page">
-
-  <div class="header">
-    Search
-  </div>
-
-  <div class="search">
-
-    <input
-      id="searchInput"
-      placeholder="Search users..."
-      oninput="searchUser()">
-
-  </div>
-
-  <div id="results"></div>
-
-</div>
-
-
-<!-- NOTIFICATIONS -->
-<div id="notifications" class="page">
-
-  <div class="header">
-    Notifications
-  </div>
-
-  <div class="notification">
-    👋 Welcome to MicroBlog!
-  </div>
-
-  <div class="notification">
-    💡 Start sharing your thoughts.
-  </div>
-
-</div>
-
-
-<!-- MESSAGES -->
-<div id="messages" class="page">
-
-  <div class="header">
-    Messages
-  </div>
-
-  <!-- EMPTY AT START -->
-  <div id="chat" class="chat"></div>
-
-  <div class="message-box">
-
-    <input
-      id="messageInput"
-      placeholder="Write a message..."
-      onkeydown="enterMessage(event)">
-
-    <button class="send" onclick="sendMessage()">
-      ➤
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- PROFILE -->
-<div id="profile" class="page">
-
-  <div class="header">
-    Profile
-  </div>
-
-  <div class="profile-cover"></div>
-
-  <div class="profile">
-
-    <div class="profile-avatar">
-      A
-    </div>
-
-    <h2>Arsh</h2>
-
-    <p>@Arshhh</p>
-
-    <p>Welcome to my MicroBlog profile.</p>
-
-  </div>
-
-</div>
-
-
-</div>
-</div>
-
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+<div class="modal-bg" id="modalBg"></div>
 
 <script>
 
-/* =========================
-   PAGE SWITCHING
-========================= */
+/* =========================================
+   MICROBLOG — SINGLE FILE APP
+   No fake users / no demo data.
+   Data is stored in browser localStorage.
+========================================= */
 
-function showPage(pageName, button){
+const KEY='microblog_complete_v3';
 
-  var pages = document.getElementsByClassName("page");
-
-  for(var i=0;i<pages.length;i++){
-    pages[i].classList.remove("active");
-  }
-
-  document.getElementById(pageName).classList.add("active");
-
-  var buttons = document.querySelectorAll(".nav button");
-
-  for(var i=0;i<buttons.length;i++){
-    buttons[i].classList.remove("active");
-  }
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  if(pageName === "messages"){
-    displayMessages();
-  }
+function fresh(){
+  return {
+    current:null,
+    accounts:[],
+    posts:[],
+    stories:[],
+    reels:[],
+    follows:{},
+    likes:{},
+    reposts:{},
+    settings:{}
+  };
 }
 
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||fresh();
 
-/* =========================
-   POSTS
-========================= */
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+}
 
-var posts =
-  JSON.parse(localStorage.getItem("microblogPosts") || "[]");
+function me(){
+  return db.accounts.find(x=>x.username===db.current);
+}
 
+function initials(a){
+  return (a||'?').slice(0,2).toUpperCase();
+}
 
-function addPost(){
+function user(u){
+  return db.accounts.find(x=>x.username===u);
+}
 
-  var input = document.getElementById("postText");
-
-  var text = input.value.trim();
-
-  if(text === ""){
-    alert("Please write something first.");
-    return;
-  }
-
-  posts.unshift({
-    text:text,
-    likes:0
-  });
-
-  localStorage.setItem(
-    "microblogPosts",
-    JSON.stringify(posts)
+function esc(s){
+  return String(s??'').replace(
+    /[&<>"']/g,
+    c=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[c])
   );
-
-  input.value = "";
-
-  displayPosts();
 }
 
+function avatar(u,cls='avatar'){
+  let x=typeof u==='string'?user(u):u;
 
-function displayPosts(){
-
-  var box = document.getElementById("posts");
-
-  if(posts.length === 0){
-
-    box.innerHTML =
-      '<div class="empty">No posts yet.<br>Write your first post!</div>';
-
-    return;
+  if(!x){
+    return `<div class="${cls}">?</div>`;
   }
 
-  var html = "";
-
-  for(var i=0;i<posts.length;i++){
-
-    html +=
-      '<div class="post">' +
-
-      '<div>' +
-      '<span class="avatar">A</span>' +
-      '<span class="name">Arsh</span> ' +
-      '<span class="handle">@Arshhh</span>' +
-      '</div>' +
-
-      '<div class="post-text">' +
-      escapeHTML(posts[i].text) +
-      '</div>' +
-
-      '<button class="action" onclick="likePost('+i+')">' +
-      '❤️ '+posts[i].likes+
-      '</button>' +
-
-      '<button class="action" onclick="deletePost('+i+')">' +
-      '🗑 Delete' +
-      '</button>' +
-
-      '</div>';
-  }
-
-  box.innerHTML = html;
+  return `
+    <div class="${cls}">
+      ${
+        x.avatar?.startsWith('data:')
+        ? `<img src="${x.avatar}">`
+        : esc(x.avatar||initials(x.name))
+      }
+    </div>
+  `;
 }
 
+function toast(t){
+  let e=document.getElementById('toast');
 
-function likePost(index){
+  e.textContent=t;
+  e.classList.add('show');
 
-  posts[index].likes++;
+  clearTimeout(window.tt);
 
-  localStorage.setItem(
-    "microblogPosts",
-    JSON.stringify(posts)
+  window.tt=setTimeout(
+    ()=>e.classList.remove('show'),
+    2200
   );
+}
 
-  displayPosts();
+function setRoot(x){
+  document.getElementById('root').innerHTML=x;
+}
+
+function openModal(content){
+  document.getElementById('modalBg').innerHTML=
+    `<div class="modal">${content}</div>`;
+
+  document.getElementById('modalBg').style.display='grid';
+}
+
+function closeModal(){
+  document.getElementById('modalBg').style.display='none';
+  document.getElementById('modalBg').innerHTML='';
 }
 
 
-function deletePost(index){
+/* =========================================
+   AUTHENTICATION
+========================================= */
 
-  posts.splice(index,1);
+function auth(){
 
-  localStorage.setItem(
-    "microblogPosts",
-    JSON.stringify(posts)
-  );
+  setRoot(`
+    <div class="auth">
 
-  displayPosts();
+      <div class="auth-card">
+
+        <div class="brand">
+          <span class="brandmark">M</span>
+          <span>MicroBlog</span>
+        </div>
+
+        <h1>Welcome back</h1>
+
+        <p class="sub">
+          Connect, share posts, watch reels and keep your own profile.
+        </p>
+
+        <div class="tabs">
+
+          <button
+            id="loginTab"
+            class="active"
+            onclick="authTab('login')">
+            Log in
+          </button>
+
+          <button
+            id="signupTab"
+            onclick="authTab('signup')">
+            Create account
+          </button>
+
+        </div>
+
+        <div id="authForm"></div>
+
+        <p class="tiny" style="margin-top:15px">
+          No demo or fake users are included.
+          Create an account to start.
+          You can create multiple accounts on this device.
+        </p>
+
+      </div>
+
+    </div>
+  `);
+
+  authTab('login');
 }
 
 
-/* =========================
-   SEARCH
-========================= */
+function authTab(mode){
 
-function searchUser(){
+  document
+    .getElementById('loginTab')
+    .classList
+    .toggle('active',mode==='login');
 
-  var value =
-    document.getElementById("searchInput")
+  document
+    .getElementById('signupTab')
+    .classList
+    .toggle('active',mode==='signup');
+
+  document.getElementById('authForm').innerHTML=
+    mode==='login'
+
+    ? `
+
+      <div id="authErr"></div>
+
+      <div class="field">
+        <label>Username</label>
+        <input
+          id="loginUser"
+          autocomplete="username"
+          placeholder="Enter username">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input
+          id="loginPass"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter password">
+      </div>
+
+      <button
+        class="primary wide"
+        onclick="login()">
+        Log in
+      </button>
+
+      <button
+        class="secondary wide"
+        style="margin-top:9px"
+        onclick="accountPicker()">
+        Choose another saved account
+      </button>
+
+    `
+
+    : `
+
+      <div id="authErr"></div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>Your name</label>
+          <input
+            id="signName"
+            placeholder="Full name">
+        </div>
+
+        <div class="field">
+          <label>Username</label>
+          <input
+            id="signUser"
+            placeholder="username">
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label>Email (optional)</label>
+        <input
+          id="signEmail"
+          type="email"
+          placeholder="you@example.com">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input
+          id="signPass"
+          type="password"
+          placeholder="Create a password">
+      </div>
+
+      <div class="field">
+        <label>Confirm password</label>
+        <input
+          id="signPass2"
+          type="password"
+          placeholder="Repeat password">
+      </div>
+
+      <div class="field">
+        <label>Bio (optional)</label>
+        <textarea
+          id="signBio"
+          rows="3"
+          placeholder="Tell people about yourself"></textarea>
+      </div>
+
+      <button
+        class="primary wide"
+        onclick="signup()">
+        Create account
+      </button>
+
+    `;
+}
+
+
+function login(){
+
+  let u=document
+    .getElementById('loginUser')
     .value
-    .toLowerCase();
+    .trim()
+    .replace(/^@/,'');
 
-  var results =
-    document.getElementById("results");
+  let p=document
+    .getElementById('loginPass')
+    .value;
 
-  if(value === ""){
+  let a=db.accounts.find(
+    x =>
+      x.username.toLowerCase()===u.toLowerCase() &&
+      x.password===p
+  );
 
-    results.innerHTML =
-      '<div class="empty">Search for a user.</div>';
+  if(!a){
+
+    document.getElementById('authErr').innerHTML=
+      '<div class="error">Username or password is incorrect.</div>';
+
+    return;
+  }
+
+  db.current=a.username;
+
+  save();
+
+  app('home');
+}
+
+
+function signup(){
+
+  let name=document
+    .getElementById('signName')
+    .value
+    .trim();
+
+  let u=document
+    .getElementById('signUser')
+    .value
+    .trim()
+    .replace(/^@/,'')
+    .replace(/\s/g,'');
+
+  let p=document
+    .getElementById('signPass')
+    .value;
+
+  let p2=document
+    .getElementById('signPass2')
+    .value;
+
+  let bio=document
+    .getElementById('signBio')
+    .value
+    .trim();
+
+  let err=document.getElementById('authErr');
+
+  if(!name||!u||!p){
+
+    err.innerHTML=
+      '<div class="error">Name, username and password are required.</div>';
+
+    return;
+  }
+
+  if(p.length<6){
+
+    err.innerHTML=
+      '<div class="error">Use at least 6 characters for the password.</div>';
+
+    return;
+  }
+
+  if(p!==p2){
+
+    err.innerHTML=
+      '<div class="error">Passwords do not match.</div>';
 
     return;
   }
 
   if(
-    "arsh".includes(value) ||
-    "@arshhh".includes(value)
+    db.accounts.some(
+      x=>x.username.toLowerCase()===u.toLowerCase()
+    )
   ){
 
-    results.innerHTML =
-      '<div class="result">' +
-      '<span class="avatar">A</span>' +
-      '<b>Arsh</b><br>' +
-      '<span class="handle">@Arshhh</span>' +
-      '</div>';
+    err.innerHTML=
+      '<div class="error">That username is already taken.</div>';
 
-  }else{
-
-    results.innerHTML =
-      '<div class="empty">No user found.</div>';
-
-  }
-}
-
-
-/* =========================
-   MESSAGES
-========================= */
-
-/*
-  IMPORTANT:
-  This starts as an EMPTY ARRAY.
-  No Hello.
-  No Hii.
-  No "I am Arsh".
-  No automatic messages.
-*/
-
-var messages =
-  JSON.parse(localStorage.getItem("microblogMessages") || "[]");
-
-
-function sendMessage(){
-
-  var input =
-    document.getElementById("messageInput");
-
-  var text =
-    input.value.trim();
-
-  if(text === ""){
     return;
   }
 
-  messages.push(text);
+  db.accounts.push({
+    username:u,
+    name:name,
+    password:p,
+    bio:bio,
+    avatar:initials(name),
+    followers:0,
+    following:0,
+    email:document
+      .getElementById('signEmail')
+      .value
+      .trim()
+  });
 
-  localStorage.setItem(
-    "microblogMessages",
-    JSON.stringify(messages)
+  db.current=u;
+
+  db.follows[u]=[];
+
+  save();
+
+  app('home');
+
+  toast('Account created successfully!');
+}
+
+
+function accountPicker(){
+
+  openModal(`
+
+    <div class="modal-head">
+      <b>Saved accounts</b>
+      <button
+        class="close"
+        onclick="closeModal()">×</button>
+    </div>
+
+    <div class="account-list">
+
+      ${
+        db.accounts.map(a=>`
+
+          <div class="account-row">
+
+            ${avatar(a)}
+
+            <div class="grow">
+              <b>${esc(a.name)}</b>
+
+              <small
+                style="display:block;color:#667085">
+                @${esc(a.username)}
+              </small>
+            </div>
+
+            <button
+              class="secondary"
+              onclick="fillLogin('${esc(a.username)}')">
+              Use
+            </button>
+
+          </div>
+
+        `).join('')
+      }
+
+    </div>
+
+  `);
+}
+
+
+function fillLogin(u){
+
+  closeModal();
+
+  authTab('login');
+
+  document.getElementById('loginUser').value=u;
+
+  document.getElementById('loginPass').focus();
+}
+
+
+/* =========================================
+   APP SHELL
+========================================= */
+
+const nav=[
+  ['home','⌂','Home'],
+  ['search','⌕','Search'],
+  ['notifications','♡','Notifications'],
+  ['messages','✉','Messages'],
+  ['reels','▶','Reels'],
+  ['profile','◉','Profile'],
+  ['settings','⚙','Settings']
+];
+
+
+function shell(page,title,content){
+
+  let a=me();
+
+  setRoot(`
+
+    <div class="shell">
+
+      <aside class="sidebar">
+
+        <div class="side-brand">
+
+          <div class="brand">
+
+            <span class="brandmark">M</span>
+
+            <span class="brandtext">
+              MicroBlog
+            </span>
+
+          </div>
+
+        </div>
+
+        <nav class="nav">
+
+          ${
+            nav.map(n=>`
+
+              <button
+                class="${page===n[0]?'active':''}"
+                onclick="app('${n[0]}')">
+
+                <span class="ico">
+                  ${n[1]}
+                </span>
+
+                <span>
+                  ${n[2]}
+                </span>
+
+              </button>
+
+            `).join('')
+          }
+
+        </nav>
+
+        <button
+          class="primary newpost"
+          onclick="composer()">
+          ＋ <span>Post</span>
+        </button>
+
+        <button
+          class="side-account"
+          onclick="profile('${a.username}')">
+
+          ${avatar(a)}
+
+          <span class="account-text">
+
+            <b>${esc(a.name)}</b>
+
+            <span>
+              @${esc(a.username)}
+            </span>
+
+          </span>
+
+          <span>⋯</span>
+
+        </button>
+
+      </aside>
+
+      <main class="main">
+        ${content}
+      </main>
+
+      <aside class="right">
+
+        <div class="search">
+
+          <span>⌕</span>
+
+          <input
+            placeholder="Search"
+            onkeydown="if(event.key==='Enter')doSearch(this.value)">
+
+        </div>
+
+        <div class="r-card">
+
+          <h3>People to follow</h3>
+
+          ${
+            db.accounts
+              .filter(x=>x.username!==a.username)
+              .slice(0,3)
+              .map(x=>rightUser(x))
+              .join('')
+            ||
+            '<small style="color:#667085">No suggestions yet.</small>'
+          }
+
+        </div>
+
+        <div class="r-card">
+
+          <h3>MicroBlog</h3>
+
+          <small style="color:#667085">
+            Posts · Stories · Reels · Messages · Multiple accounts
+          </small>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  `);
+}
+
+
+function rightUser(a){
+
+  let on=(db.follows[me().username]||[])
+    .includes(a.username);
+
+  return `
+
+    <div class="r-user">
+
+      ${avatar(a)}
+
+      <div class="grow">
+
+        <b>${esc(a.name)}</b>
+
+        <small>@${esc(a.username)}</small>
+
+      </div>
+
+      <button
+        class="follow ${on?'on':''}"
+        onclick="toggleFollow('${a.username}')">
+
+        ${on?'Following':'Follow'}
+
+      </button>
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================
+   HOME
+========================================= */
+
+function home(){
+
+  let a=me();
+
+  let story=[
+    a,
+    ...db.accounts
+      .filter(x=>x.username!==a.username)
+      .slice(0,5)
+  ];
+
+  let posts=db.posts.slice().reverse();
+
+  shell(
+    'home',
+    'Home',
+
+    `
+
+    <div class="header header-spread">
+
+      <h2>Home</h2>
+
+      <div class="header-actions">
+
+        <button
+          class="circle"
+          onclick="app('search')">
+          ⌕
+        </button>
+
+        <button
+          class="circle"
+          onclick="settings()">
+          ⚙
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="storybar">
+
+      ${
+        story.map((s,i)=>`
+
+          <div
+            class="story ${i===0?'add':''}"
+            onclick="viewStory('${s.username}')">
+
+            ${avatar(s)}
+
+            <p>
+              ${i===0?'Your story':esc(s.name.split(' ')[0])}
+            </p>
+
+          </div>
+
+        `).join('')
+      }
+
+    </div>
+
+    <div class="composer">
+
+      <div>
+        ${avatar(a)}
+      </div>
+
+      <div class="composer-body">
+
+        <textarea
+          id="homeText"
+          placeholder="What's happening, ${esc(a.name.split(' ')[0])}?"></textarea>
+
+        <div class="composer-bottom">
+
+          <div class="tools">
+
+            <button>🖼</button>
+            <button>GIF</button>
+            <button>😊</button>
+
+          </div>
+
+          <button
+            class="primary"
+            onclick="createPost()">
+            Post
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div>
+      ${posts.map(postCard).join('')}
+    </div>
+
+    `
+  );
+}
+
+
+function postCard(p){
+
+  let a=user(p.author);
+
+  if(!a)return '';
+
+  let mine=me().username;
+
+  let l=db.likes[mine]?.includes(p.id);
+
+  let r=db.reposts[mine]?.includes(p.id);
+
+  return `
+
+    <article
+      class="post"
+      id="post-${p.id}">
+
+      ${avatar(a)}
+
+      <div class="postbody">
+
+        <div class="posthead">
+
+          <b>
+            ${esc(a.name)}
+          </b>
+
+          <span class="muted">
+            @${esc(a.username)} · ${esc(p.time)}
+          </span>
+
+        </div>
+
+        <div class="posttext">
+          ${linkMentions(esc(p.text))}
+        </div>
+
+        ${
+          p.media
+          ? `<div class="post-media">
+               🎬 ${esc(p.media)}
+             </div>`
+          : ''
+        }
+
+        <div class="post-actions">
+
+          <button
+            class="act"
+            onclick="commentPost(${p.id})">
+
+            💬 ${p.comments||0}
+
+          </button>
+
+          <button
+            class="act ${r?'reposted':''}"
+            onclick="toggleRepost(${p.id})">
+
+            🔁 ${(p.reposts||0)+(r?1:0)}
+
+          </button>
+
+          <button
+            class="act ${l?'liked':''}"
+            onclick="toggleLike(${p.id})">
+
+            ♥ ${(p.likes||0)+(l?1:0)}
+
+          </button>
+
+          <button
+            class="act"
+            onclick="sharePost(${p.id})">
+
+            ↗ Share
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `;
+}
+
+
+function linkMentions(s){
+
+  return s.replace(
+    /@([a-zA-Z0-9_]+)/g,
+
+    (m,u)=>
+      `<span
+        style="color:var(--blue);cursor:pointer"
+        onclick="profile('${u}')">
+        ${m}
+      </span>`
+  );
+}
+
+
+function createPost(){
+
+  let e=document.getElementById('homeText');
+
+  let t=e.value.trim();
+
+  if(!t){
+    return toast('Write something first');
+  }
+
+  db.posts.push({
+    id:Date.now(),
+    author:me().username,
+    text:t,
+    time:'just now',
+    likes:0,
+    reposts:0,
+    comments:0
+  });
+
+  save();
+
+  home();
+
+  toast('Post published!');
+}
+
+
+function composer(){
+
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>Create a post</b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <textarea
+      id="modalPost"
+      style="
+        width:100%;
+        min-height:140px;
+        border:1px solid #d9dee8;
+        border-radius:14px;
+        padding:12px;
+        resize:vertical;
+        outline:0"
+      placeholder="What's happening?"></textarea>
+
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        margin-top:10px">
+
+      <button
+        class="secondary"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="modalPost()">
+        Post
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+function modalPost(){
+
+  let t=document
+    .getElementById('modalPost')
+    .value
+    .trim();
+
+  if(!t)return;
+
+  db.posts.push({
+    id:Date.now(),
+    author:me().username,
+    text:t,
+    time:'just now',
+    likes:0,
+    reposts:0,
+    comments:0
+  });
+
+  save();
+
+  closeModal();
+
+  home();
+
+  toast('Posted!');
+}
+
+
+/* =========================================
+   INTERACTIONS
+========================================= */
+
+function toggleLike(id){
+
+  let u=me().username;
+
+  db.likes[u]??=[];
+
+  let i=db.likes[u].indexOf(id);
+
+  if(i>=0){
+    db.likes[u].splice(i,1);
+  }else{
+    db.likes[u].push(id);
+  }
+
+  save();
+
+  home();
+}
+
+
+function toggleRepost(id){
+
+  let u=me().username;
+
+  db.reposts[u]??=[];
+
+  let i=db.reposts[u].indexOf(id);
+
+  if(i>=0){
+    db.reposts[u].splice(i,1);
+  }else{
+    db.reposts[u].push(id);
+  }
+
+  save();
+
+  home();
+}
+
+
+function commentPost(id){
+
+  let p=db.posts.find(x=>x.id===id);
+
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>Comments</b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <p style="font-size:13px">
+      ${esc(p.text)}
+    </p>
+
+    <div class="field">
+
+      <textarea
+        id="comment"
+        rows="3"
+        placeholder="Write a comment..."></textarea>
+
+    </div>
+
+    <button
+      class="primary wide"
+      onclick="addComment(${id})">
+      Comment
+    </button>
+
+  `);
+}
+
+
+function addComment(id){
+
+  let t=document
+    .getElementById('comment')
+    .value
+    .trim();
+
+  if(!t)return;
+
+  let p=db.posts.find(x=>x.id===id);
+
+  p.comments=(p.comments||0)+1;
+
+  save();
+
+  closeModal();
+
+  toast('Comment added');
+}
+
+
+function sharePost(id){
+
+  navigator.clipboard?.writeText(
+    location.href+'#post-'+id
   );
 
-  input.value = "";
-
-  displayMessages();
+  toast('Post link copied');
 }
 
 
-function enterMessage(event){
+function toggleFollow(u){
 
-  if(event.key === "Enter"){
-    sendMessage();
+  let meU=me().username;
+
+  db.follows[meU]??=[];
+
+  let arr=db.follows[meU];
+
+  let i=arr.indexOf(u);
+
+  if(i>=0){
+    arr.splice(i,1);
+  }else{
+    arr.push(u);
   }
+
+  save();
+
+  app('home');
+
+  toast(i>=0?'Unfollowed':'Following');
 }
 
 
-function displayMessages(){
+function viewStory(u){
 
-  var chat =
-    document.getElementById("chat");
+  let a=user(u);
 
-  if(messages.length === 0){
+  let s=db.stories.find(
+    x=>x.author===u
+  );
 
-    chat.innerHTML =
-      '<div class="empty">' +
-      '💬<br><br>' +
-      '<b>No messages yet</b><br>' +
-      'Write a message below to start.' +
-      '</div>';
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>${esc(a.name)}'s story</b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div
+      style="
+        height:330px;
+        border-radius:16px;
+        background:linear-gradient(135deg,#101828,#635bff);
+        color:#fff;
+        display:grid;
+        place-items:center;
+        text-align:center;
+        padding:30px">
+
+      <div>
+
+        ${avatar(a,'avatar')}
+
+        <h2>
+          ${esc(s?.text||'Your story')}
+        </h2>
+
+        <p style="opacity:.8">
+          Story
+        </p>
+
+      </div>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function doSearch(q){
+  app('search',q);
+}
+
+
+function searchPage(q=''){
+
+  shell(
+    'search',
+    'Search',
+
+    `
+
+    <div class="header">
+      <h2>Search</h2>
+    </div>
+
+    <div class="search-page">
+
+      <div class="bigsearch">
+
+        ⌕
+
+        <input
+          id="searchInput"
+          value="${esc(q)}"
+          placeholder="Search username, name or posts"
+          oninput="renderSearch(this.value)">
+
+      </div>
+
+      <div id="searchResults"></div>
+
+    </div>
+
+    `
+  );
+
+  renderSearch(q);
+}
+
+
+function renderSearch(q){
+
+  let box=document.getElementById('searchResults');
+
+  if(!box)return;
+
+  q=q.trim().toLowerCase();
+
+  if(!q){
+
+    box.innerHTML=`
+
+      <div class="empty">
+
+        <h3>
+          Find people and posts
+        </h3>
+
+        <p>
+          Search for a username, name,
+          or something someone posted.
+        </p>
+
+      </div>
+
+    `;
 
     return;
   }
 
-  var html = "";
+  let us=db.accounts.filter(
+    a =>
+      (
+        a.username+
+        ' '+
+        a.name+
+        ' '+
+        (a.bio||'')
+      )
+      .toLowerCase()
+      .includes(q)
+  );
 
-  for(var i=0;i<messages.length;i++){
+  let ps=db.posts.filter(
+    p =>
+      p.text.toLowerCase().includes(q) ||
+      p.author.toLowerCase().includes(q)
+  );
 
-    html +=
-      '<div class="message">' +
-      '<span>' +
-      escapeHTML(messages[i]) +
-      '</span>' +
-      '</div>';
+  box.innerHTML=`
 
+    <h3
+      style="
+        font-size:13px;
+        margin:18px 4px 5px">
+      People
+    </h3>
+
+    ${
+      us.length
+
+      ? us.map(a=>`
+
+          <div class="result-user">
+
+            ${avatar(a)}
+
+            <div class="grow">
+
+              <b>
+                ${esc(a.name)}
+              </b>
+
+              <small
+                style="
+                  display:block;
+                  color:#667085">
+                @${esc(a.username)}
+              </small>
+
+            </div>
+
+            <button
+              class="follow"
+              onclick="profile('${a.username}')">
+              View
+            </button>
+
+          </div>
+
+        `).join('')
+
+      : '<div class="tiny">No people found.</div>'
+    }
+
+    <h3
+      style="
+        font-size:13px;
+        margin:18px 4px 5px">
+      Posts
+    </h3>
+
+    ${
+      ps.length
+      ? ps.map(postCard).join('')
+      : '<div class="tiny">No posts found.</div>'
+    }
+
+  `;
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+function profile(u=me().username){
+
+  let a=user(u);
+
+  if(!a){
+    return app('search');
   }
 
-  chat.innerHTML = html;
+  let own=u===me().username;
+
+  let count=db.posts.filter(
+    p=>p.author===u
+  ).length;
+
+  let following=(db.follows[me().username]||[])
+    .includes(u);
+
+  shell(
+    'profile',
+    a.name,
+
+    `
+
+    <div class="header">
+
+      <button
+        class="back"
+        onclick="backFromProfile()">
+        ‹
+      </button>
+
+      <h2>${esc(a.name)}</h2>
+
+    </div>
+
+    <div class="profile-cover"></div>
+
+    <div class="profile-top">
+
+      ${avatar(a,'avatar profile-avatar')}
+
+      <div class="profile-actions">
+
+        ${
+          own
+
+          ? `
+            <button
+              class="secondary"
+              onclick="editProfile()">
+              Edit profile
+            </button>
+          `
+
+          : `
+
+            <button
+              class="follow ${following?'on':''}"
+              onclick="toggleFollow('${esc(u)}')">
+
+              ${following?'Following':'Follow'}
+
+            </button>
+
+          `
+        }
+
+      </div>
+
+      <div class="profile-name">
+        ${esc(a.name)}
+      </div>
+
+      <div
+        style="
+          color:#667085;
+          font-size:12px">
+        @${esc(a.username)}
+      </div>
+
+      <div class="profile-bio">
+        ${esc(a.bio||'No bio yet.')}
+      </div>
+
+      <div class="stats">
+
+        <span>
+          <b>${count}</b> Posts
+        </span>
+
+        <span>
+          <b>${a.followers||0}</b> Followers
+        </span>
+
+        <span>
+          <b>${a.following||0}</b> Following
+        </span>
+
+      </div>
+
+    </div>
+
+    <div class="profile-tabs">
+
+      <button class="active">
+        Posts
+      </button>
+
+      <button onclick="app('reels')">
+        Reels
+      </button>
+
+      <button
+        onclick="toast('Likes are private to your account')">
+        Likes
+      </button>
+
+    </div>
+
+    <div>
+
+      ${
+        db.posts
+          .filter(p=>p.author===u)
+          .slice()
+          .reverse()
+          .map(postCard)
+          .join('')
+
+        ||
+
+        `
+          <div class="empty">
+
+            <h3>
+              No posts yet
+            </h3>
+
+            <p>
+              Posts from this profile
+              will appear here.
+            </p>
+
+          </div>
+        `
+      }
+
+    </div>
+
+    `
+  );
 }
 
 
-/* =========================
-   SECURITY
-========================= */
-
-function escapeHTML(text){
-
-  var div = document.createElement("div");
-
-  div.textContent = text;
-
-  return div.innerHTML;
+function backFromProfile(){
+  app('home');
 }
 
 
-/* =========================
-   START
-========================= */
+function editProfile(){
 
-displayPosts();
+  let a=me();
 
-displayMessages();
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>Edit profile</b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div class="field">
+
+      <label>Name</label>
+
+      <input
+        id="editName"
+        value="${esc(a.name)}">
+
+    </div>
+
+    <div class="field">
+
+      <label>Bio</label>
+
+      <textarea
+        id="editBio"
+        rows="4">${esc(a.bio||'')}</textarea>
+
+    </div>
+
+    <div class="field">
+
+      <label>Email</label>
+
+      <input
+        id="editEmail"
+        value="${esc(a.email||'')}">
+
+    </div>
+
+    <button
+      class="primary wide"
+      onclick="saveProfile()">
+      Save changes
+    </button>
+
+  `);
+}
+
+
+function saveProfile(){
+
+  let a=me();
+
+  a.name=
+    document
+      .getElementById('editName')
+      .value
+      .trim()
+    ||a.name;
+
+  a.bio=
+    document
+      .getElementById('editBio')
+      .value
+      .trim();
+
+  a.email=
+    document
+      .getElementById('editEmail')
+      .value
+      .trim();
+
+  save();
+
+  closeModal();
+
+  profile(a.username);
+
+  toast('Profile updated');
+}
+
+
+/* =========================================
+   REELS
+========================================= */
+
+function reels(){
+
+  shell(
+    'reels',
+    'Reels',
+
+    `
+
+    <div class="header header-spread">
+
+      <h2>Reels</h2>
+
+      <button
+        class="circle"
+        onclick="composer()">
+        ＋
+      </button>
+
+    </div>
+
+    <div>
+
+      ${
+        db.reels.map(
+          r=>`
+
+            <div
+              class="post"
+              style="display:block">
+
+              <div class="posthead">
+
+                <b>
+                  ${esc(user(r.author)?.name||r.author)}
+                </b>
+
+                <span class="muted">
+                  @${esc(r.author)}
+                </span>
+
+              </div>
+
+              <div
+                class="post-media"
+                style="
+                  height:420px;
+                  margin-top:10px;
+                  font-size:40px;
+                  flex-direction:column">
+
+                ▶
+
+                <span
+                  style="font-size:14px">
+                  ${esc(r.title)}
+                </span>
+
+              </div>
+
+              <div class="post-actions">
+
+                <button
+                  class="act"
+                  onclick="toast('Liked reel')">
+                  ♥ ${r.likes}
+                </button>
+
+                <button
+                  class="act"
+                  onclick="toast('Comments opened')">
+                  💬 Comment
+                </button>
+
+                <button
+                  class="act"
+                  onclick="sharePost(r.id)">
+                  ↗ Share
+                </button>
+
+              </div>
+
+            </div>
+
+          `
+        ).join('')
+      }
+
+    </div>
+
+    `
+  );
+}
+
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+function notifications(){
+
+  shell(
+    'notifications',
+    'Notifications',
+
+    `
+
+    <div class="header">
+      <h2>Notifications</h2>
+    </div>
+
+    <div class="post">
+
+      <div class="avatar">
+        ♡
+      </div>
+
+      <div class="postbody">
+
+        <b>
+          Welcome to MicroBlog
+        </b>
+
+        <div
+          class="muted"
+          style="margin-top:4px">
+
+          Your notifications will appear here.
+
+        </div>
+
+      </div>
+
+    </div>
+
+    `
+  );
+}
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+function messages(){
+
+  shell(
+    'messages',
+    'Messages',
+
+    `
+
+    <div class="header header-spread">
+
+      <h2>Messages</h2>
+
+      <button
+        class="circle"
+        onclick="toast('New message')">
+        ＋
+      </button>
+
+    </div>
+
+    <div class="empty">
+
+      <div style="font-size:35px">
+        ✉
+      </div>
+
+      <h3>
+        Your messages
+      </h3>
+
+      <p>
+        Start a conversation
+        with someone you follow.
+      </p>
+
+      <button
+        class="primary"
+        onclick="app('search')">
+        Find people
+      </button>
+
+    </div>
+
+    `
+  );
+}
+
+
+/* =========================================
+   SETTINGS
+========================================= */
+
+function settings(){
+
+  shell(
+    'settings',
+    'Settings',
+
+    `
+
+    <div class="header">
+
+      <button
+        class="back"
+        onclick="app('home')">
+        ‹
+      </button>
+
+      <h2>
+        Settings
+      </h2>
+
+    </div>
+
+    <div class="settings">
+
+      <div class="setting-group">
+
+        <h3>
+          ACCOUNT
+        </h3>
+
+        <button
+          class="setting-item"
+          onclick="editProfile()">
+
+          <span>
+
+            <b>
+              Account information
+            </b>
+
+            <small>
+              Name, email and username
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+        <button
+          class="setting-item"
+          onclick="changePassword()">
+
+          <span>
+
+            <b>
+              Password & security
+            </b>
+
+            <small>
+              Change your password
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+        <button
+          class="setting-item"
+          onclick="manageAccounts()">
+
+          <span>
+
+            <b>
+              Manage accounts
+            </b>
+
+            <small>
+              Add, switch or remove local accounts
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+      </div>
+
+
+      <div class="setting-group">
+
+        <h3>
+          PRIVACY & SAFETY
+        </h3>
+
+        ${settingToggle(
+          'private',
+          'Private account',
+          'Only people you approve can follow you.'
+        )}
+
+        ${settingToggle(
+          'mentions',
+          'Allow mentions',
+          'Let people mention you in posts.'
+        )}
+
+        ${settingToggle(
+          'messages',
+          'Message requests',
+          'Allow messages from people you do not follow.'
+        )}
+
+      </div>
+
+
+      <div class="setting-group">
+
+        <h3>
+          CONTENT
+        </h3>
+
+        ${settingToggle(
+          'autoplay',
+          'Autoplay reels',
+          'Play reel previews automatically.'
+        )}
+
+        ${settingToggle(
+          'sensitive',
+          'Show sensitive content',
+          'Control potentially sensitive media.'
+        )}
+
+        <button
+          class="setting-item"
+          onclick="toast('Language: English')">
+
+          <span>
+
+            <b>
+              Language
+            </b>
+
+            <small>
+              English
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+      </div>
+
+
+      <div class="setting-group">
+
+        <h3>
+          APP
+        </h3>
+
+        <button
+          class="setting-item"
+          onclick="toggleTheme()">
+
+          <span>
+
+            <b>
+              Appearance
+            </b>
+
+            <small id="themeText">
+
+              ${
+                db.settings[me().username]?.dark
+                ? 'Dark mode'
+                : 'Light mode'
+              }
+
+            </small>
+
+          </span>
+
+          <span>◐</span>
+
+        </button>
+
+        <button
+          class="setting-item"
+          onclick="toast('Your preferences are stored on this device.')">
+
+          <span>
+
+            <b>
+              Data & storage
+            </b>
+
+            <small>
+              Local storage controls
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+      </div>
+
+
+      <div class="setting-group">
+
+        <h3>
+          SESSION
+        </h3>
+
+        <button
+          class="setting-item"
+          onclick="logout()">
+
+          <span>
+
+            <b>
+              Log out
+            </b>
+
+            <small>
+              Log out of @${esc(me().username)}
+            </small>
+
+          </span>
+
+          <span class="danger">
+            ↪
+          </span>
+
+        </button>
+
+        <button
+          class="setting-item"
+          onclick="resetAll()">
+
+          <span>
+
+            <b class="danger">
+              Delete all local app data
+            </b>
+
+            <small>
+              This removes all accounts and posts from this browser.
+            </small>
+
+          </span>
+
+          <span>›</span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+    `
+  );
+}
+
+
+function settingToggle(key,title,desc){
+
+  let on=!!db.settings[me().username]?.[key];
+
+  return `
+
+    <button
+      class="setting-item"
+      onclick="toggleSetting('${key}')">
+
+      <span>
+
+        <b>
+          ${title}
+        </b>
+
+        <small>
+          ${desc}
+        </small>
+
+      </span>
+
+      <span
+        class="switch ${on?'on':''}">
+
+        <i></i>
+
+      </span>
+
+    </button>
+
+  `;
+}
+
+
+function toggleSetting(k){
+
+  let u=me().username;
+
+  db.settings[u]??={};
+
+  db.settings[u][k]=!db.settings[u][k];
+
+  save();
+
+  settings();
+}
+
+
+function toggleTheme(){
+
+  let u=me().username;
+
+  db.settings[u]??={};
+
+  db.settings[u].dark=!db.settings[u].dark;
+
+  save();
+
+  document.body.style.background=
+    db.settings[u].dark
+    ? '#101828'
+    : 'var(--bg)';
+
+  toast('Appearance updated');
+}
+
+
+function changePassword(){
+
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>
+        Change password
+      </b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div id="passErr"></div>
+
+    <div class="field">
+
+      <label>
+        Current password
+      </label>
+
+      <input
+        id="oldPass"
+        type="password">
+
+    </div>
+
+    <div class="field">
+
+      <label>
+        New password
+      </label>
+
+      <input
+        id="newPass"
+        type="password">
+
+    </div>
+
+    <div class="field">
+
+      <label>
+        Confirm new password
+      </label>
+
+      <input
+        id="newPass2"
+        type="password">
+
+    </div>
+
+    <button
+      class="primary wide"
+      onclick="savePassword()">
+      Update password
+    </button>
+
+  `);
+}
+
+
+function savePassword(){
+
+  let a=me();
+
+  let o=document
+    .getElementById('oldPass')
+    .value;
+
+  let n=document
+    .getElementById('newPass')
+    .value;
+
+  let n2=document
+    .getElementById('newPass2')
+    .value;
+
+  let e=document
+    .getElementById('passErr');
+
+  if(o!==a.password){
+
+    e.innerHTML=
+      '<div class="error">Current password is incorrect.</div>';
+
+    return;
+  }
+
+  if(n.length<6||n!==n2){
+
+    e.innerHTML=
+      '<div class="error">New passwords must match and contain at least 6 characters.</div>';
+
+    return;
+  }
+
+  a.password=n;
+
+  save();
+
+  closeModal();
+
+  toast('Password changed');
+}
+
+
+function manageAccounts(){
+
+  openModal(`
+
+    <div class="modal-head">
+
+      <b>
+        Manage accounts
+      </b>
+
+      <button
+        class="close"
+        onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <p class="tiny">
+      You can keep multiple accounts on this device.
+      Each account has separate profile/content preferences.
+    </p>
+
+    <div class="account-list">
+
+      ${
+        db.accounts.map(a=>`
+
+          <div class="account-row">
+
+            ${avatar(a)}
+
+            <div class="grow">
+
+              <b>
+                ${esc(a.name)}
+              </b>
+
+              <small
+                style="display:block;color:#667085">
+
+                @${esc(a.username)}
+
+              </small>
+
+            </div>
+
+            ${
+              a.username===me().username
+
+              ? `
+                <b
+                  style="
+                    font-size:11px;
+                    color:#12b76a">
+                  Current
+                </b>
+              `
+
+              : `
+
+                <button
+                  class="secondary"
+                  onclick="switchAccount('${esc(a.username)}')">
+                  Switch
+                </button>
+
+              `
+            }
+
+          </div>
+
+        `).join('')
+      }
+
+    </div>
+
+    <button
+      class="primary wide"
+      style="margin-top:12px"
+      onclick="closeModal();openCreateAccount()">
+
+      ＋ Create another account
+
+    </button>
+
+  `);
+}
+
+
+function openCreateAccount(){
+
+  auth();
+
+  authTab('signup');
+}
+
+
+function switchAccount(u){
+
+  db.current=u;
+
+  save();
+
+  closeModal();
+
+  app('home');
+
+  toast('Switched to @'+u);
+}
+
+
+function logout(){
+
+  db.current=null;
+
+  save();
+
+  auth();
+
+  toast('Logged out');
+}
+
+
+function resetAll(){
+
+  if(
+    confirm(
+      'Delete all MicroBlog data on this browser?'
+    )
+  ){
+
+    localStorage.removeItem(KEY);
+
+    db=fresh();
+
+    auth();
+  }
+}
+
+
+/* =========================================
+   ROUTER
+========================================= */
+
+function app(page,arg=''){
+
+  if(!db.current){
+
+    auth();
+
+    return;
+  }
+
+  if(page==='home')
+    home();
+
+  else if(page==='search')
+    searchPage(arg);
+
+  else if(page==='notifications')
+    notifications();
+
+  else if(page==='messages')
+    messages();
+
+  else if(page==='reels')
+    reels();
+
+  else if(page==='profile')
+    profile(arg||me().username);
+
+  else if(page==='settings')
+    settings();
+}
+
+
+/* =========================================
+   START APP
+========================================= */
+
+if(db.current&&!me())
+  db.current=null;
+
+if(db.current)
+  app('home');
+else
+  auth();
 
 </script>
 
