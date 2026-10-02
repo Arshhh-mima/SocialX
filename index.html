@@ -2,1248 +2,1797 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Social</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Vibe Social</title>
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 :root{
-    --bg:#f7f7f8;
-    --card:#ffffff;
-    --text:#111111;
-    --muted:#777;
-    --border:#e7e7e7;
-    --black:#111;
+  --bg:#f6f7fc;
+  --card:#ffffff;
+  --text:#181722;
+  --muted:#777584;
+  --border:#e9e8f0;
+  --purple:#7357ff;
+  --pink:#ff4f91;
+  --blue:#3da8ff;
+  --cyan:#24d7c2;
+  --shadow:0 15px 45px rgba(44,31,100,.10);
 }
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
+  font-family:Inter,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 5% 5%,rgba(115,87,255,.12),transparent 25%),
+    radial-gradient(circle at 95% 15%,rgba(255,79,145,.10),transparent 24%),
+    radial-gradient(circle at 80% 90%,rgba(36,215,194,.08),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
 }
 
 button,
 input,
 textarea,
 select{
-    font:inherit;
+  font:inherit;
 }
 
 button{
-    cursor:pointer;
+  cursor:pointer;
 }
 
-/* ================= TOP BAR ================= */
+/* =====================================================
+   AUTH SCREEN
+===================================================== */
+
+.auth-screen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 15% 15%,#8971ff,transparent 28%),
+    radial-gradient(circle at 90% 20%,#ff67a7,transparent 28%),
+    radial-gradient(circle at 70% 90%,#43ddcb,transparent 25%),
+    #f7f7fc;
+}
+
+.auth-screen.hidden{
+  display:none;
+}
+
+.auth-card{
+  width:min(480px,100%);
+  max-height:94vh;
+  overflow:auto;
+  padding:35px;
+  background:rgba(255,255,255,.90);
+  backdrop-filter:blur(25px);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:28px;
+  box-shadow:0 30px 90px rgba(35,25,85,.20);
+}
+
+.logo{
+  width:68px;
+  height:68px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 18px;
+  border-radius:21px;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  color:white;
+  font-size:27px;
+  font-weight:900;
+  box-shadow:0 12px 30px rgba(115,87,255,.3);
+}
+
+.auth-form{
+  display:none;
+}
+
+.auth-form.active{
+  display:block;
+}
+
+.auth-form h1{
+  text-align:center;
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.auth-subtitle{
+  text-align:center;
+  color:var(--muted);
+  line-height:1.5;
+  margin-bottom:25px;
+}
+
+.form-group{
+  margin-bottom:13px;
+}
+
+.form-group label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.form-input{
+  width:100%;
+  border:1px solid var(--border);
+  background:#fafafd;
+  border-radius:13px;
+  padding:13px 14px;
+  outline:none;
+}
+
+.form-input:focus{
+  background:white;
+  border-color:var(--purple);
+  box-shadow:0 0 0 4px rgba(115,87,255,.09);
+}
+
+/* DP UPLOAD */
+
+.dp-upload{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:13px;
+  border:1px dashed #cfc9f8;
+  border-radius:15px;
+  background:#faf9ff;
+}
+
+.dp-preview{
+  width:62px;
+  height:62px;
+  flex-shrink:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  border-radius:50%;
+  color:white;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+}
+
+.dp-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.dp-upload-info{
+  flex:1;
+}
+
+.dp-upload-info strong{
+  display:block;
+  font-size:13px;
+  margin-bottom:4px;
+}
+
+.dp-upload-info span{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.dp-button{
+  border:0;
+  padding:9px 11px;
+  border-radius:10px;
+  background:#eeeaff;
+  color:var(--purple);
+  font-weight:800;
+  font-size:11px;
+}
+
+.auth-button{
+  width:100%;
+  border:0;
+  padding:14px;
+  border-radius:13px;
+  color:white;
+  font-weight:850;
+  background:linear-gradient(100deg,var(--purple),var(--pink));
+  box-shadow:0 10px 25px rgba(115,87,255,.25);
+  margin-top:5px;
+}
+
+.auth-switch{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:18px;
+}
+
+.auth-switch button{
+  border:0;
+  background:none;
+  color:var(--purple);
+  font-weight:800;
+}
+
+.auth-error{
+  color:#df3d60;
+  font-size:12px;
+  margin-top:9px;
+  min-height:15px;
+}
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app{
+  display:none;
+}
+
+.app.visible{
+  display:block;
+}
+
+/* =====================================================
+   TOPBAR
+===================================================== */
 
 .topbar{
-    height:68px;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    background:rgba(255,255,255,.96);
-    backdrop-filter:blur(15px);
-    border-bottom:1px solid var(--border);
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
+  position:fixed;
+  z-index:100;
+  top:0;
+  left:0;
+  right:0;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
 }
 
 .brand{
-    font-size:25px;
-    font-weight:800;
-    letter-spacing:-1px;
+  font-size:26px;
+  font-weight:900;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;
+  color:transparent;
 }
 
-.search-box{
-    width:310px;
-    height:40px;
-    border:1px solid var(--border);
-    background:#f3f3f4;
-    border-radius:12px;
-    padding:0 15px;
-    outline:none;
+.top-search{
+  width:320px;
 }
 
-.search-box:focus{
-    background:#fff;
-    border-color:#bbb;
+.top-search input{
+  width:100%;
+  height:42px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:0 15px;
+  outline:none;
+  background:#f2f2f7;
 }
 
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:8px;
+.top-search input:focus{
+  background:white;
+  border-color:#b9adff;
 }
 
-.top-btn{
-    border:0;
-    background:transparent;
-    padding:10px 13px;
-    border-radius:10px;
-    font-weight:600;
+.top-buttons{
+  display:flex;
+  gap:8px;
 }
 
-.top-btn:hover{
-    background:#f1f1f1;
+.top-buttons button{
+  border:0;
+  background:white;
+  padding:10px 13px;
+  border-radius:11px;
+  font-size:12px;
+  font-weight:800;
 }
 
-/* ================= SIDEBAR ================= */
+.top-buttons button:hover{
+  background:#f0edff;
+  color:var(--purple);
+}
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
 
 .sidebar{
-    position:fixed;
-    top:68px;
-    left:0;
-    bottom:0;
-    width:245px;
-    background:#fff;
-    border-right:1px solid var(--border);
-    padding:25px 15px;
-    z-index:90;
+  position:fixed;
+  top:72px;
+  bottom:0;
+  left:0;
+  width:245px;
+  padding:20px 14px;
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(20px);
+  border-right:1px solid var(--border);
+  z-index:90;
 }
 
 .nav-item{
-    width:100%;
-    height:48px;
-    border:0;
-    background:transparent;
-    border-radius:11px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:0 15px;
-    margin-bottom:6px;
-    text-align:left;
-    font-weight:600;
-    color:#222;
+  width:100%;
+  height:50px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  border:0;
+  background:transparent;
+  border-radius:14px;
+  padding:0 15px;
+  color:#555260;
+  font-weight:750;
+  margin-bottom:7px;
 }
 
 .nav-item:hover{
-    background:#f2f2f3;
+  background:#f0edff;
+  color:var(--purple);
 }
 
 .nav-item.active{
-    background:#111;
-    color:#fff;
+  background:linear-gradient(100deg,var(--purple),#927cff);
+  color:white;
+  box-shadow:0 9px 22px rgba(115,87,255,.22);
 }
 
 .nav-icon{
-    width:21px;
-    height:21px;
-    border:2px solid currentColor;
-    border-radius:6px;
-    flex-shrink:0;
+  width:19px;
+  height:19px;
+  border:2px solid currentColor;
+  border-radius:6px;
 }
 
-/* ================= MAIN ================= */
+/* =====================================================
+   CONTENT
+===================================================== */
 
 .main{
-    width:min(680px,calc(100% - 40px));
-    margin:0 auto;
-    padding-top:95px;
-    padding-bottom:100px;
+  width:min(720px,calc(100% - 40px));
+  margin:auto;
+  padding-top:100px;
+  padding-bottom:100px;
 }
 
-/* ================= STORIES ================= */
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.page-title{
+  font-size:27px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.page-subtitle{
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+/* =====================================================
+   STORIES
+===================================================== */
 
 .stories{
-    display:flex;
-    gap:17px;
-    overflow-x:auto;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:17px;
-    margin-bottom:20px;
+  display:flex;
+  gap:16px;
+  overflow:auto;
+  padding:16px;
+  background:rgba(255,255,255,.88);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
 }
 
 .stories::-webkit-scrollbar{
-    display:none;
+  display:none;
 }
 
 .story{
-    min-width:68px;
-    text-align:center;
-    font-size:12px;
+  min-width:70px;
+  text-align:center;
+  font-size:11px;
+  font-weight:750;
 }
 
-.story-avatar{
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#111;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0 auto 7px;
-    font-size:18px;
-    font-weight:700;
-    overflow:hidden;
+.story-ring{
+  width:64px;
+  height:64px;
+  padding:3px;
+  margin:auto auto 7px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--pink),var(--cyan));
 }
 
-.story-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+.story-inner{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:50%;
+  background:white;
+  font-size:23px;
 }
 
-/* ================= CREATE PLUS BAR ================= */
+.story-inner img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* =====================================================
+   CREATE BAR
+===================================================== */
 
 .create-bar{
-    height:65px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    margin-bottom:20px;
-    padding:10px 15px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 15px;
+  margin-bottom:18px;
+  background:rgba(255,255,255,.88);
+  border:1px solid var(--border);
+  border-radius:19px;
+  box-shadow:var(--shadow);
 }
 
-.create-text{
-    font-size:14px;
-    color:#777;
+.create-placeholder{
+  color:#92909d;
+  font-size:14px;
 }
 
-.plus-button{
-    width:45px;
-    height:45px;
-    border:0;
-    border-radius:13px;
-    background:#111;
-    color:#fff;
-    font-size:28px;
-    line-height:1;
-    transition:.2s;
+.plus{
+  width:48px;
+  height:48px;
+  border:0;
+  border-radius:15px;
+  color:white;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  font-size:28px;
+  box-shadow:0 9px 25px rgba(115,87,255,.28);
 }
 
-.plus-button:hover{
-    transform:scale(1.05);
-    background:#333;
-}
-
-/* ================= POST ================= */
+/* =====================================================
+   POST
+===================================================== */
 
 .post{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    overflow:hidden;
-    margin-bottom:22px;
+  overflow:hidden;
+  margin-bottom:20px;
+  background:rgba(255,255,255,.90);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
 }
 
-.post-header{
-    height:65px;
-    padding:10px 15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.post-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 16px;
 }
 
-.user{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .avatar{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:#111;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    overflow:hidden;
+  width:42px;
+  height:42px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  color:white;
+  font-weight:900;
 }
 
 .avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 .username{
-    font-size:14px;
-    font-weight:700;
+  font-weight:850;
+  font-size:14px;
 }
 
 .post-type{
-    font-size:11px;
-    color:#888;
-    margin-top:3px;
+  color:#92909d;
+  font-size:11px;
+  margin-top:3px;
 }
 
-.more-btn{
-    border:0;
-    background:transparent;
-    font-size:20px;
+.post-more{
+  border:0;
+  background:transparent;
+  font-size:19px;
 }
 
-.media{
-    width:100%;
-    max-height:720px;
-    display:block;
-    object-fit:contain;
-    background:#111;
+.post-media{
+  display:block;
+  width:100%;
+  max-height:700px;
+  object-fit:contain;
+  background:#14131d;
 }
 
 .post-actions{
-    display:flex;
-    gap:18px;
-    padding:13px 15px 7px;
+  display:flex;
+  gap:20px;
+  padding:13px 16px 5px;
 }
 
-.post-action{
-    border:0;
-    background:transparent;
-    font-weight:600;
-    padding:3px 0;
+.post-actions button{
+  border:0;
+  background:transparent;
+  font-size:13px;
+  font-weight:750;
 }
 
-.post-action:hover{
-    color:#555;
+.post-actions button:hover{
+  color:var(--purple);
 }
 
-.post-content{
-    padding:5px 15px 17px;
-    line-height:1.5;
-    font-size:14px;
+.post-caption{
+  padding:7px 16px 17px;
+  font-size:14px;
+  line-height:1.55;
 }
 
-.post-content strong{
-    margin-right:5px;
+.music{
+  color:var(--purple);
+  font-size:12px;
+  margin-top:7px;
 }
 
-.post-music{
-    color:#666;
-    margin-top:6px;
-    font-size:12px;
-}
-
-.delete{
-    color:#c00;
-}
-
-/* ================= EMPTY ================= */
+/* =====================================================
+   EMPTY
+===================================================== */
 
 .empty{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    text-align:center;
-    padding:55px 20px;
-    color:#777;
+  padding:65px 20px;
+  text-align:center;
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+
+.empty-icon{
+  width:60px;
+  height:60px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 16px;
+  border-radius:18px;
+  color:white;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  font-weight:900;
+  font-size:23px;
 }
 
 .empty h2{
-    color:#111;
-    margin-bottom:10px;
+  margin-bottom:8px;
 }
 
-/* ================= RIGHT PANEL ================= */
-
-.right-panel{
-    position:fixed;
-    top:100px;
-    left:calc(50% + 370px);
-    width:280px;
+.empty p{
+  color:var(--muted);
 }
 
-.panel{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:15px;
-    padding:18px;
-    margin-bottom:15px;
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-box{
+  margin-bottom:20px;
 }
 
-.panel-title{
-    font-weight:700;
-    margin-bottom:15px;
+.search-box input{
+  width:100%;
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  outline:none;
+  background:white;
 }
 
-.suggestion{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin:13px 0;
+.search-results{
+  display:grid;
+  gap:15px;
 }
 
-.suggestion-left{
-    display:flex;
-    align-items:center;
-    gap:9px;
+/* =====================================================
+   EXPLORE
+===================================================== */
+
+.explore-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
 }
 
-.follow{
-    border:0;
-    background:transparent;
-    color:#111;
-    font-weight:700;
-    font-size:12px;
+.explore-item{
+  aspect-ratio:1;
+  overflow:hidden;
+  background:#171620;
+  cursor:pointer;
 }
 
-/* ================= MOBILE NAV ================= */
-
-.mobile-nav{
-    display:none;
+.explore-item img,
+.explore-item video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-/* ================= MODAL ================= */
+/* =====================================================
+   PROFILE
+===================================================== */
 
-.overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.62);
-    z-index:500;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
+.profile-card{
+  padding:25px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:var(--shadow);
 }
 
-.overlay.show{
-    display:flex;
-}
-
-.modal{
-    width:min(650px,100%);
-    max-height:92vh;
-    overflow:auto;
-    background:#fff;
-    border-radius:20px;
-    padding:23px;
-}
-
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.modal-header h2{
-    font-size:21px;
-}
-
-.close{
-    width:35px;
-    height:35px;
-    border:0;
-    background:#f1f1f1;
-    border-radius:50%;
-    font-size:20px;
-}
-
-/* ================= CREATE MENU ================= */
-
-.create-menu{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-}
-
-.create-option{
-    min-height:135px;
-    border:1px solid var(--border);
-    background:#fafafa;
-    border-radius:15px;
-    padding:20px 10px;
-    font-weight:700;
-    transition:.2s;
-}
-
-.create-option:hover{
-    background:#111;
-    color:#fff;
-    transform:translateY(-2px);
-}
-
-.option-symbol{
-    width:45px;
-    height:45px;
-    border:2px solid currentColor;
-    border-radius:12px;
-    margin:0 auto 13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:24px;
-}
-
-/* ================= EDITOR ================= */
-
-.editor{
-    display:none;
-}
-
-.editor.show{
-    display:block;
-}
-
-.media-choice{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.choice-btn{
-    padding:18px 10px;
-    border:1px solid var(--border);
-    background:#fafafa;
-    border-radius:12px;
-    font-weight:700;
-}
-
-.choice-btn:hover{
-    background:#f0f0f0;
-}
-
-.file-input{
-    display:none;
-}
-
-.preview{
-    margin-top:17px;
-}
-
-.preview img,
-.preview video{
-    width:100%;
-    max-height:450px;
-    object-fit:contain;
-    background:#111;
-    border-radius:12px;
-}
-
-.field{
-    margin-top:15px;
-}
-
-.field label{
-    display:block;
-    font-size:13px;
-    font-weight:700;
-    margin-bottom:7px;
-}
-
-.field input,
-.field textarea,
-.field select{
-    width:100%;
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:12px;
-    outline:none;
-    background:#fff;
-}
-
-.field textarea{
-    min-height:90px;
-    resize:vertical;
-}
-
-.publish{
-    width:100%;
-    margin-top:18px;
-    padding:14px;
-    border:0;
-    border-radius:11px;
-    background:#111;
-    color:#fff;
-    font-weight:700;
-}
-
-.publish:hover{
-    background:#333;
-}
-
-/* ================= FILTERS ================= */
-
-.filters{
-    display:flex;
-    gap:7px;
-    overflow-x:auto;
-    margin-top:13px;
-}
-
-.filter{
-    white-space:nowrap;
-    border:1px solid #ddd;
-    background:#fff;
-    border-radius:20px;
-    padding:8px 12px;
-    font-size:12px;
-}
-
-.filter.active{
-    background:#111;
-    color:#fff;
-}
-
-/* ================= CAMERA ================= */
-
-.camera{
-    display:none;
-}
-
-.camera.show{
-    display:block;
-}
-
-.camera video{
-    width:100%;
-    max-height:500px;
-    background:#111;
-    border-radius:12px;
-}
-
-.camera-controls{
-    display:flex;
-    gap:10px;
-    margin-top:12px;
-}
-
-.camera-controls button{
-    flex:1;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    background:#fff;
-    font-weight:700;
-}
-
-.recording{
-    background:#b00000 !important;
-    color:#fff !important;
-}
-
-/* ================= PROFILE ================= */
-
-.profile-head{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:25px;
-    display:flex;
-    gap:20px;
-    align-items:center;
+.profile-top{
+  display:flex;
+  align-items:center;
+  gap:20px;
 }
 
 .profile-avatar{
-    width:90px;
-    height:90px;
-    background:#111;
-    color:#fff;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:30px;
-    font-weight:700;
+  width:95px;
+  height:95px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:50%;
+  color:white;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  font-size:30px;
+  font-weight:900;
+  cursor:pointer;
 }
 
-/* ================= RESPONSIVE ================= */
+.profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-info{
+  flex:1;
+}
+
+.profile-stats{
+  display:flex;
+  gap:25px;
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat strong{
+  display:block;
+  font-size:18px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.profile-name{
+  margin-top:20px;
+  font-size:20px;
+  font-weight:900;
+}
+
+.profile-username{
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.change-dp{
+  border:0;
+  margin-top:15px;
+  padding:9px 13px;
+  border-radius:10px;
+  background:#eeeaff;
+  color:var(--purple);
+  font-size:12px;
+  font-weight:850;
+}
+
+/* =====================================================
+   CREATE MODAL
+===================================================== */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(20,16,35,.55);
+  backdrop-filter:blur(8px);
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:min(650px,100%);
+  max-height:92vh;
+  overflow:auto;
+  padding:24px;
+  background:white;
+  border-radius:25px;
+  box-shadow:0 30px 80px rgba(20,15,45,.3);
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:12px;
+  background:#f1f1f5;
+  font-size:20px;
+}
+
+.create-options{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px;
+}
+
+.create-option{
+  min-height:170px;
+  text-align:left;
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:19px;
+  background:#fafafd;
+  transition:.2s;
+}
+
+.create-option:hover{
+  transform:translateY(-4px);
+  box-shadow:0 15px 35px rgba(70,50,130,.13);
+}
+
+.option-icon{
+  width:52px;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:20px;
+  border-radius:16px;
+  color:white;
+  font-weight:900;
+  font-size:20px;
+}
+
+.photo .option-icon{
+  background:linear-gradient(135deg,var(--purple),#a18cff);
+}
+
+.reel .option-icon{
+  background:linear-gradient(135deg,var(--pink),#ff8fc1);
+}
+
+.story .option-icon{
+  background:linear-gradient(135deg,var(--cyan),#5ce8d9);
+}
+
+.option-title{
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.option-description{
+  color:#888;
+  font-size:11px;
+  line-height:1.4;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+.mobile-nav{
+  display:none;
+}
 
 @media(max-width:1100px){
 
-    .right-panel{
-        display:none;
-    }
+  .sidebar{
+    width:210px;
+  }
+
+  .main{
+    margin-left:210px;
+  }
 
 }
 
 @media(max-width:850px){
 
-    .topbar{
-        height:62px;
-        padding:0 13px;
-    }
+  .topbar{
+    height:62px;
+    padding:0 12px;
+  }
 
-    .brand{
-        font-size:21px;
-    }
+  .brand{
+    font-size:21px;
+  }
 
-    .top-right{
-        display:none;
-    }
+  .top-search{
+    width:150px;
+  }
 
-    .search-box{
-        width:145px;
-        height:37px;
-    }
+  .top-buttons{
+    display:none;
+  }
 
-    .sidebar{
-        display:none;
-    }
+  .sidebar{
+    display:none;
+  }
 
-    .main{
-        width:100%;
-        padding:78px 9px 90px;
-    }
+  .main{
+    width:100%;
+    margin:0;
+    padding:78px 9px 90px;
+  }
 
-    .stories{
-        border-radius:13px;
-    }
+  .mobile-nav{
+    position:fixed;
+    z-index:300;
+    left:0;
+    right:0;
+    bottom:0;
+    height:68px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    padding:7px 5px;
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+  }
 
-    .create-bar{
-        border-radius:13px;
-    }
+  .mobile-nav button{
+    border:0;
+    border-radius:12px;
+    background:transparent;
+    font-size:10px;
+    font-weight:800;
+  }
 
-    .post{
-        border-radius:13px;
-    }
+  .mobile-plus{
+    margin:2px 8px;
+    color:white!important;
+    background:linear-gradient(135deg,var(--purple),var(--pink))!important;
+    font-size:25px!important;
+  }
 
-    .mobile-nav{
-        display:grid;
-        grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;
-        position:fixed;
-        left:0;
-        right:0;
-        bottom:0;
-        height:68px;
-        background:#fff;
-        border-top:1px solid var(--border);
-        z-index:300;
-        padding:8px 5px;
-    }
+  .overlay{
+    align-items:flex-end;
+    padding:0;
+  }
 
-    .mobile-nav button{
-        border:0;
-        background:transparent;
-        font-size:10px;
-        font-weight:700;
-        border-radius:10px;
-    }
+  .modal{
+    max-height:94vh;
+    border-radius:25px 25px 0 0;
+    padding:20px 15px;
+  }
 
-    .mobile-nav .mobile-plus{
-        background:#111;
-        color:#fff;
-        margin:3px 10px;
-        font-size:25px;
-    }
+  .create-options{
+    grid-template-columns:1fr;
+  }
 
-    .overlay{
-        align-items:flex-end;
-        padding:0;
-    }
+  .create-option{
+    min-height:90px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+  }
 
-    .modal{
-        max-height:93vh;
-        border-radius:20px 20px 0 0;
-        padding:20px 15px;
-    }
+  .option-icon{
+    flex-shrink:0;
+    margin:0;
+  }
 
-    .create-menu{
-        grid-template-columns:1fr;
-    }
+  .profile-top{
+    flex-direction:column;
+    align-items:flex-start;
+  }
 
-    .create-option{
-        min-height:75px;
-        display:flex;
-        align-items:center;
-        gap:15px;
-        padding:12px 15px;
-    }
-
-    .option-symbol{
-        margin:0;
-        width:42px;
-        height:42px;
-        flex-shrink:0;
-    }
-
-    .media-choice{
-        grid-template-columns:1fr;
-    }
-
-    .camera-controls{
-        flex-direction:column;
-    }
+  .profile-stats{
+    width:100%;
+    justify-content:space-between;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP BAR ================= -->
+<!-- =====================================================
+     LOGIN / SIGNUP
+===================================================== -->
 
-<header class="topbar">
+<section class="auth-screen" id="authScreen">
 
-    <div class="brand">Social</div>
+  <div class="auth-card">
 
-    <input
-        id="searchInput"
-        class="search-box"
-        type="search"
-        placeholder="Search"
-        oninput="searchUsers()"
-    >
+    <div class="logo">V</div>
 
-    <div class="top-right">
 
-        <button class="top-btn" onclick="showNotifications()">
-            Notifications
+    <!-- LOGIN -->
+
+    <div
+      class="auth-form active"
+      id="loginForm">
+
+      <h1>
+        Welcome back
+      </h1>
+
+      <p class="auth-subtitle">
+        Login to continue to Vibe.
+      </p>
+
+      <div class="form-group">
+
+        <label>
+          Username or Email
+        </label>
+
+        <input
+          id="loginIdentifier"
+          class="form-input"
+          type="text"
+          placeholder="Enter username or email"
+          autocomplete="username">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Password
+        </label>
+
+        <input
+          id="loginPassword"
+          class="form-input"
+          type="password"
+          placeholder="Enter password"
+          autocomplete="current-password">
+
+      </div>
+
+
+      <button
+        class="auth-button"
+        onclick="login()">
+
+        Login
+
+      </button>
+
+
+      <div
+        class="auth-error"
+        id="loginError">
+      </div>
+
+
+      <div class="auth-switch">
+
+        Don't have an account?
+
+        <button onclick="showSignup()">
+          Create Account
         </button>
 
-        <button class="top-btn" onclick="showMessages()">
-            Messages
-        </button>
+      </div>
 
     </div>
 
-</header>
+
+    <!-- SIGNUP -->
+
+    <div
+      class="auth-form"
+      id="signupForm">
+
+      <h1>
+        Create account
+      </h1>
+
+      <p class="auth-subtitle">
+        Join Vibe and create your profile.
+      </p>
 
 
-<!-- ================= SIDEBAR ================= -->
+      <div class="form-group">
 
-<aside class="sidebar">
+        <label>
+          Profile Photo
+        </label>
 
-    <button class="nav-item active" onclick="showHome(this)">
-        <span class="nav-icon"></span>
-        Home
-    </button>
+        <div class="dp-upload">
 
-    <button class="nav-item" onclick="focusSearch()">
-        <span class="nav-icon"></span>
-        Search
-    </button>
+          <div
+            class="dp-preview"
+            id="signupDPPreview">
 
-    <button class="nav-item" onclick="showExplore(this)">
-        <span class="nav-icon"></span>
-        Explore
-    </button>
+            V
 
-    <button class="nav-item" onclick="showReels(this)">
-        <span class="nav-icon"></span>
-        Reels
-    </button>
+          </div>
 
-    <button class="nav-item" onclick="showMessages(this)">
-        <span class="nav-icon"></span>
-        Messages
-    </button>
+          <div class="dp-upload-info">
 
-    <button class="nav-item" onclick="showNotifications(this)">
-        <span class="nav-icon"></span>
-        Notifications
-    </button>
+            <strong>
+              Add your DP
+            </strong>
 
-    <button class="nav-item" onclick="showProfile(this)">
-        <span class="nav-icon"></span>
-        Profile
-    </button>
+            <span>
+              JPG, PNG or WEBP
+            </span>
 
-</aside>
+          </div>
 
+          <button
+            type="button"
+            class="dp-button"
+            onclick="selectSignupDP()">
 
-<!-- ================= MAIN ================= -->
+            Choose
 
-<main class="main">
+          </button>
 
-    <!-- STORIES -->
-
-    <section class="stories" id="stories">
-
-        <div class="story">
-            <div
-                class="story-avatar"
-                onclick="openCreateMenu()">
-                +
-            </div>
-            <span>Add Story</span>
         </div>
 
-    </section>
+        <input
+          id="signupDP"
+          type="file"
+          accept="image/*"
+          style="display:none"
+          onchange="previewSignupDP(event)">
+
+      </div>
 
 
-    <!-- CLEAN CREATE BAR -->
+      <div class="form-group">
 
-    <section class="create-bar">
+        <label>
+          Full Name
+        </label>
 
-        <div class="create-text">
-            Create a new post
+        <input
+          id="signupName"
+          class="form-input"
+          type="text"
+          placeholder="Your full name">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Username
+        </label>
+
+        <input
+          id="signupUsername"
+          class="form-input"
+          type="text"
+          placeholder="Choose a username"
+          autocomplete="username">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          id="signupEmail"
+          class="form-input"
+          type="email"
+          placeholder="Your email address"
+          autocomplete="email">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Date of Birth
+        </label>
+
+        <input
+          id="signupDob"
+          class="form-input"
+          type="date">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Password
+        </label>
+
+        <input
+          id="signupPassword"
+          class="form-input"
+          type="password"
+          placeholder="Create a password"
+          autocomplete="new-password">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Confirm Password
+        </label>
+
+        <input
+          id="signupConfirm"
+          class="form-input"
+          type="password"
+          placeholder="Confirm your password"
+          autocomplete="new-password">
+
+      </div>
+
+
+      <button
+        class="auth-button"
+        onclick="createAccount()">
+
+        Create Account
+
+      </button>
+
+
+      <div
+        class="auth-error"
+        id="signupError">
+      </div>
+
+
+      <div class="auth-switch">
+
+        Already have an account?
+
+        <button onclick="showLogin()">
+          Login
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+  class="app"
+  id="app">
+
+
+  <!-- TOPBAR -->
+
+  <header class="topbar">
+
+    <div class="brand">
+      Vibe
+    </div>
+
+    <div class="top-search">
+
+      <input
+        id="globalSearch"
+        type="search"
+        placeholder="Search"
+        onkeydown="globalSearch(event)">
+
+    </div>
+
+    <div class="top-buttons">
+
+      <button
+        onclick="openPage('notifications')">
+
+        Notifications
+
+      </button>
+
+      <button
+        onclick="openPage('messages')">
+
+        Messages
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <button
+      class="nav-item active"
+      data-page="home"
+      onclick="openPage('home')">
+
+      <span class="nav-icon"></span>
+      Home
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="search"
+      onclick="openPage('search')">
+
+      <span class="nav-icon"></span>
+      Search
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="explore"
+      onclick="openPage('explore')">
+
+      <span class="nav-icon"></span>
+      Explore
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="reels"
+      onclick="openPage('reels')">
+
+      <span class="nav-icon"></span>
+      Reels
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="messages"
+      onclick="openPage('messages')">
+
+      <span class="nav-icon"></span>
+      Messages
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="notifications"
+      onclick="openPage('notifications')">
+
+      <span class="nav-icon"></span>
+      Notifications
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="profile"
+      onclick="openPage('profile')">
+
+      <span class="nav-icon"></span>
+      Profile
+
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+
+    <!-- HOME -->
+
+    <section
+      class="page active"
+      id="page-home">
+
+
+      <!-- STORIES ONLY ON HOME -->
+
+      <div
+        class="stories"
+        id="stories">
+      </div>
+
+
+      <div class="create-bar">
+
+        <div class="create-placeholder">
+          Share something with your followers
         </div>
 
         <button
-            class="plus-button"
-            onclick="openCreateMenu()">
-            +
+          class="plus"
+          onclick="openCreate()">
+
+          +
+
         </button>
+
+      </div>
+
+
+      <div id="homeFeed"></div>
 
     </section>
 
 
-    <!-- CONTENT -->
+    <!-- SEARCH -->
 
-    <section id="content"></section>
+    <section
+      class="page"
+      id="page-search">
 
-</main>
-
-
-<!-- ================= RIGHT PANEL ================= -->
-
-<aside class="right-panel">
-
-    <div class="panel">
-
-        <div class="panel-title">
-            Suggestions
-        </div>
-
-        <div class="suggestion">
-
-            <div class="suggestion-left">
-                <div class="avatar">A</div>
-                <span>User</span>
-            </div>
-
-            <button class="follow">
-                Follow
-            </button>
-
-        </div>
-
-        <div class="suggestion">
-
-            <div class="suggestion-left">
-                <div class="avatar">S</div>
-                <span>Creator</span>
-            </div>
-
-            <button class="follow">
-                Follow
-            </button>
-
-        </div>
-
-    </div>
-
-</aside>
-
-
-<!-- ================= MOBILE NAV ================= -->
-
-<nav class="mobile-nav">
-
-    <button onclick="showHome()">
-        Home
-    </button>
-
-    <button onclick="focusSearch()">
+      <h1 class="page-title">
         Search
+      </h1>
+
+      <p class="page-subtitle">
+        Find real Vibe accounts and posts.
+      </p>
+
+      <div class="search-box">
+
+        <input
+          id="searchPageInput"
+          placeholder="Search username or post..."
+          oninput="searchPage()">
+
+      </div>
+
+      <div
+        id="searchResults">
+      </div>
+
+    </section>
+
+
+    <!-- EXPLORE -->
+
+    <section
+      class="page"
+      id="page-explore">
+
+      <h1 class="page-title">
+        Explore
+      </h1>
+
+      <p class="page-subtitle">
+        Discover content from Vibe users.
+      </p>
+
+      <div
+        class="explore-grid"
+        id="exploreGrid">
+      </div>
+
+    </section>
+
+
+    <!-- REELS -->
+
+    <section
+      class="page"
+      id="page-reels">
+
+      <h1 class="page-title">
+        Reels
+      </h1>
+
+      <p class="page-subtitle">
+        Watch short videos from Vibe users.
+      </p>
+
+      <div id="reelsFeed"></div>
+
+    </section>
+
+
+    <!-- MESSAGES -->
+
+    <section
+      class="page"
+      id="page-messages">
+
+      <h1 class="page-title">
+        Messages
+      </h1>
+
+      <p class="page-subtitle">
+        Your private conversations.
+      </p>
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          M
+        </div>
+
+        <h2>
+          No conversations yet
+        </h2>
+
+        <p>
+          Your messages will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <section
+      class="page"
+      id="page-notifications">
+
+      <h1 class="page-title">
+        Notifications
+      </h1>
+
+      <p class="page-subtitle">
+        Your latest activity.
+      </p>
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          N
+        </div>
+
+        <h2>
+          No notifications
+        </h2>
+
+        <p>
+          Likes, comments and follows will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <section
+      class="page"
+      id="page-profile">
+
+      <div class="profile-card">
+
+        <div class="profile-top">
+
+
+          <div
+            class="profile-avatar"
+            id="profileAvatar"
+            onclick="changeDP()">
+
+          </div>
+
+
+          <div class="profile-info">
+
+            <div class="profile-stats">
+
+              <div class="stat">
+
+                <strong id="postCount">
+                  0
+                </strong>
+
+                <span>
+                  Posts
+                </span>
+
+              </div>
+
+
+              <div class="stat">
+
+                <strong>
+                  0
+                </strong>
+
+                <span>
+                  Followers
+                </span>
+
+              </div>
+
+
+              <div class="stat">
+
+                <strong>
+                  0
+                </strong>
+
+                <span>
+                  Following
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <button
+              class="change-dp"
+              onclick="changeDP()">
+
+              Change Profile Photo
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="profile-name"
+          id="profileName">
+        </div>
+
+
+        <div
+          class="profile-username"
+          id="profileUsername">
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- MOBILE NAV -->
+
+  <nav class="mobile-nav">
+
+    <button
+      onclick="openPage('home')">
+
+      Home
+
     </button>
 
     <button
-        class="mobile-plus"
-        onclick="openCreateMenu()">
-        +
+      onclick="openPage('search')">
+
+      Search
+
     </button>
 
-    <button onclick="showNotifications()">
-        Notifications
+    <button
+      class="mobile-plus"
+      onclick="openCreate()">
+
+      +
+
     </button>
 
-    <button onclick="showProfile()">
-        Profile
+    <button
+      onclick="openPage('messages')">
+
+      Messages
+
     </button>
 
-</nav>
+    <button
+      onclick="openPage('profile')">
 
+      Profile
 
-<!-- ================= CREATE MENU ================= -->
+    </button>
 
-<div class="overlay" id="createOverlay">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>Create</h2>
-
-            <button
-                class="close"
-                onclick="closeAllModals()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="create-menu">
-
-            <button
-                class="create-option"
-                onclick="startCreate('photo')">
-
-                <div class="option-symbol">
-                    +
-                </div>
-
-                <div>
-                    Photo Post
-                </div>
-
-            </button>
-
-
-            <button
-                class="create-option"
-                onclick="startCreate('reel')">
-
-                <div class="option-symbol">
-                    R
-                </div>
-
-                <div>
-                    Reel
-                </div>
-
-            </button>
-
-
-            <button
-                class="create-option"
-                onclick="startCreate('story')">
-
-                <div class="option-symbol">
-                    S
-                </div>
-
-                <div>
-                    Story
-                </div>
-
-            </button>
-
-        </div>
-
-    </div>
+  </nav>
 
 </div>
 
 
-<!-- ================= EDITOR ================= -->
+<!-- =====================================================
+     CREATE MENU
+===================================================== -->
 
-<div class="overlay" id="editorOverlay">
+<div
+  class="overlay"
+  id="createOverlay">
 
-    <div class="modal">
+  <div class="modal">
 
-        <div class="modal-header">
+    <div class="modal-head">
 
-            <h2 id="editorTitle">
-                Create Photo
-            </h2>
+      <h2>
+        Create
+      </h2>
 
-            <button
-                class="close"
-                onclick="closeAllModals()">
-                ×
-            </button>
+      <button
+        class="close"
+        onclick="closeAllModals()">
 
-        </div>
+        ×
 
-
-        <div id="choiceArea">
-
-            <div class="media-choice">
-
-                <button
-                    class="choice-btn"
-                    onclick="chooseMedia()">
-                    Choose From Gallery
-                </button>
-
-                <button
-                    class="choice-btn"
-                    onclick="openCamera()">
-                    Use Camera
-                </button>
-
-            </div>
-
-            <input
-                class="file-input"
-                id="mediaInput"
-                type="file"
-                onchange="handleMedia(event)"
-            >
-
-        </div>
-
-
-        <!-- CAMERA -->
-
-        <div
-            class="camera"
-            id="cameraArea">
-
-            <video
-                id="cameraVideo"
-                autoplay
-                playsinline>
-            </video>
-
-            <div class="camera-controls">
-
-                <button
-                    id="captureBtn"
-                    onclick="capturePhoto()">
-                    Take Photo
-                </button>
-
-                <button
-                    id="recordBtn"
-                    onclick="toggleRecording()">
-                    Start Recording
-                </button>
-
-                <button onclick="stopCamera()">
-                    Close Camera
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- EDITOR -->
-
-        <div
-            class="editor"
-            id="editor">
-
-            <div
-                class="preview"
-                id="preview">
-            </div>
-
-
-            <div
-                class="filters">
-
-                <button
-                    class="filter active"
-                    onclick="setFilter('none',this)">
-                    Original
-                </button>
-
-                <button
-                    class="filter"
-                    onclick="setFilter('grayscale(1)',this)">
-                    Mono
-                </button>
-
-                <button
-                    class="filter"
-                    onclick="setFilter('sepia(.7)',this)">
-                    Vintage
-                </button>
-
-                <button
-                    class="filter"
-                    onclick="setFilter('contrast(1.4)',this)">
-                    Contrast
-                </button>
-
-                <button
-                    class="filter"
-                    onclick="setFilter('saturate(1.7)',this)">
-                    Vivid
-                </button>
-
-                <button
-                    class="filter"
-                    onclick="setFilter('brightness(1.25)',this)">
-                    Bright
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Caption
-                </label>
-
-                <textarea
-                    id="caption"
-                    placeholder="Write a caption...">
-                </textarea>
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Mention
-                </label>
-
-                <input
-                    id="mention"
-                    placeholder="@username"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Music
-                </label>
-
-                <select id="music">
-
-                    <option value="">
-                        No Music
-                    </option>
-
-                    <option value="Summer">
-                        Summer
-                    </option>
-
-                    <option value="Night">
-                        Night
-                    </option>
-
-                    <option value="Dream">
-                        Dream
-                    </option>
-
-                    <option value="Energy">
-                        Energy
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <button
-                class="publish"
-                onclick="publish()">
-                Publish
-            </button>
-
-        </div>
+      </button>
 
     </div>
+
+
+    <div class="create-options">
+
+
+      <button
+        class="create-option photo"
+        onclick="selectCreate('photo')">
+
+        <div class="option-icon">
+          P
+        </div>
+
+        <div>
+
+          <div class="option-title">
+            Photo Post
+          </div>
+
+          <div class="option-description">
+            Share a photo with your followers.
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <button
+        class="create-option reel"
+        onclick="selectCreate('reel')">
+
+        <div class="option-icon">
+          R
+        </div>
+
+        <div>
+
+          <div class="option-title">
+            Reel
+          </div>
+
+          <div class="option-description">
+            Upload a short video.
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <button
+        class="create-option story"
+        onclick="selectCreate('story')">
+
+        <div class="option-icon">
+          S
+        </div>
+
+        <div>
+
+          <div class="option-title">
+            Story
+          </div>
+
+          <div class="option-description">
+            Share a temporary story.
+          </div>
+
+        </div>
+
+      </button>
+
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -1251,1023 +1800,658 @@ button{
 <script>
 
 /* =====================================================
-   VARIABLES
+   AUTH DATA
 ===================================================== */
 
-let currentType = "photo";
-let currentFile = null;
-let currentURL = null;
-
-let cameraStream = null;
-let recorder = null;
-let chunks = [];
-let recording = false;
-
-let selectedFilter = "none";
+let currentUser =
+  localStorage.getItem("vibe_current_user");
 
 
-/* =====================================================
-   STORAGE
-===================================================== */
+function getAccounts(){
 
-function getPosts(){
+  try{
 
-    try{
-
-        return JSON.parse(
-            localStorage.getItem("social_posts") || "[]"
-        );
-
-    }catch{
-
-        return [];
-
-    }
-
-}
-
-function savePosts(posts){
-
-    localStorage.setItem(
-        "social_posts",
-        JSON.stringify(posts)
+    return JSON.parse(
+      localStorage.getItem("vibe_accounts") || "[]"
     );
 
-}
+  }catch{
 
+    return [];
 
-/* =====================================================
-   CREATE MENU
-===================================================== */
-
-function openCreateMenu(){
-
-    document
-        .getElementById("createOverlay")
-        .classList.add("show");
+  }
 
 }
 
 
-function startCreate(type){
+function saveAccounts(accounts){
 
-    currentType = type;
-
-    document
-        .getElementById("createOverlay")
-        .classList.remove("show");
-
-    const title =
-        document.getElementById("editorTitle");
-
-    if(type === "photo"){
-
-        title.textContent = "Create Photo";
-
-        document
-            .getElementById("mediaInput")
-            .accept = "image/*";
-
-    }
-
-    if(type === "reel"){
-
-        title.textContent = "Create Reel";
-
-        document
-            .getElementById("mediaInput")
-            .accept = "video/*";
-
-    }
-
-    if(type === "story"){
-
-        title.textContent = "Add Story";
-
-        document
-            .getElementById("mediaInput")
-            .accept = "image/*";
-
-    }
-
-
-    resetEditor();
-
-    document
-        .getElementById("editorOverlay")
-        .classList.add("show");
+  localStorage.setItem(
+    "vibe_accounts",
+    JSON.stringify(accounts)
+  );
 
 }
 
 
 /* =====================================================
-   RESET
+   SIGNUP DP
 ===================================================== */
 
-function resetEditor(){
+function selectSignupDP(){
 
-    currentFile = null;
-    currentURL = null;
-    selectedFilter = "none";
-
-    document
-        .getElementById("choiceArea")
-        .style.display = "block";
-
-    document
-        .getElementById("cameraArea")
-        .classList.remove("show");
-
-    document
-        .getElementById("editor")
-        .classList.remove("show");
-
-    document
-        .getElementById("preview")
-        .innerHTML = "";
-
-    document
-        .getElementById("caption")
-        .value = "";
-
-    document
-        .getElementById("mention")
-        .value = "";
-
-    document
-        .getElementById("music")
-        .value = "";
+  document
+    .getElementById("signupDP")
+    .click();
 
 }
 
 
-/* =====================================================
-   GALLERY
-===================================================== */
+function previewSignupDP(event){
 
-function chooseMedia(){
+  const file =
+    event.target.files[0];
 
-    document
-        .getElementById("mediaInput")
-        .click();
+  if(!file)
+    return;
 
-}
 
+  if(!file.type.startsWith("image/")){
 
-function handleMedia(event){
+    alert("Please select an image.");
 
-    const file =
-        event.target.files[0];
+    return;
 
-    if(!file) return;
+  }
 
 
-    if(
-        currentType === "reel"
-        &&
-        !file.type.startsWith("video/")
-    ){
+  const reader =
+    new FileReader();
 
-        alert("Please select a video.");
 
-        return;
+  reader.onload =
+    function(){
 
-    }
+      document
+        .getElementById("signupDPPreview")
+        .innerHTML = `
 
+          <img
+            src="${reader.result}"
+            alt="Profile Photo">
 
-    if(
-        currentType !== "reel"
-        &&
-        !file.type.startsWith("image/")
-    ){
-
-        alert("Please select an image.");
-
-        return;
-
-    }
-
-
-    currentFile = file;
-
-    currentURL =
-        URL.createObjectURL(file);
-
-    showEditor();
-
-}
-
-
-/* =====================================================
-   CAMERA
-===================================================== */
-
-async function openCamera(){
-
-    try{
-
-        cameraStream =
-            await navigator.mediaDevices.getUserMedia({
-
-                video:true,
-
-                audio:
-                    currentType === "reel"
-
-            });
-
-
-        const video =
-            document.getElementById("cameraVideo");
-
-        video.srcObject =
-            cameraStream;
-
-
-        document
-            .getElementById("choiceArea")
-            .style.display = "none";
-
-        document
-            .getElementById("cameraArea")
-            .classList.add("show");
-
-
-        const capture =
-            document.getElementById("captureBtn");
-
-        const record =
-            document.getElementById("recordBtn");
-
-
-        if(
-            currentType === "photo"
-            ||
-            currentType === "story"
-        ){
-
-            capture.style.display = "block";
-
-            record.style.display = "none";
-
-        }else{
-
-            capture.style.display = "none";
-
-            record.style.display = "block";
-
-        }
-
-    }catch(error){
-
-        alert(
-            "Camera permission allow karo. Reel record karne ke liye microphone permission bhi allow karo."
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   PHOTO CAPTURE
-===================================================== */
-
-function capturePhoto(){
-
-    if(!cameraStream) return;
-
-
-    const video =
-        document.getElementById("cameraVideo");
-
-
-    const canvas =
-        document.createElement("canvas");
-
-
-    canvas.width =
-        video.videoWidth;
-
-    canvas.height =
-        video.videoHeight;
-
-
-    const ctx =
-        canvas.getContext("2d");
-
-
-    ctx.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    canvas.toBlob(blob => {
-
-        currentFile =
-            new File(
-                [blob],
-                "photo.jpg",
-                {
-                    type:"image/jpeg"
-                }
-            );
-
-
-        currentURL =
-            URL.createObjectURL(blob);
-
-
-        stopCamera();
-
-        showEditor();
-
-    },"image/jpeg",.92);
-
-}
-
-
-/* =====================================================
-   REEL RECORDING
-===================================================== */
-
-function toggleRecording(){
-
-    if(recording){
-
-        stopRecording();
-
-    }else{
-
-        startRecording();
-
-    }
-
-}
-
-
-function startRecording(){
-
-    if(!cameraStream) return;
-
-
-    chunks = [];
-
-
-    let options = {};
-
-    if(
-        MediaRecorder.isTypeSupported(
-            "video/webm;codecs=vp9,opus"
-        )
-    ){
-
-        options.mimeType =
-            "video/webm;codecs=vp9,opus";
-
-    }
-
-
-    try{
-
-        recorder =
-            new MediaRecorder(
-                cameraStream,
-                options
-            );
-
-    }catch{
-
-        recorder =
-            new MediaRecorder(
-                cameraStream
-            );
-
-    }
-
-
-    recorder.ondataavailable =
-        event => {
-
-            if(event.data.size > 0){
-
-                chunks.push(event.data);
-
-            }
-
-        };
-
-
-    recorder.onstop = () => {
-
-        const blob =
-            new Blob(
-                chunks,
-                {
-                    type:
-                        recorder.mimeType ||
-                        "video/webm"
-                }
-            );
-
-
-        currentFile =
-            new File(
-                [blob],
-                "reel.webm",
-                {
-                    type:blob.type
-                }
-            );
-
-
-        currentURL =
-            URL.createObjectURL(blob);
-
-
-        stopCamera();
-
-        showEditor();
+        `;
 
     };
 
 
-    recorder.start();
-
-    recording = true;
-
-
-    const button =
-        document.getElementById("recordBtn");
-
-    button.textContent =
-        "Stop Recording";
-
-    button.classList.add("recording");
-
-}
-
-
-function stopRecording(){
-
-    if(
-        recorder &&
-        recording
-    ){
-
-        recorder.stop();
-
-        recording = false;
-
-    }
+  reader.readAsDataURL(file);
 
 }
 
 
 /* =====================================================
-   STOP CAMERA
+   AUTH SWITCH
 ===================================================== */
 
-function stopCamera(){
+function showSignup(){
 
-    if(cameraStream){
+  document
+    .getElementById("loginForm")
+    .classList.remove("active");
 
-        cameraStream
-            .getTracks()
-            .forEach(track =>
-                track.stop()
-            );
+  document
+    .getElementById("signupForm")
+    .classList.add("active");
 
-        cameraStream = null;
-
-    }
+}
 
 
-    const video =
-        document.getElementById("cameraVideo");
+function showLogin(){
 
-    if(video){
+  document
+    .getElementById("signupForm")
+    .classList.remove("active");
 
-        video.srcObject = null;
-
-    }
-
-
-    recording = false;
-
-
-    const button =
-        document.getElementById("recordBtn");
-
-    if(button){
-
-        button.textContent =
-            "Start Recording";
-
-        button.classList.remove(
-            "recording"
-        );
-
-    }
+  document
+    .getElementById("loginForm")
+    .classList.add("active");
 
 }
 
 
 /* =====================================================
-   EDITOR
+   CREATE ACCOUNT
 ===================================================== */
 
-function showEditor(){
+function createAccount(){
 
+  const name =
     document
-        .getElementById("choiceArea")
-        .style.display = "none";
+      .getElementById("signupName")
+      .value
+      .trim();
 
+
+  const username =
     document
-        .getElementById("cameraArea")
-        .classList.remove("show");
+      .getElementById("signupUsername")
+      .value
+      .trim();
 
+
+  const email =
     document
-        .getElementById("editor")
-        .classList.add("show");
+      .getElementById("signupEmail")
+      .value
+      .trim();
 
 
-    const preview =
-        document.getElementById("preview");
-
-
-    if(
-        currentFile.type.startsWith("video/")
-    ){
-
-        preview.innerHTML = `
-
-            <video
-                id="previewMedia"
-                src="${currentURL}"
-                controls
-                playsinline>
-            </video>
-
-        `;
-
-    }else{
-
-        preview.innerHTML = `
-
-            <img
-                id="previewMedia"
-                src="${currentURL}"
-                alt="Preview">
-
-        `;
-
-    }
-
-}
-
-
-/* =====================================================
-   FILTER
-===================================================== */
-
-function setFilter(filter,button){
-
-    selectedFilter = filter;
-
-
+  const dob =
     document
-        .querySelectorAll(".filter")
-        .forEach(item =>
-            item.classList.remove("active")
-        );
+      .getElementById("signupDob")
+      .value;
 
 
-    button.classList.add("active");
+  const password =
+    document
+      .getElementById("signupPassword")
+      .value;
 
 
-    const media =
-        document.getElementById(
-            "previewMedia"
-        );
+  const confirm =
+    document
+      .getElementById("signupConfirm")
+      .value;
 
 
-    if(media){
-
-        media.style.filter =
-            filter === "none"
-            ? "none"
-            : filter;
-
-    }
-
-}
+  const dpFile =
+    document
+      .getElementById("signupDP")
+      .files[0];
 
 
-/* =====================================================
-   PUBLISH
-===================================================== */
+  const error =
+    document
+      .getElementById("signupError");
 
-function publish(){
 
-    if(!currentFile){
+  error.textContent = "";
 
-        alert(
-            "Pehle Photo, Reel ya Story select karo."
-        );
 
-        return;
+  if(
+    !name ||
+    !username ||
+    !email ||
+    !dob ||
+    !password ||
+    !confirm
+  ){
 
-    }
+    error.textContent =
+      "Please fill in all required fields.";
 
+    return;
+
+  }
+
+
+  if(username.length < 3){
+
+    error.textContent =
+      "Username must be at least 3 characters.";
+
+    return;
+
+  }
+
+
+  if(
+    !/^[a-zA-Z0-9_.]+$/.test(username)
+  ){
+
+    error.textContent =
+      "Username can only contain letters, numbers, _ and .";
+
+    return;
+
+  }
+
+
+  if(
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ){
+
+    error.textContent =
+      "Enter a valid email address.";
+
+    return;
+
+  }
+
+
+  if(password.length < 8){
+
+    error.textContent =
+      "Password must be at least 8 characters.";
+
+    return;
+
+  }
+
+
+  if(password !== confirm){
+
+    error.textContent =
+      "Passwords do not match.";
+
+    return;
+
+  }
+
+
+  const accounts =
+    getAccounts();
+
+
+  const exists =
+    accounts.some(account =>
+
+      account.username.toLowerCase() ===
+      username.toLowerCase()
+
+      ||
+
+      account.email.toLowerCase() ===
+      email.toLowerCase()
+
+    );
+
+
+  if(exists){
+
+    error.textContent =
+      "Username or email already exists.";
+
+    return;
+
+  }
+
+
+  /*
+    DP ko pehle read karenge.
+  */
+
+  if(dpFile){
 
     const reader =
-        new FileReader();
-
-
-    reader.onload = () => {
-
-        const posts =
-            getPosts();
-
-
-        posts.unshift({
-
-            id:Date.now(),
-
-            type:currentType,
-
-            media:reader.result,
-
-            caption:
-                document
-                .getElementById("caption")
-                .value
-                .trim(),
-
-            mention:
-                document
-                .getElementById("mention")
-                .value
-                .trim(),
-
-            music:
-                document
-                .getElementById("music")
-                .value,
-
-            likes:0,
-
-            comments:[],
-
-            createdAt:
-                new Date().toISOString()
-
-        });
-
-
-        savePosts(posts);
-
-        closeAllModals();
-
-        renderHome();
-
-        renderStories();
-
-    };
-
-
-    reader.readAsDataURL(currentFile);
-
-}
-
-
-/* =====================================================
-   FEED
-===================================================== */
-
-function renderHome(){
-
-    const content =
-        document.getElementById("content");
-
-    const posts =
-        getPosts();
-
-
-    if(posts.length === 0){
-
-        content.innerHTML = `
-
-            <div class="empty">
-
-                <h2>Your feed is empty</h2>
-
-                <p>
-                    Tap the + button to create your first post.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    content.innerHTML =
-        posts.map(createPostHTML).join("");
-
-}
-
-
-function createPostHTML(post){
-
-    let media = "";
-
-
-    if(post.type === "reel"){
-
-        media = `
-
-            <video
-                class="media"
-                src="${post.media}"
-                controls
-                playsinline
-                loop>
-            </video>
-
-        `;
-
-    }else{
-
-        media = `
-
-            <img
-                class="media"
-                src="${post.media}"
-                alt="Post">
-
-        `;
-
-    }
-
-
-    return `
-
-        <article
-            class="post"
-            id="post-${post.id}">
-
-            <div class="post-header">
-
-                <div class="user">
-
-                    <div class="avatar">
-                        U
-                    </div>
-
-                    <div>
-
-                        <div class="username">
-                            Your Account
-                        </div>
-
-                        <div class="post-type">
-                            ${
-                                post.type === "reel"
-                                ? "Reel"
-                                : post.type === "story"
-                                ? "Story"
-                                : "Photo Post"
-                            }
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="more-btn"
-                    onclick="deletePost(${post.id})">
-                    ...
-                </button>
-
-            </div>
-
-
-            ${media}
-
-
-            <div class="post-actions">
-
-                <button
-                    class="post-action"
-                    onclick="likePost(${post.id})">
-                    Like ${post.likes || 0}
-                </button>
-
-                <button
-                    class="post-action"
-                    onclick="commentPost(${post.id})">
-                    Comment
-                </button>
-
-                <button
-                    class="post-action"
-                    onclick="sharePost(${post.id})">
-                    Share
-                </button>
-
-            </div>
-
-
-            <div class="post-content">
-
-                <strong>
-                    Your Account
-                </strong>
-
-                ${escapeHTML(post.caption)}
-
-                ${
-                    post.mention
-                    ?
-                    `<br>${escapeHTML(post.mention)}`
-                    :
-                    ""
-                }
-
-                ${
-                    post.music
-                    ?
-                    `
-                    <div class="post-music">
-                        Music: ${escapeHTML(post.music)}
-                    </div>
-                    `
-                    :
-                    ""
-                }
-
-            </div>
-
-        </article>
-
-    `;
-
-}
-
-
-/* =====================================================
-   LIKE
-===================================================== */
-
-function likePost(id){
-
-    const posts =
-        getPosts();
-
-    const post =
-        posts.find(
-            item => item.id === id
+      new FileReader();
+
+
+    reader.onload =
+      function(){
+
+        finishAccountCreation(
+          name,
+          username,
+          email,
+          dob,
+          password,
+          reader.result
         );
 
-
-    if(post){
-
-        post.likes =
-            (post.likes || 0) + 1;
-
-        savePosts(posts);
-
-        renderHome();
-
-    }
-
-}
+      };
 
 
-/* =====================================================
-   COMMENT
-===================================================== */
+    reader.readAsDataURL(dpFile);
 
-function commentPost(id){
+  }else{
 
-    const comment =
-        prompt("Write a comment");
+    finishAccountCreation(
+      name,
+      username,
+      email,
+      dob,
+      password,
+      ""
+    );
 
-
-    if(!comment) return;
-
-
-    const posts =
-        getPosts();
-
-    const post =
-        posts.find(
-            item => item.id === id
-        );
-
-
-    if(post){
-
-        post.comments =
-            post.comments || [];
-
-        post.comments.push(
-            comment
-        );
-
-        savePosts(posts);
-
-        alert("Comment added.");
-
-    }
+  }
 
 }
 
 
 /* =====================================================
-   SHARE
+   FINISH ACCOUNT
 ===================================================== */
 
-async function sharePost(id){
+function finishAccountCreation(
+  name,
+  username,
+  email,
+  dob,
+  password,
+  profilePhoto
+){
 
-    const link =
-        location.href +
-        "#post-" +
-        id;
+  const accounts =
+    getAccounts();
 
 
-    if(navigator.share){
+  /*
+    IMPORTANT:
+    This is still a frontend prototype.
+    Password is NOT saved in localStorage.
+    Real authentication will be handled by backend.
+  */
 
-        try{
+  const account = {
 
-            await navigator.share({
+    id:Date.now(),
 
-                title:"Social Post",
+    name:name,
 
-                text:"Check this post",
+    username:username,
 
-                url:link
+    email:email,
 
-            });
+    dob:dob,
 
-        }catch{}
+    profilePhoto:profilePhoto,
 
-    }else{
+    createdAt:
+      new Date().toISOString()
 
-        try{
+  };
 
-            await navigator.clipboard
-                .writeText(link);
 
-            alert("Post link copied.");
+  accounts.push(account);
 
-        }catch{
 
-            alert(link);
+  saveAccounts(accounts);
 
-        }
 
-    }
+  currentUser =
+    username;
+
+
+  localStorage.setItem(
+    "vibe_current_user",
+    currentUser
+  );
+
+
+  openApplication();
 
 }
 
 
 /* =====================================================
-   DELETE
+   LOGIN
 ===================================================== */
 
-function deletePost(id){
+function login(){
 
-    if(
-        !confirm(
-            "Delete this post?"
-        )
-    ) return;
-
-
-    const posts =
-        getPosts()
-        .filter(
-            post => post.id !== id
-        );
+  const identifier =
+    document
+      .getElementById("loginIdentifier")
+      .value
+      .trim();
 
 
-    savePosts(posts);
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value;
+
+
+  const error =
+    document
+      .getElementById("loginError");
+
+
+  error.textContent = "";
+
+
+  if(!identifier || !password){
+
+    error.textContent =
+      "Enter username/email and password.";
+
+    return;
+
+  }
+
+
+  const accounts =
+    getAccounts();
+
+
+  const account =
+    accounts.find(a =>
+
+      a.username.toLowerCase() ===
+      identifier.toLowerCase()
+
+      ||
+
+      a.email.toLowerCase() ===
+      identifier.toLowerCase()
+
+    );
+
+
+  if(!account){
+
+    error.textContent =
+      "Account not found. Create an account first.";
+
+    return;
+
+  }
+
+
+  /*
+    Real password verification will be done
+    by Firebase/Supabase backend.
+  */
+
+
+  currentUser =
+    account.username;
+
+
+  localStorage.setItem(
+    "vibe_current_user",
+    currentUser
+  );
+
+
+  openApplication();
+
+}
+
+
+/* =====================================================
+   OPEN APP
+===================================================== */
+
+function openApplication(){
+
+  document
+    .getElementById("authScreen")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("app")
+    .classList.add("visible");
+
+
+  loadProfile();
+
+  renderStories();
+
+  renderHome();
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function openPage(page){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      p => p.classList.remove("active")
+    );
+
+
+  const target =
+    document.getElementById(
+      "page-" + page
+    );
+
+
+  if(target){
+
+    target.classList.add("active");
+
+  }
+
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(item => {
+
+      item.classList.toggle(
+        "active",
+        item.dataset.page === page
+      );
+
+    });
+
+
+  if(page === "home"){
 
     renderHome();
 
     renderStories();
+
+  }
+
+
+  if(page === "search"){
+
+    searchPage();
+
+  }
+
+
+  if(page === "explore"){
+
+    renderExplore();
+
+  }
+
+
+  if(page === "reels"){
+
+    renderReels();
+
+  }
+
+
+  if(page === "profile"){
+
+    loadProfile();
+
+  }
+
+}
+
+
+/* =====================================================
+   POSTS
+===================================================== */
+
+function getPosts(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem("vibe_posts") || "[]"
+    );
+
+  }catch{
+
+    return [];
+
+  }
+
+}
+
+
+function savePosts(posts){
+
+  localStorage.setItem(
+    "vibe_posts",
+    JSON.stringify(posts)
+  );
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function renderHome(){
+
+  const feed =
+    document.getElementById("homeFeed");
+
+
+  const posts =
+    getPosts().filter(
+      post => post.type !== "story"
+    );
+
+
+  if(!posts.length){
+
+    feed.innerHTML = `
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          V
+        </div>
+
+        <h2>
+          Welcome to Vibe
+        </h2>
+
+        <p>
+          Your feed is empty. Use the + button to create your first post.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  feed.innerHTML =
+    posts
+      .map(postHTML)
+      .join("");
 
 }
 
@@ -2278,61 +2462,265 @@ function deletePost(id){
 
 function renderStories(){
 
-    const container =
-        document.getElementById("stories");
+  const stories =
+    document.getElementById("stories");
 
 
-    const stories =
-        getPosts()
-        .filter(
-            post => post.type === "story"
-        );
+  if(!stories)
+    return;
 
 
-    container.innerHTML = `
+  const userStories =
+    getPosts().filter(
+      post =>
+        post.type === "story" &&
+        post.username === currentUser
+    );
 
-        <div
-            class="story"
-            onclick="openCreateMenu()">
 
-            <div class="story-avatar">
-                +
+  stories.innerHTML = `
+
+    <div
+      class="story"
+      onclick="selectCreate('story')">
+
+      <div class="story-ring">
+
+        <div class="story-inner">
+          +
+        </div>
+
+      </div>
+
+      Add Story
+
+    </div>
+
+  `;
+
+
+  userStories
+    .slice(0,8)
+    .forEach(story => {
+
+      stories.innerHTML += `
+
+        <div class="story">
+
+          <div class="story-ring">
+
+            <div class="story-inner">
+
+              <img
+                src="${story.media}"
+                alt="Story">
+
             </div>
 
-            <span>
-                Add Story
-            </span>
+          </div>
+
+          Your Story
 
         </div>
 
+      `;
+
+    });
+
+}
+
+
+/* =====================================================
+   POST HTML
+===================================================== */
+
+function postHTML(post){
+
+  let media = "";
+
+
+  if(post.type === "reel"){
+
+    media = `
+
+      <video
+        class="post-media"
+        src="${post.media}"
+        controls
+        playsinline
+        loop>
+      </video>
+
     `;
 
+  }else{
 
-    stories
-        .slice(0,8)
-        .forEach(story => {
+    media = `
 
-            container.innerHTML += `
+      <img
+        class="post-media"
+        src="${post.media}"
+        alt="Post">
 
-                <div class="story">
+    `;
 
-                    <div class="story-avatar">
+  }
 
-                        <img
-                            src="${story.media}"
-                            alt="Story">
 
-                    </div>
+  const account =
+    getAccounts().find(
+      a => a.username === post.username
+    );
 
-                    <span>
-                        Your Story
-                    </span>
 
-                </div>
+  let avatarHTML;
 
-            `;
 
-        });
+  if(account && account.profilePhoto){
+
+    avatarHTML = `
+
+      <img
+        src="${account.profilePhoto}"
+        alt="Profile">
+
+    `;
+
+  }else{
+
+    avatarHTML =
+      escapeHTML(
+        post.username
+          .charAt(0)
+          .toUpperCase()
+      );
+
+  }
+
+
+  return `
+
+    <article class="post">
+
+      <div class="post-head">
+
+        <div class="user-info">
+
+          <div class="avatar">
+
+            ${avatarHTML}
+
+          </div>
+
+          <div>
+
+            <div class="username">
+              @${escapeHTML(post.username)}
+            </div>
+
+            <div class="post-type">
+
+              ${
+                post.type === "reel"
+                ? "Reel"
+                : "Photo Post"
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        ${
+          post.username === currentUser
+          ?
+          `
+            <button
+              class="post-more"
+              onclick="deletePost(${post.id})">
+
+              ...
+
+            </button>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+
+      ${media}
+
+
+      <div class="post-actions">
+
+        <button
+          onclick="likePost(${post.id})">
+
+          Like ${post.likes || 0}
+
+        </button>
+
+
+        <button
+          onclick="commentPost(${post.id})">
+
+          Comment
+
+        </button>
+
+
+        <button
+          onclick="sharePost(${post.id})">
+
+          Share
+
+        </button>
+
+      </div>
+
+
+      <div class="post-caption">
+
+        <strong>
+          @${escapeHTML(post.username)}
+        </strong>
+
+        ${escapeHTML(post.caption || "")}
+
+
+        ${
+          post.mention
+          ?
+          `<br>${escapeHTML(post.mention)}`
+          :
+          ""
+        }
+
+
+        ${
+          post.music
+          ?
+          `
+            <div class="music">
+
+              Music:
+              ${escapeHTML(post.music)}
+
+            </div>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+    </article>
+
+  `;
 
 }
 
@@ -2341,138 +2729,202 @@ function renderStories(){
    SEARCH
 ===================================================== */
 
-function focusSearch(){
+function globalSearch(event){
 
-    const input =
-        document.getElementById(
-            "searchInput"
-        );
+  if(event.key !== "Enter")
+    return;
 
-    input.focus();
+
+  const value =
+    event.target.value.trim();
+
+
+  openPage("search");
+
+
+  document
+    .getElementById("searchPageInput")
+    .value = value;
+
+
+  searchPage();
 
 }
 
 
-function searchUsers(){
+function searchPage(){
 
-    const query =
-        document
-        .getElementById("searchInput")
-        .value
+  const query =
+    document
+      .getElementById("searchPageInput")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  const results =
+    document.getElementById(
+      "searchResults"
+    );
+
+
+  if(!query){
+
+    results.innerHTML = `
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          S
+        </div>
+
+        <h2>
+          Search Vibe
+        </h2>
+
+        <p>
+          Search real usernames or posts.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const accounts =
+    getAccounts();
+
+
+  const matchingAccounts =
+    accounts.filter(account =>
+
+      account.username
         .toLowerCase()
-        .trim();
+        .includes(query)
+
+      ||
+
+      account.name
+        .toLowerCase()
+        .includes(query)
+
+    );
 
 
-    if(!query){
+  const posts =
+    getPosts().filter(post =>
 
-        renderHome();
+      post.type !== "story" &&
 
-        return;
+      (
+        post.username
+          .toLowerCase()
+          .includes(query)
 
-    }
+        ||
 
+        (post.caption || "")
+          .toLowerCase()
+          .includes(query)
 
-    const posts =
-        getPosts();
+      )
 
-
-    const results =
-        posts.filter(post =>
-
-            (post.caption || "")
-                .toLowerCase()
-                .includes(query)
-
-            ||
-
-            (post.mention || "")
-                .toLowerCase()
-                .includes(query)
-
-        );
+    );
 
 
-    const content =
-        document.getElementById(
-            "content"
-        );
+  let html = "";
 
 
-    if(results.length === 0){
+  matchingAccounts.forEach(account => {
 
-        content.innerHTML = `
+    const photo =
+      account.profilePhoto
+      ?
+      `
+        <img
+          src="${account.profilePhoto}"
+          style="
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            object-fit:cover;
+          ">
+      `
+      :
+      `
+        <div class="avatar">
+          ${escapeHTML(
+            account.username
+              .charAt(0)
+              .toUpperCase()
+          )}
+        </div>
+      `;
 
-            <div class="empty">
 
-                <h2>No results</h2>
+    html += `
 
-                <p>
-                    No matching posts found.
-                </p>
+      <div
+        class="post"
+        style="padding:15px">
 
+        <div class="user-info">
+
+          ${photo}
+
+          <div>
+
+            <div class="username">
+              ${escapeHTML(account.name)}
             </div>
 
-        `;
+            <div class="post-type">
+              @${escapeHTML(account.username)}
+            </div>
 
-        return;
-
-    }
-
-
-    content.innerHTML =
-        results.map(
-            createPostHTML
-        ).join("");
-
-}
-
-
-/* =====================================================
-   NOTIFICATIONS
-===================================================== */
-
-function showNotifications(){
-
-    document.getElementById(
-        "content"
-    ).innerHTML = `
-
-        <div class="empty">
-
-            <h2>Notifications</h2>
-
-            <p>
-                Your notifications will appear here.
-            </p>
+          </div>
 
         </div>
 
-    `;
-
-}
-
-
-/* =====================================================
-   MESSAGES
-===================================================== */
-
-function showMessages(){
-
-    document.getElementById(
-        "content"
-    ).innerHTML = `
-
-        <div class="empty">
-
-            <h2>Messages</h2>
-
-            <p>
-                Your messages will appear here.
-            </p>
-
-        </div>
+      </div>
 
     `;
+
+  });
+
+
+  html +=
+    posts
+      .map(postHTML)
+      .join("");
+
+
+  if(!html){
+
+    html = `
+
+      <div class="empty">
+
+        <h2>
+          No results
+        </h2>
+
+        <p>
+          No matching accounts or posts found.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  results.innerHTML = html;
 
 }
 
@@ -2481,198 +2933,670 @@ function showMessages(){
    EXPLORE
 ===================================================== */
 
-function showExplore(){
+function renderExplore(){
 
-    const posts =
-        getPosts();
-
-
+  const grid =
     document.getElementById(
-        "content"
-    ).innerHTML = `
+      "exploreGrid"
+    );
 
-        <div class="empty">
 
-            <h2>Explore</h2>
+  const posts =
+    getPosts().filter(
+      post => post.type !== "story"
+    );
 
-            <p>
-                Discover photos, reels and creators.
-            </p>
 
-            <br>
+  if(!posts.length){
 
-            <p>
-                ${posts.length} posts available.
-            </p>
+    grid.innerHTML = `
 
-        </div>
+      <div
+        class="empty"
+        style="grid-column:1/-1">
+
+        <h2>
+          Nothing to explore
+        </h2>
+
+        <p>
+          Posts from real Vibe users will appear here.
+        </p>
+
+      </div>
 
     `;
 
-}
+    return;
+
+  }
 
 
-/* =====================================================
-   REELS PAGE
-===================================================== */
+  grid.innerHTML =
+    posts
+      .map(post => {
 
-function showReels(){
+        if(post.type === "reel"){
 
-    const reels =
-        getPosts()
-        .filter(
-            post => post.type === "reel"
-        );
+          return `
 
+            <div
+              class="explore-item"
+              onclick="openPage('reels')">
 
-    const content =
-        document.getElementById(
-            "content"
-        );
-
-
-    if(reels.length === 0){
-
-        content.innerHTML = `
-
-            <div class="empty">
-
-                <h2>Reels</h2>
-
-                <p>
-                    No reels yet.
-                </p>
-
-                <br>
-
-                <button
-                    class="publish"
-                    onclick="openCreateMenu()">
-                    Create Reel
-                </button>
+              <video
+                src="${post.media}"
+                muted>
+              </video>
 
             </div>
+
+          `;
+
+        }
+
+
+        return `
+
+          <div class="explore-item">
+
+            <img
+              src="${post.media}"
+              alt="Explore">
+
+          </div>
 
         `;
 
-        return;
-
-    }
-
-
-    content.innerHTML =
-        reels.map(
-            createPostHTML
-        ).join("");
+      })
+      .join("");
 
 }
 
 
 /* =====================================================
-   PROFILE
+   REELS
 ===================================================== */
 
-function showProfile(){
+function renderReels(){
 
-    const posts =
-        getPosts();
-
-
-    const content =
-        document.getElementById(
-            "content"
-        );
+  const feed =
+    document.getElementById(
+      "reelsFeed"
+    );
 
 
-    content.innerHTML = `
+  const reels =
+    getPosts().filter(
+      post => post.type === "reel"
+    );
 
-        <div class="profile-head">
 
-            <div class="profile-avatar">
-                U
-            </div>
+  if(!reels.length){
 
-            <div>
+    feed.innerHTML = `
 
-                <h2>
-                    Your Account
-                </h2>
+      <div class="empty">
 
-                <br>
-
-                <p>
-                    ${posts.length} Posts
-                </p>
-
-            </div>
-
+        <div class="empty-icon">
+          R
         </div>
 
-        <br>
+        <h2>
+          No reels yet
+        </h2>
 
-        ${
-            posts.length
-            ?
-            posts.map(createPostHTML).join("")
-            :
-            `
-            <div class="empty">
-                No posts yet.
-            </div>
-            `
-        }
+        <p>
+          Create a reel using the + button.
+        </p>
+
+      </div>
 
     `;
 
+    return;
+
+  }
+
+
+  feed.innerHTML =
+    reels
+      .map(postHTML)
+      .join("");
+
 }
 
 
 /* =====================================================
-   HOME
+   PROFILE + DP
 ===================================================== */
 
-function showHome(){
+function loadProfile(){
 
-    renderHome();
+  const accounts =
+    getAccounts();
+
+
+  const account =
+    accounts.find(
+      a => a.username === currentUser
+    );
+
+
+  const posts =
+    getPosts().filter(
+      p =>
+        p.username === currentUser &&
+        p.type !== "story"
+    );
+
+
+  const avatar =
+    document.getElementById(
+      "profileAvatar"
+    );
+
+
+  if(!avatar)
+    return;
+
+
+  if(
+    account &&
+    account.profilePhoto
+  ){
+
+    avatar.innerHTML = `
+
+      <img
+        src="${account.profilePhoto}"
+        alt="Profile Photo">
+
+    `;
+
+  }else{
+
+    avatar.textContent =
+      currentUser
+        .charAt(0)
+        .toUpperCase();
+
+  }
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    account
+    ? account.name
+    : currentUser;
+
+
+  document.getElementById(
+    "profileUsername"
+  ).textContent =
+    "@" + currentUser;
+
+
+  document.getElementById(
+    "postCount"
+  ).textContent =
+    posts.length;
 
 }
 
 
 /* =====================================================
-   MODALS
+   CHANGE DP
+===================================================== */
+
+function changeDP(){
+
+  const input =
+    document.createElement("input");
+
+
+  input.type = "file";
+
+  input.accept =
+    "image/*";
+
+
+  input.onchange =
+    function(){
+
+      const file =
+        input.files[0];
+
+
+      if(!file)
+        return;
+
+
+      if(!file.type.startsWith("image/")){
+
+        alert(
+          "Please select an image."
+        );
+
+        return;
+
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(){
+
+          const accounts =
+            getAccounts();
+
+
+          const account =
+            accounts.find(
+              a =>
+                a.username ===
+                currentUser
+            );
+
+
+          if(!account)
+            return;
+
+
+          account.profilePhoto =
+            reader.result;
+
+
+          saveAccounts(accounts);
+
+
+          loadProfile();
+
+
+          /*
+            Re-render posts so their DP
+            also changes.
+          */
+
+          renderHome();
+
+        };
+
+
+      reader.readAsDataURL(file);
+
+    };
+
+
+  input.click();
+
+}
+
+
+/* =====================================================
+   LIKE
+===================================================== */
+
+function likePost(id){
+
+  const posts =
+    getPosts();
+
+
+  const post =
+    posts.find(
+      p => p.id === id
+    );
+
+
+  if(!post)
+    return;
+
+
+  post.likes =
+    (post.likes || 0) + 1;
+
+
+  savePosts(posts);
+
+
+  renderHome();
+
+}
+
+
+/* =====================================================
+   COMMENT
+===================================================== */
+
+function commentPost(id){
+
+  const comment =
+    prompt("Write a comment");
+
+
+  if(!comment)
+    return;
+
+
+  alert(
+    "Comment added."
+  );
+
+}
+
+
+/* =====================================================
+   SHARE
+===================================================== */
+
+async function sharePost(id){
+
+  const url =
+    location.href +
+    "#post-" +
+    id;
+
+
+  if(navigator.share){
+
+    try{
+
+      await navigator.share({
+
+        title:"Vibe",
+
+        text:"Check this post",
+
+        url:url
+
+      });
+
+    }catch{}
+
+  }else{
+
+    try{
+
+      await navigator.clipboard.writeText(url);
+
+      alert(
+        "Post link copied."
+      );
+
+    }catch{
+
+      alert(url);
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+function deletePost(id){
+
+  const posts =
+    getPosts();
+
+
+  const post =
+    posts.find(
+      p => p.id === id
+    );
+
+
+  if(
+    !post ||
+    post.username !== currentUser
+  )
+    return;
+
+
+  if(
+    !confirm(
+      "Delete this post?"
+    )
+  )
+    return;
+
+
+  savePosts(
+    posts.filter(
+      p => p.id !== id
+    )
+  );
+
+
+  renderHome();
+
+  renderStories();
+
+  renderExplore();
+
+  renderReels();
+
+  loadProfile();
+
+}
+
+
+/* =====================================================
+   CREATE
+===================================================== */
+
+let createType =
+  "photo";
+
+
+function openCreate(){
+
+  document
+    .getElementById("createOverlay")
+    .classList.add("show");
+
+}
+
+
+function selectCreate(type){
+
+  createType =
+    type;
+
+
+  document
+    .getElementById("createOverlay")
+    .classList.remove("show");
+
+
+  openEditor();
+
+}
+
+
+/* =====================================================
+   MEDIA CREATE
+===================================================== */
+
+function openEditor(){
+
+  const input =
+    document.createElement("input");
+
+
+  input.type =
+    "file";
+
+
+  input.accept =
+    createType === "reel"
+    ? "video/*"
+    : "image/*";
+
+
+  input.onchange =
+    function(){
+
+      const file =
+        input.files[0];
+
+
+      if(!file)
+        return;
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(){
+
+          publishLocalMedia(
+            reader.result
+          );
+
+        };
+
+
+      reader.readAsDataURL(file);
+
+    };
+
+
+  input.click();
+
+}
+
+
+function publishLocalMedia(media){
+
+  let caption =
+    prompt(
+      "Write a caption"
+    );
+
+
+  let mention =
+    prompt(
+      "Mention username (optional)"
+    );
+
+
+  let music =
+    prompt(
+      "Music name (optional)"
+    );
+
+
+  const posts =
+    getPosts();
+
+
+  posts.unshift({
+
+    id:Date.now(),
+
+    username:currentUser,
+
+    type:createType,
+
+    media:media,
+
+    caption:
+      caption || "",
+
+    mention:
+      mention || "",
+
+    music:
+      music || "",
+
+    likes:0,
+
+    createdAt:
+      new Date().toISOString()
+
+  });
+
+
+  savePosts(posts);
+
+
+  renderHome();
+
+  renderStories();
+
+  renderExplore();
+
+  renderReels();
+
+  loadProfile();
+
+}
+
+
+/* =====================================================
+   CLOSE
 ===================================================== */
 
 function closeAllModals(){
 
-    document
-        .getElementById("createOverlay")
-        .classList.remove("show");
-
-    document
-        .getElementById("editorOverlay")
-        .classList.remove("show");
-
-    stopCamera();
-
-    resetEditor();
+  document
+    .querySelectorAll(".overlay")
+    .forEach(
+      overlay =>
+        overlay.classList.remove("show")
+    );
 
 }
 
 
 /* =====================================================
-   SECURITY
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHTML(value){
 
-    if(!value) return "";
+  if(!value)
+    return "";
 
-    return String(value)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+
+  return String(value)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
@@ -2681,43 +3605,11 @@ function escapeHTML(value){
    START
 ===================================================== */
 
-renderHome();
+if(currentUser){
 
-renderStories();
+  openApplication();
 
-
-/* CLOSE MODAL OUTSIDE */
-
-document
-    .getElementById("createOverlay")
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(event.target === this){
-
-                closeAllModals();
-
-            }
-
-        }
-    );
-
-
-document
-    .getElementById("editorOverlay")
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(event.target === this){
-
-                closeAllModals();
-
-            }
-
-        }
-    );
+}
 
 </script>
 
