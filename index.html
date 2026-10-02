@@ -1,1 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroBlog</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial;color:#111}
+nav{position:fixed;width:220px;height:100%;border-right:1px solid #ddd;padding:25px}
+nav h2{margin-bottom:35px}nav button{display:block;width:100%;padding:14px;margin:5px 0;border:0;background:white;text-align:left;font-size:16px;cursor:pointer}
+main{margin-left:220px;max-width:700px;border-right:1px solid #ddd;min-height:100vh}
+header{padding:20px;border-bottom:1px solid #ddd;font-size:20px;font-weight:bold}
+.page{display:none}.active{display:block}
+textarea{width:100%;height:80px;border:0;border-bottom:1px solid #ddd;padding:20px;font-size:16px;resize:none;outline:0}
+.postbtn{float:right;margin:10px;padding:10px 20px;border:0;border-radius:20px;background:#1683e8;color:white}
+.post{clear:both;padding:20px;border-bottom:1px solid #ddd}
+.name{font-weight:bold}.handle{color:#777;font-size:13px}.text{margin:12px 0}
+button{cursor:pointer}.action{border:0;background:white;margin-right:20px;color:#555}
+input{margin:20px;width:calc(100% - 40px);padding:13px;border:1px solid #ddd;border-radius:20px}
+.msg{padding:15px}.right{background:#f5f5f5;padding:20px;margin:20px}
+@media(max-width:600px){nav{width:65px;padding:10px}nav h2{font-size:0}nav h2:after{content:"M";font-size:25px}nav button{font-size:0;text-align:center}main{margin-left:65px}}
+</style>
+</head>
+
+<body>
+
+<nav>
+<h2>MicroBlog</h2>
+<button onclick="page('home')">🏠 Home</button>
+<button onclick="page('search')">🔍 Search</button>
+<button onclick="page('notifications')">🔔 Notifications</button>
+<button onclick="page('messages')">✉️ Messages</button>
+</nav>
+
+<main>
+
+<section id="home" class="page active">
+<header>Home</header>
+<textarea id="txt" placeholder="What's happening?"></textarea>
+<button class="postbtn" onclick="post()">Post</button>
+<div id="posts"></div>
+</section>
+
+<section id="search" class="page">
+<header>Search</header>
+<input placeholder="Search..." oninput="search(this.value)">
+<div id="results"></div>
+</section>
+
+<section id="notifications" class="page">
+<header>Notifications</header>
+<div class="post">🔔 Welcome to MicroBlog!</div>
+<div class="post">❤️ Someone liked your post.</div>
+</section>
+
+
+
+</main>
+
+<script>
+<section id="messages" class="page">
+<header>Messages</header>
+
+<div id="chat"></div>
+
+<div style="padding:15px;position:sticky;bottom:0;background:white">
+<input id="msg" placeholder="Write a message..." style="width:75%;margin:0">
+<button onclick="send()" style="padding:12px">Send</button>
+</div>
+</section>
+
+<script>
+let messages=JSON.parse(localStorage.messages||"[]");
+
+function send(){
+ let x=document.getElementById("msg");
+ if(!x.value.trim())return;
+
+ messages.push(x.value);
+ localStorage.messages=JSON.stringify(messages);
+ x.value="";
+ showMessages();
+}
+
+function showMessages(){
+ document.getElementById("chat").innerHTML=
+ messages.map(x=>`
+ <div style="text-align:right;padding:10px">
+ <span style="background:#1683e8;color:white;padding:10px 15px;border-radius:18px">
+ ${x}
+ </span>
+ </div>`).join("");
+}
+
+showMessages();
+</script>
+  
+  let posts=JSON.parse(localStorage.posts||"[]");
+
+function page(x){
+ document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
+ document.getElementById(x).classList.add("active");
+}
+
+function post(){
+ let t=document.getElementById("txt");
+ if(!t.value.trim())return;
+ posts.unshift({text:t.value,like:0});
+ localStorage.posts=JSON.stringify(posts);
+ t.value="";
+ show();
+}
+
+function like(i){
+ posts[i].like++;
+ localStorage.posts=JSON.stringify(posts);
+ show();
+}
+
+function show(){
+ document.getElementById("posts").innerHTML=posts.map((p,i)=>`
+ <div class="post">
+ <b>Arsh</b> <span class="handle">@Arshhh</span>
+ <div class="text">${p.text}</div>
+ <button class="action" onclick="like(${i})">❤️ ${p.like}</button>
+ <button class="action" onclick="posts.splice(${i},1);localStorage.posts=JSON.stringify(posts);show()">🗑 Delete</button>
+ </div>`).join("");
+}
+
+function search(x){
+ document.getElementById("results").innerHTML=
+ x.toLowerCase().includes("arsh")?
+ '<div class="post"><b>Arsh</b><br><span class="handle">@Arshhh</span></div>':
+ '<div class="post">No users found.</div>';
+}
+
+show();
+</script>
+
+</body>
+</html>
 
