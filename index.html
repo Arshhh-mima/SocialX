@@ -846,6 +846,144 @@ button{
   line-height:1.4;
 }
 
+
+/* =====================================================
+   STORY VIEWER
+===================================================== */
+
+.story-viewer{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(7,6,16,.96);
+  backdrop-filter:blur(18px);
+}
+
+.story-viewer.show{
+  display:flex;
+}
+
+.story-viewer-card{
+  position:relative;
+  width:min(430px,94vw);
+  height:min(760px,92vh);
+  overflow:hidden;
+  border-radius:24px;
+  background:#111;
+  box-shadow:0 30px 100px rgba(0,0,0,.55);
+}
+
+.story-viewer-media{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  background:#111;
+}
+
+.story-viewer-progress{
+  position:absolute;
+  top:12px;
+  left:14px;
+  right:14px;
+  z-index:5;
+  height:4px;
+  overflow:hidden;
+  border-radius:10px;
+  background:rgba(255,255,255,.35);
+}
+
+.story-viewer-progress-bar{
+  width:0;
+  height:100%;
+  border-radius:10px;
+  background:white;
+}
+
+.story-viewer-user{
+  position:absolute;
+  top:25px;
+  left:18px;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+  font-size:13px;
+  font-weight:850;
+  text-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+
+.story-viewer-avatar{
+  width:38px;
+  height:38px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid white;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  color:white;
+  font-weight:900;
+}
+
+.story-viewer-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.story-viewer-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  z-index:10;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  color:white;
+  background:rgba(0,0,0,.35);
+  font-size:28px;
+  line-height:1;
+}
+
+.story-viewer-nav{
+  position:absolute;
+  top:50%;
+  z-index:10;
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:50%;
+  color:white;
+  background:rgba(0,0,0,.32);
+  font-size:32px;
+  line-height:1;
+  transform:translateY(-50%);
+}
+
+.story-viewer-prev{left:12px}
+.story-viewer-next{right:12px}
+
+.story-viewer-nav:hover,
+.story-viewer-close:hover{
+  background:rgba(255,255,255,.22);
+}
+
+@media(max-width:850px){
+  .story-viewer-card{
+    width:100vw;
+    height:100vh;
+    max-height:none;
+    border-radius:0;
+  }
+}
+
 /* =====================================================
    MOBILE
 ===================================================== */
@@ -1691,6 +1829,35 @@ button{
 </div>
 
 
+
+<!-- =====================================================
+     STORY VIEWER
+===================================================== -->
+
+<div class="story-viewer" id="storyViewer" onclick="storyViewerBackground(event)">
+
+  <div class="story-viewer-card">
+
+    <div class="story-viewer-progress">
+      <div class="story-viewer-progress-bar" id="storyViewerProgress"></div>
+    </div>
+
+    <div class="story-viewer-user">
+      <div class="story-viewer-avatar" id="storyViewerAvatar"></div>
+      <span id="storyViewerUsername"></span>
+    </div>
+
+    <button class="story-viewer-close" onclick="closeStoryViewer()">×</button>
+
+    <img class="story-viewer-media" id="storyViewerMedia" alt="Story">
+
+    <button class="story-viewer-nav story-viewer-prev" id="storyViewerPrev" onclick="previousStory(event)">‹</button>
+    <button class="story-viewer-nav story-viewer-next" id="storyViewerNext" onclick="nextStory(event)">›</button>
+
+  </div>
+
+</div>
+
 <!-- =====================================================
      CREATE MENU
 ===================================================== -->
@@ -2465,10 +2632,8 @@ function renderStories(){
   const stories =
     document.getElementById("stories");
 
-
   if(!stories)
     return;
-
 
   const userStories =
     getPosts().filter(
@@ -2476,7 +2641,6 @@ function renderStories(){
         post.type === "story" &&
         post.username === currentUser
     );
-
 
   stories.innerHTML = `
 
@@ -2498,14 +2662,18 @@ function renderStories(){
 
   `;
 
-
   userStories
     .slice(0,8)
     .forEach(story => {
 
       stories.innerHTML += `
 
-        <div class="story">
+        <div
+          class="story"
+          role="button"
+          tabindex="0"
+          onclick="openStoryViewer(${story.id})"
+          onkeydown="if(event.key==='Enter' || event.key===' '){event.preventDefault();openStoryViewer(${story.id})}">
 
           <div class="story-ring">
 
@@ -2513,7 +2681,7 @@ function renderStories(){
 
               <img
                 src="${story.media}"
-                alt="Story">
+                alt="Your Story">
 
             </div>
 
@@ -2529,6 +2697,135 @@ function renderStories(){
 
 }
 
+
+/* =====================================================
+   STORY VIEWER
+===================================================== */
+
+let storyViewerList = [];
+let storyViewerIndex = 0;
+let storyViewerTimer = null;
+
+function openStoryViewer(storyId){
+
+  storyViewerList = getPosts().filter(
+    post => post.type === "story" && post.username === currentUser
+  );
+
+  storyViewerIndex = storyViewerList.findIndex(
+    story => Number(story.id) === Number(storyId)
+  );
+
+  if(storyViewerIndex < 0 || !storyViewerList.length){
+    return;
+  }
+
+  const viewer = document.getElementById("storyViewer");
+
+  if(!viewer){
+    return;
+  }
+
+  viewer.classList.add("show");
+  document.body.style.overflow = "hidden";
+
+  showCurrentStory();
+}
+
+function showCurrentStory(){
+
+  if(!storyViewerList.length){
+    closeStoryViewer();
+    return;
+  }
+
+  const story = storyViewerList[storyViewerIndex];
+  const account = getAccounts().find(
+    a => a.username === story.username
+  );
+
+  const media = document.getElementById("storyViewerMedia");
+  const username = document.getElementById("storyViewerUsername");
+  const avatar = document.getElementById("storyViewerAvatar");
+  const progress = document.getElementById("storyViewerProgress");
+  const prev = document.getElementById("storyViewerPrev");
+  const next = document.getElementById("storyViewerNext");
+
+  media.src = story.media;
+  username.textContent = story.username === currentUser
+    ? "Your Story"
+    : "@" + story.username;
+
+  if(account && account.profilePhoto){
+    avatar.innerHTML = `<img src="${account.profilePhoto}" alt="Profile">`;
+  }else{
+    avatar.textContent = (story.username || "V").charAt(0).toUpperCase();
+  }
+
+  prev.style.display = storyViewerIndex > 0 ? "block" : "none";
+  next.style.display = storyViewerIndex < storyViewerList.length - 1 ? "block" : "none";
+
+  clearTimeout(storyViewerTimer);
+
+  progress.style.transition = "none";
+  progress.style.width = "0%";
+
+  requestAnimationFrame(() => {
+    progress.style.transition = "width 5s linear";
+    progress.style.width = "100%";
+  });
+
+  storyViewerTimer = setTimeout(() => {
+    nextStory();
+  }, 5000);
+}
+
+function nextStory(event){
+
+  if(event){
+    event.stopPropagation();
+  }
+
+  if(storyViewerIndex < storyViewerList.length - 1){
+    storyViewerIndex++;
+    showCurrentStory();
+  }else{
+    closeStoryViewer();
+  }
+}
+
+function previousStory(event){
+
+  if(event){
+    event.stopPropagation();
+  }
+
+  if(storyViewerIndex > 0){
+    storyViewerIndex--;
+    showCurrentStory();
+  }
+}
+
+function closeStoryViewer(){
+
+  clearTimeout(storyViewerTimer);
+  storyViewerTimer = null;
+
+  const viewer = document.getElementById("storyViewer");
+
+  if(viewer){
+    viewer.classList.remove("show");
+  }
+
+  document.body.style.overflow = "";
+}
+
+function storyViewerBackground(event){
+
+  if(event.target.id === "storyViewer"){
+    closeStoryViewer();
+  }
+}
 
 /* =====================================================
    POST HTML
