@@ -1,0 +1,19 @@
+{
+  "overview": "A Twitter-style microblogging app where people post, follow each other, and now exchange direct messages once they follow each other back.",
+  "features": [
+    "Post short updates with text and media",
+    "Follow, block, and mute other users",
+    "Search for people by username or display name",
+    "Direct messages between users who follow each other",
+    "Conversation inbox with unread badges",
+    "Notifications for likes, replies, mentions, and follows"
+  ],
+  "category": "social-network",
+  "tags": [
+    "social",
+    "microblog",
+    "messaging",
+    "community"
+  ],
+  "last_updated": "2026-10-01T14:58:17.527Z"
+}

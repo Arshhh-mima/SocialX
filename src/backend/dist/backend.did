@@ -1,0 +1,324 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfileResponse = 
+ record {
+   bio: text;
+   createdAt: Time;
+   displayName: text;
+   followersCount: nat;
+   followingCount: nat;
+   headerImageHash: opt ExternalBlob;
+   isBlockedByCurrentUser: bool;
+   isFollowedByCurrentUser: bool;
+   isMutedByCurrentUser: bool;
+   postsCount: nat;
+   "principal": principal;
+   profilePictureHash: opt ExternalBlob;
+   updatedAt: Time;
+   username: text;
+ };
+type UserProfile = 
+ record {
+   bio: text;
+   createdAt: Time;
+   displayName: text;
+   headerImageHash: opt ExternalBlob;
+   profilePictureHash: opt ExternalBlob;
+   updatedAt: Time;
+   username: text;
+ };
+type TrendingHashtag = 
+ record {
+   count: nat;
+   tag: text;
+ };
+type Time = int;
+type Result__1 = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ variant {
+   err: MessagingError;
+   ok: Message;
+ };
+type PostType = 
+ variant {
+   original;
+   quote: nat;
+   reply: nat;
+   repost: nat;
+ };
+type PostResponse = 
+ record {
+   author: principal;
+   authorDisplayName: text;
+   authorProfilePictureHash: opt ExternalBlob;
+   authorUsername: text;
+   createdAt: Time;
+   editedAt: opt Time;
+   id: nat;
+   isLikedByCurrentUser: bool;
+   isRepostedByCurrentUser: bool;
+   likeCount: nat;
+   mediaHash: opt ExternalBlob;
+   mediaType: opt text;
+   postType: PostType;
+   replyCount: nat;
+   repostCount: nat;
+   "text": text;
+ };
+type PaginatedPosts = 
+ record {
+   hasMore: bool;
+   nextCursor: opt nat;
+   posts: vec PostResponse;
+ };
+type PaginatedNotifications = 
+ record {
+   hasMore: bool;
+   nextCursor: opt nat;
+   notifications: vec Notification;
+ };
+type PaginatedMessages = 
+ record {
+   hasMore: bool;
+   messages: vec Message;
+   nextCursor: opt nat;
+ };
+type PaginatedFollows = 
+ record {
+   hasMore: bool;
+   nextOffset: opt nat;
+   users: vec FollowUserResponse;
+ };
+type NotificationType = 
+ variant {
+   follow;
+   like: nat;
+   mention: nat;
+   quote: nat;
+   reply: nat;
+   repost: nat;
+ };
+type Notification = 
+ record {
+   actorPrincipal: principal;
+   actorUsername: text;
+   createdAt: Time;
+   id: nat;
+   isRead: bool;
+   notificationType: NotificationType;
+ };
+type MutualFollowStatus = 
+ record {
+   callerFollowsOther: bool;
+   isMutual: bool;
+   otherFollowsCaller: bool;
+ };
+type MessagingError = 
+ variant {
+   blocked;
+   emptyMessage;
+   messageTooLong: record {maxLength: nat;};
+   notMutual;
+   recipientNotFound;
+   selfMessage;
+ };
+type Message = 
+ record {
+   conversationId: ConversationId;
+   createdAt: Time;
+   id: nat;
+   recipient: principal;
+   sender: principal;
+   "text": text;
+ };
+type FollowUserResponse = 
+ record {
+   displayName: text;
+   "principal": principal;
+   profilePictureHash: opt ExternalBlob;
+   username: text;
+ };
+type ExternalBlob = blob;
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type ConversationSummary = 
+ record {
+   conversationId: ConversationId;
+   lastMessageAt: Time;
+   lastMessageFromCaller: bool;
+   lastMessagePreview: text;
+   otherDisplayName: text;
+   otherParticipant: principal;
+   otherProfilePictureHash: opt ExternalBlob;
+   otherUsername: text;
+   unreadCount: nat;
+ };
+type ConversationId = text;
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+service : {
+  __accessControlState: () -> (reserved) query;
+  __blocks: () -> (reserved) query;
+  __conversations: () -> (reserved) query;
+  __followers: () -> (reserved) query;
+  __following: () -> (reserved) query;
+  __hashtagIndex: () -> (reserved) query;
+  __messages: () -> (reserved) query;
+  __mutes: () -> (reserved) query;
+  __nextMessageId: () -> (reserved) query;
+  __nextNotificationId: () -> (nat) query;
+  __nextPostId: () -> (nat) query;
+  __postLikes: () -> (reserved) query;
+  __postReplies: () -> (reserved) query;
+  __postReposts: () -> (reserved) query;
+  __posts: () -> (reserved) query;
+  __repostIndex: () -> (reserved) query;
+  __userNotifications: () -> (reserved) query;
+  __userPostCounts: () -> (reserved) query;
+  __userProfiles: () -> (reserved) query;
+  __usernameToUser: () -> (reserved) query;
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result_1);
+  _internet_identity_sign_in_start: () -> (blob);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  blockUser: (user: principal) -> ();
+  checkUsernameAvailability: (username: text) -> (bool) query;
+  createPost: ("text": text, mediaHash: opt ExternalBlob, mediaType:
+   opt text) -> (PostResponse);
+  createReply: (parentPostId: nat, "text": text, mediaHash: opt ExternalBlob,
+   mediaType: opt text) -> (PostResponse);
+  deletePost: (postId: nat) -> ();
+  editPost: (postId: nat, "text": text) -> (PostResponse);
+  execute: (qJson: text) -> (Result__1) query;
+  followUser: (user: principal) -> ();
+  /// Return the backend's public API documentation as Markdown.
+  getApiDoc: () -> (text) query;
+  getCallerUserRole: () -> (UserRole) query;
+  /// List the caller's conversations, most recent message first.
+  getConversations: () -> (vec ConversationSummary) query;
+  getFollowers: (username: text, offset: nat, limit: nat) ->
+   (PaginatedFollows) query;
+  getFollowing: (username: text, offset: nat, limit: nat) ->
+   (PaginatedFollows) query;
+  getGlobalFeed: (cursor: opt nat, limit: nat) -> (PaginatedPosts) query;
+  getHomeFeed: (cursor: opt nat, limit: nat) -> (PaginatedPosts) query;
+  /// Fetch a page of a conversation's history, newest first. `before` is an
+  /// exclusive cursor on message id; `null` starts from the newest message.
+  getMessages: (conversationId: ConversationId, before: opt nat, limit:
+   nat) -> (PaginatedMessages) query;
+  /// Whether the caller and `other` follow each other, so the frontend can
+  /// decide whether to show the Message button.
+  getMutualFollowStatus: (other: principal) -> (MutualFollowStatus) query;
+  getNotifications: (cursor: opt nat, limit: nat) ->
+   (PaginatedNotifications) query;
+  getPost: (postId: nat) -> (opt PostResponse) query;
+  getPostsByHashtag: (tag: text, cursor: opt nat, limit: nat) ->
+   (PaginatedPosts) query;
+  getPostsByUser: (user: principal, cursor: opt nat, limit: nat) ->
+   (PaginatedPosts) query;
+  getPostsByUsername: (username: text, cursor: opt nat, limit: nat) ->
+   (PaginatedPosts) query;
+  getPrincipalByUsername: (username: text) -> (opt principal) query;
+  getProfile: () -> (opt UserProfile) query;
+  getProfileByUsername: (username: text) -> (opt UserProfileResponse) query;
+  getReplies: (postId: nat, cursor: opt nat, limit: nat) ->
+   (PaginatedPosts) query;
+  getTrendingHashtags: (limit: nat) -> (vec TrendingHashtag) query;
+  /// Total unread messages across all of the caller's conversations.
+  getUnreadMessageCount: () -> (nat) query;
+  getUnreadNotificationCount: () -> (nat) query;
+  getUserProfile: (user: principal) -> (opt UserProfileResponse) query;
+  isCallerAdmin: () -> (bool) query;
+  likePost: (postId: nat) -> ();
+  markAllNotificationsRead: () -> ();
+  /// Mark a conversation's messages as read for the caller.
+  markConversationRead: (conversationId: ConversationId) -> ();
+  markNotificationRead: (notifId: nat) -> ();
+  muteUser: (user: principal) -> ();
+  quotePost: (postId: nat, "text": text, mediaHash: opt ExternalBlob,
+   mediaType: opt text) -> (PostResponse);
+  repostPost: (postId: nat) -> (PostResponse);
+  schema: () -> (text) query;
+  searchPosts: (searchText: text, cursor: opt nat, limit: nat) ->
+   (PaginatedPosts) query;
+  searchUsers: (searchText: text, limit: nat) ->
+   (vec UserProfileResponse) query;
+  /// Send a direct message to `recipient`. Requires a mutual follow and no
+  /// block in either direction. Returns the caller-actionable error otherwise.
+  sendMessage: (recipient: principal, "text": text) -> (Result);
+  setProfile: (username: text, displayName: text, bio: text) -> ();
+  unblockUser: (user: principal) -> ();
+  undoRepost: (postId: nat) -> ();
+  unfollowUser: (user: principal) -> ();
+  unlikePost: (postId: nat) -> ();
+  unmuteUser: (user: principal) -> ();
+  updateHeaderImage: (imageHash: opt ExternalBlob) -> ();
+  updateProfilePicture: (pictureHash: opt ExternalBlob) -> ();
+}

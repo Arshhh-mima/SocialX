@@ -1,0 +1,361 @@
+// Version: 4.0.0
+type AccessControlState__201339279 =
+  {
+    var adminAssigned : Bool;
+    userRoles : Map__230067015<Principal, UserRole__91647283>
+  };
+type ConversationId__199309249 = Text;
+type ConversationId__493622256 = Text;
+type ConversationSummary__1050636877 =
+  {
+    conversationId : ConversationId__493622256;
+    lastMessageAt : Int;
+    lastMessageFromCaller : Bool;
+    lastMessagePreview : Text;
+    otherDisplayName : Text;
+    otherParticipant : Principal;
+    otherProfilePictureHash : ?ExternalBlob__220559234;
+    otherUsername : Text;
+    unreadCount : Nat
+  };
+type ConversationSummary__570342879 =
+  {
+    conversationId : ConversationId__199309249;
+    lastMessageAt : Time__918999370;
+    lastMessageFromCaller : Bool;
+    lastMessagePreview : Text;
+    otherDisplayName : Text;
+    otherParticipant : Principal;
+    otherProfilePictureHash : ?ExternalBlob__220559234;
+    otherUsername : Text;
+    unreadCount : Nat
+  };
+type Data__44217153<K, V> = {var count : Nat__227979830; kvs : [var ?(K, V)]};
+type ExternalBlob__220559234 = Blob;
+type Int__616954475 = Int;
+type Int__789852381 = Int__616954475;
+type Internal__283199666<K, V> =
+  {children : [var ?Node__204828119<K, V>]; data : Data__44217153<K, V>};
+type Leaf__598469445<K, V> = {data : Data__44217153<K, V>};
+type Map__230067015<K, V> = Map__405889023<K, V>;
+type Map__405889023<K, V> = Map__603270868<K, V>;
+type Map__603270868<K, V> =
+  {var root : Node__204828119<K, V>; var size : Nat__227979830};
+type Message__512618064 =
+  {
+    conversationId : ConversationId__493622256;
+    createdAt : Int;
+    id : Nat;
+    recipient : Principal;
+    sender : Principal;
+    text : Text
+  };
+type Message__804209456 =
+  {
+    conversationId : ConversationId__199309249;
+    createdAt : Time__918999370;
+    id : Nat;
+    recipient : Principal;
+    sender : Principal;
+    text : Text
+  };
+type Nat__227979830 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NewActor__1016434722 =
+  {
+    accessControlState : AccessControlState__201339279;
+    blocks : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    conversations :
+      Map__230067015<Principal,
+                      Map__230067015<ConversationId__493622256,
+                                      ConversationSummary__1050636877>>;
+    followers : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    following : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    hashtagIndex : Map__230067015<Text, Map__230067015<Nat, Bool>>;
+    messages :
+      Map__230067015<ConversationId__493622256,
+                      Map__230067015<Nat, Message__512618064>>;
+    mutes : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    nextMessageId : {var value : Nat};
+    var nextNotificationId : Nat;
+    var nextPostId : Nat;
+    postLikes : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+    postReplies : Map__230067015<Nat, Map__230067015<Nat, Bool>>;
+    postReposts : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+    posts : Map__230067015<Nat, Post__167522185>;
+    repostIndex : Map__230067015<Principal, Map__230067015<Nat, Nat>>;
+    userNotifications :
+      Map__230067015<Principal, Map__230067015<Nat, Notification__734501238>>;
+    userPostCounts : Map__230067015<Principal, Nat>;
+    userProfiles : Map__230067015<Principal, UserProfile__727997356>;
+    usernameToUser : Map__230067015<Text, Principal>
+  };
+type Node__204828119<K, V> =
+  {#internal : Internal__283199666<K, V>; #leaf : Leaf__598469445<K, V>};
+type NotificationType__309028197 =
+  {
+    #follow;
+    #like : Nat;
+    #mention : Nat;
+    #quote : Nat;
+    #reply : Nat;
+    #repost : Nat
+  };
+type NotificationType__546194540 =
+  {
+    #follow;
+    #like : Nat;
+    #mention : Nat;
+    #quote : Nat;
+    #reply : Nat;
+    #repost : Nat
+  };
+type NotificationType__754463539 =
+  {
+    #follow;
+    #like : Nat;
+    #mention : Nat;
+    #quote : Nat;
+    #reply : Nat;
+    #repost : Nat
+  };
+type Notification__73044690 =
+  {
+    actorPrincipal : Principal;
+    actorUsername : Text;
+    createdAt : Time__918999370;
+    id : Nat;
+    isRead : Bool;
+    notificationType : NotificationType__309028197
+  };
+type Notification__734501238 =
+  {
+    actorPrincipal : Principal;
+    actorUsername : Text;
+    createdAt : Int;
+    id : Nat;
+    isRead : Bool;
+    notificationType : NotificationType__546194540
+  };
+type Notification__879889657 =
+  {
+    actorPrincipal : Principal;
+    actorUsername : Text;
+    createdAt : Time__918999370;
+    id : Nat;
+    isRead : Bool;
+    notificationType : NotificationType__754463539
+  };
+type OldActor__1039258229 =
+  {
+    accessControlState : AccessControlState__201339279;
+    blocks : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    followers : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    following : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    hashtagIndex : Map__230067015<Text, Map__230067015<Nat, Bool>>;
+    mutes : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+    var nextNotificationId : Nat;
+    var nextPostId : Nat;
+    postLikes : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+    postReplies : Map__230067015<Nat, Map__230067015<Nat, Bool>>;
+    postReposts : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+    posts : Map__230067015<Nat, Post__167522185>;
+    repostIndex : Map__230067015<Principal, Map__230067015<Nat, Nat>>;
+    userNotifications :
+      Map__230067015<Principal, Map__230067015<Nat, Notification__734501238>>;
+    userPostCounts : Map__230067015<Principal, Nat>;
+    userProfiles : Map__230067015<Principal, UserProfile__727997356>;
+    usernameToUser : Map__230067015<Text, Principal>
+  };
+type PostType__137568890 =
+  {#original; #quote : Nat; #reply : Nat; #repost : Nat};
+type PostType__490378007 =
+  {#original; #quote : Nat; #reply : Nat; #repost : Nat};
+type PostType__607883700 =
+  {#original; #quote : Nat; #reply : Nat; #repost : Nat};
+type Post__167522185 =
+  {
+    author : Principal;
+    createdAt : Int;
+    editedAt : ?Int;
+    id : Nat;
+    mediaHash : ?ExternalBlob__220559234;
+    mediaType : ?Text;
+    postType : PostType__607883700;
+    text : Text
+  };
+type Post__56459536 =
+  {
+    author : Principal;
+    createdAt : Time__918999370;
+    editedAt : ?Time__918999370;
+    id : Nat;
+    mediaHash : ?ExternalBlob__220559234;
+    mediaType : ?Text;
+    postType : PostType__137568890;
+    text : Text
+  };
+type Post__955439577 =
+  {
+    author : Principal;
+    createdAt : Time__918999370;
+    editedAt : ?Time__918999370;
+    id : Nat;
+    mediaHash : ?ExternalBlob__220559234;
+    mediaType : ?Text;
+    postType : PostType__490378007;
+    text : Text
+  };
+type Time__418528263 = Int__789852381;
+type Time__918999370 = Time__418528263;
+type UserProfile__248713505 =
+  {
+    bio : Text;
+    createdAt : Time__918999370;
+    displayName : Text;
+    headerImageHash : ?ExternalBlob__220559234;
+    profilePictureHash : ?ExternalBlob__220559234;
+    updatedAt : Time__918999370;
+    username : Text
+  };
+type UserProfile__491224006 =
+  {
+    bio : Text;
+    createdAt : Time__918999370;
+    displayName : Text;
+    headerImageHash : ?ExternalBlob__220559234;
+    profilePictureHash : ?ExternalBlob__220559234;
+    updatedAt : Time__918999370;
+    username : Text
+  };
+type UserProfile__727997356 =
+  {
+    bio : Text;
+    createdAt : Int;
+    displayName : Text;
+    headerImageHash : ?ExternalBlob__220559234;
+    profilePictureHash : ?ExternalBlob__220559234;
+    updatedAt : Int;
+    username : Text
+  };
+type UserRole__91647283 = {#admin; #guest; #user};
+{
+  "20250101_000000_Init" :
+    {} ->
+      {
+        accessControlState : AccessControlState__201339279;
+        blocks : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+        followers :
+          Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+        following :
+          Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+        hashtagIndex : Map__230067015<Text, Map__230067015<Nat, Bool>>;
+        mutes : Map__230067015<Principal, Map__230067015<Principal, Bool>>;
+        var nextNotificationId : Nat;
+        var nextPostId : Nat;
+        postLikes : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+        postReplies : Map__230067015<Nat, Map__230067015<Nat, Bool>>;
+        postReposts : Map__230067015<Nat, Map__230067015<Principal, Bool>>;
+        posts : Map__230067015<Nat, Post__56459536>;
+        repostIndex : Map__230067015<Principal, Map__230067015<Nat, Nat>>;
+        userNotifications :
+          Map__230067015<Principal,
+                          Map__230067015<Nat, Notification__73044690>>;
+        userPostCounts : Map__230067015<Principal, Nat>;
+        userProfiles : Map__230067015<Principal, UserProfile__248713505>;
+        usernameToUser : Map__230067015<Text, Principal>
+      };
+  "20260101_000000_AddMessaging" :
+    (old : OldActor__1039258229) -> NewActor__1016434722
+}
+actor  {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__230067015<Principal, UserRole__91647283>
+    };
+  stable blocks :
+    {
+      var root : Node__204828119<Principal, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable conversations :
+    {
+      var root :
+        Node__204828119<Principal,
+                         Map__230067015<ConversationId__199309249,
+                                         ConversationSummary__570342879>>;
+      var size : Nat__227979830
+    };
+  stable followers :
+    {
+      var root : Node__204828119<Principal, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable following :
+    {
+      var root : Node__204828119<Principal, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable hashtagIndex :
+    {
+      var root : Node__204828119<Text, Map__230067015<Nat, Bool>>;
+      var size : Nat__227979830
+    };
+  stable messages :
+    {
+      var root :
+        Node__204828119<ConversationId__199309249,
+                         Map__230067015<Nat, Message__804209456>>;
+      var size : Nat__227979830
+    };
+  stable mutes :
+    {
+      var root : Node__204828119<Principal, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable nextMessageId : {var value : Nat};
+  stable var nextNotificationId : Nat;
+  stable var nextPostId : Nat;
+  stable postLikes :
+    {
+      var root : Node__204828119<Nat, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable postReplies :
+    {
+      var root : Node__204828119<Nat, Map__230067015<Nat, Bool>>;
+      var size : Nat__227979830
+    };
+  stable postReposts :
+    {
+      var root : Node__204828119<Nat, Map__230067015<Principal, Bool>>;
+      var size : Nat__227979830
+    };
+  stable posts :
+    {
+      var root : Node__204828119<Nat, Post__955439577>;
+      var size : Nat__227979830
+    };
+  stable repostIndex :
+    {
+      var root : Node__204828119<Principal, Map__230067015<Nat, Nat>>;
+      var size : Nat__227979830
+    };
+  stable userNotifications :
+    {
+      var root :
+        Node__204828119<Principal,
+                         Map__230067015<Nat, Notification__879889657>>;
+      var size : Nat__227979830
+    };
+  stable userPostCounts :
+    {var root : Node__204828119<Principal, Nat>; var size : Nat__227979830};
+  stable userProfiles :
+    {
+      var root : Node__204828119<Principal, UserProfile__491224006>;
+      var size : Nat__227979830
+    };
+  stable usernameToUser :
+    {var root : Node__204828119<Text, Principal>; var size : Nat__227979830}
+};

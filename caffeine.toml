@@ -1,0 +1,11 @@
+manifest_version = "0.1.0"
+
+[project]
+id = "microblog"
+name = "MicroBlog"
+
+[workspace]
+include = ["src/**"]
+
+[canisters.frontend]
+depends_on = ["backend"]
