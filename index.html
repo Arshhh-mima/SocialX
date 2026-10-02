@@ -1,2188 +1,2338 @@
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MicroBlog — Social App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<title>SocialSpace</title>
 
 <style>
-:root{
-  --blue:#1688ff;
-  --blue2:#5b5ff7;
-  --ink:#101828;
-  --muted:#667085;
-  --line:#e7eaf0;
-  --bg:#f7f8fc;
-  --card:#fff;
-  --danger:#ef4444;
-  --green:#12b76a;
-  --shadow:0 10px 30px rgba(16,24,40,.08)
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-*{box-sizing:border-box}
+html,body{
+    width:100%;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#fafafa;
+    color:#111;
+}
 
 body{
-  margin:0;
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial;
-  color:var(--ink);
-  background:var(--bg)
+    overflow-x:hidden;
 }
 
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-button:disabled{opacity:.5;cursor:not-allowed}
-
-.app{min-height:100vh}
-
-.auth{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:22px;
-  background:
-    radial-gradient(circle at 10% 10%,#dcecff,transparent 35%),
-    radial-gradient(circle at 90% 90%,#ece4ff,transparent 35%),
-    #f7f8fc
+button,input,textarea,select{
+    font:inherit;
 }
 
-.auth-card{
-  width:min(440px,100%);
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:28px;
-  padding:30px;
-  box-shadow:var(--shadow)
+button{
+    cursor:pointer;
+}
+
+img,video{
+    max-width:100%;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+    min-height:100vh;
+}
+
+.topbar{
+    height:62px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:100;
 }
 
 .brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  font-size:23px
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:23px;
+    font-weight:700;
 }
 
-.brandmark{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  color:white;
-  background:linear-gradient(135deg,var(--blue),var(--blue2))
+.brand img{
+    width:38px;
+    height:38px;
+    object-fit:contain;
+    border-radius:9px;
 }
-.logo{
-  width:42px;
-  height:42px;
-  object-fit:contain;
-  border-radius:12px;
-}
-.auth-card h1{
-  margin:25px 0 7px;
-  font-size:27px
-}
-
-.auth-card .sub{
-  margin:0 0 20px;
-  color:var(--muted);
-  font-size:14px
-}
-
-.tabs{
-  display:flex;
-  background:#f2f4f7;
-  border-radius:12px;
-  padding:4px;
-  margin-bottom:18px
-}
-
-.tabs button{
-  flex:1;
-  border:0;
-  background:none;
-  padding:9px;
-  border-radius:9px;
-  color:var(--muted);
-  font-weight:700
-}
-
-.tabs button.active{
-  background:#fff;
-  color:var(--ink);
-  box-shadow:0 2px 7px #0000000d
-}
-
-.field{margin:11px 0}
-
-.field label{
-  display:block;
-  font-size:12px;
-  font-weight:700;
-  margin:0 0 6px
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  border:1px solid #d9dee8;
-  border-radius:12px;
-  padding:11px 12px;
-  outline:none;
-  background:#fff
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px #1688ff18
-}
-
-.row{
-  display:flex;
-  gap:10px
-}
-
-.row>*{flex:1}
-
-.primary{
-  border:0;
-  background:linear-gradient(135deg,var(--blue),var(--blue2));
-  color:#fff;
-  border-radius:12px;
-  padding:11px 17px;
-  font-weight:800
-}
-
-.secondary{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:12px;
-  padding:10px 15px;
-  font-weight:700
-}
-
-.wide{width:100%}
-
-.tiny{
-  font-size:11px;
-  color:var(--muted);
-  line-height:1.5
-}
-
-.error{
-  background:#fff0f1;
-  color:#c21d36;
-  border:1px solid #ffd0d7;
-  padding:9px;
-  border-radius:10px;
-  font-size:12px;
-  margin:8px 0
-}
-
-/* APP */
-
-.shell{
-  max-width:1250px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:245px minmax(450px,650px) 300px;
-  min-height:100vh
-}
-
-.sidebar{
-  position:sticky;
-  top:0;
-  height:100vh;
-  padding:20px 14px;
-  border-right:1px solid var(--line);
-  background:#fff
-}
-
-.side-brand{padding:0 10px 22px}
-
-.nav{
-  display:grid;
-  gap:4px
-}
-
-.nav button{
-  border:0;
-  background:none;
-  text-align:left;
-  border-radius:13px;
-  padding:12px 13px;
-  display:flex;
-  gap:12px;
-  align-items:center;
-  font-weight:700;
-  color:#667085
-}
-
-.nav button:hover,
-.nav button.active{
-  background:#f1f6ff;
-  color:var(--blue)
-}
-
-.nav .ico{
-  width:20px;
-  text-align:center;
-  font-size:18px
-}
-
-.newpost{margin-top:18px}
-
-.side-account{
-  position:absolute;
-  bottom:14px;
-  left:14px;
-  right:14px;
-  padding:9px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  gap:9px
-}
-
-.side-account:hover{background:#f7f8fa}
-
-.avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  flex:none;
-  background:linear-gradient(135deg,#111827,#64748b);
-  color:#fff;
-  font-size:12px;
-  font-weight:900;
-  overflow:hidden
-}
-
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover
-}
-
-.account-text{min-width:0}
-
-.account-text b,
-.account-text span{
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
-}
-
-.account-text span{
-  color:var(--muted);
-  font-size:11px
-}
-
-.main{
-  background:#fff;
-  min-height:100vh;
-  border-right:1px solid var(--line)
-}
-
-.header{
-  height:58px;
-  display:flex;
-  align-items:center;
-  border-bottom:1px solid var(--line);
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#fffffff2;
-  backdrop-filter:blur(10px)
-}
-
-.header h2{
-  font-size:17px;
-  margin:0;
-  padding:0 17px
-}
-
-.back{
-  border:0;
-  background:none;
-  font-size:22px;
-  width:46px;
-  color:var(--ink)
-}
-
-.header-spread{justify-content:space-between}
-
-.header-actions{
-  display:flex;
-  gap:5px;
-  padding-right:10px
-}
-
-.circle{
-  width:35px;
-  height:35px;
-  border:0;
-  background:#f2f4f7;
-  border-radius:50%
-}
-
-.right{padding:13px 14px}
 
 .search{
-  height:39px;
-  background:#eef1f5;
-  border-radius:22px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:0 13px
+    width:300px;
+    position:relative;
 }
 
 .search input{
-  border:0;
-  outline:0;
-  background:none;
-  width:100%;
-  font-size:12px
+    width:100%;
+    padding:10px 14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    outline:none;
+    background:#f5f5f5;
 }
 
-.r-card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-  margin-top:12px
+.top-actions{
+    display:flex;
+    gap:9px;
 }
 
-.r-card h3{
-  margin:0 0 12px;
-  font-size:15px
+.icon-btn{
+    width:42px;
+    height:42px;
+    border:0;
+    background:transparent;
+    border-radius:10px;
+    font-size:19px;
 }
 
-.r-user{
-  display:flex;
-  gap:9px;
-  align-items:center;
-  margin:11px 0
+.icon-btn:hover{
+    background:#f1f1f1;
 }
 
-.r-user .grow{
-  flex:1;
-  min-width:0
+/* =========================
+   DESKTOP LAYOUT
+========================= */
+
+.layout{
+    max-width:1200px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:230px minmax(0,630px) 280px;
+    gap:24px;
+    padding:25px 15px 90px;
 }
 
-.r-user b,
-.r-user small{
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
+.sidebar{
+    position:sticky;
+    top:85px;
+    height:max-content;
 }
 
-.r-user small{color:var(--muted)}
-
-.follow{
-  border:1px solid #d9dee8;
-  background:#fff;
-  border-radius:18px;
-  padding:6px 11px;
-  font-size:11px;
-  font-weight:800
+.nav-item{
+    width:100%;
+    border:0;
+    background:transparent;
+    padding:13px 14px;
+    text-align:left;
+    border-radius:12px;
+    margin-bottom:5px;
+    font-size:15px;
 }
 
-.follow.on{
-  background:#111827;
-  color:#fff
+.nav-item:hover,
+.nav-item.active{
+    background:#eee;
+    font-weight:600;
 }
 
-/* COMPOSER */
-
-.composer{
-  padding:13px 14px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  gap:10px
+.right-card{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:17px;
+    margin-bottom:15px;
 }
 
-.composer-body{flex:1}
-
-.composer textarea{
-  width:100%;
-  min-height:55px;
-  resize:none;
-  border:0;
-  outline:0;
-  padding:5px 0;
-  font-size:15px
+.right-card h3{
+    font-size:15px;
+    margin-bottom:14px;
 }
 
-.composer-bottom{
-  display:flex;
-  justify-content:space-between;
-  align-items:center
+.suggestion{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:13px 0;
 }
 
-.tools{
-  display:flex;
-  gap:2px
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#ddd;
+    object-fit:cover;
 }
 
-.tools button{
-  border:0;
-  background:none;
-  color:var(--blue);
-  padding:6px;
-  border-radius:8px
+.suggestion-info{
+    flex:1;
 }
 
-.tools button:hover{background:#eef6ff}
+.suggestion-info b{
+    display:block;
+    font-size:14px;
+}
 
-/* STORIES */
+.suggestion-info span{
+    color:#777;
+    font-size:12px;
+}
 
-.storybar{
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  gap:13px;
-  overflow:auto
+.follow-btn{
+    border:0;
+    background:#111;
+    color:white;
+    border-radius:8px;
+    padding:7px 10px;
+    font-size:12px;
+}
+
+/* =========================
+   FEED
+========================= */
+
+.stories{
+    display:flex;
+    gap:13px;
+    overflow-x:auto;
+    padding:5px 2px 17px;
+    scrollbar-width:none;
+}
+
+.stories::-webkit-scrollbar{
+    display:none;
 }
 
 .story{
-  width:60px;
-  flex:none;
-  text-align:center
+    min-width:68px;
+    text-align:center;
+    font-size:11px;
 }
 
-.story .avatar{
-  width:52px;
-  height:52px;
-  margin:auto;
-  border:3px solid #fff;
-  outline:2px solid #8b5cf6
+.story-ring{
+    width:64px;
+    height:64px;
+    padding:2px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#111,#888);
+    margin:auto auto 5px;
 }
 
-.story p{
-  font-size:10px;
-  margin:5px 0 0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
+.story-ring img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    border:2px solid white;
 }
 
-.story.add .avatar{
-  outline-color:var(--blue);
-  font-size:22px;
-  background:#edf6ff;
-  color:var(--blue)
+.add-story .story-ring{
+    background:#eee;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
 }
-
-/* POSTS */
 
 .post{
-  padding:13px 14px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  gap:10px
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    margin-bottom:22px;
+    overflow:hidden;
 }
 
-.post:hover{background:#fcfcfd}
-
-.postbody{
-  min-width:0;
-  flex:1
+.post-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
 }
 
-.posthead{
-  display:flex;
-  gap:5px;
-  align-items:center;
-  font-size:12px
+.post-head .post-user{
+    flex:1;
 }
 
-.posthead .muted{color:var(--muted)}
+.post-user b{
+    display:block;
+    font-size:14px;
+}
 
-.posttext{
-  font-size:14px;
-  line-height:1.5;
-  margin:6px 0 9px;
-  white-space:pre-wrap;
-  word-break:break-word
+.post-user span{
+    color:#777;
+    font-size:11px;
+}
+
+.post-more{
+    border:0;
+    background:none;
+    font-size:18px;
 }
 
 .post-media{
-  height:230px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#f0f5ff,#faf4ff);
-  margin:8px 0;
-  color:#667085
+    width:100%;
+    background:#111;
+    display:flex;
+    justify-content:center;
+}
+
+.post-media img,
+.post-media video{
+    width:100%;
+    max-height:700px;
+    object-fit:cover;
 }
 
 .post-actions{
-  display:flex;
-  justify-content:space-between;
-  max-width:470px
+    padding:10px 13px 4px;
+    display:flex;
+    gap:14px;
 }
 
-.act{
-  border:0;
-  background:none;
-  color:#667085;
-  padding:5px 8px;
-  border-radius:12px;
-  display:flex;
-  gap:5px;
-  align-items:center;
-  font-size:12px
+.post-actions button{
+    border:0;
+    background:none;
+    font-size:22px;
 }
 
-.act:hover{
-  background:#f1f6ff;
-  color:var(--blue)
+.post-body{
+    padding:4px 14px 16px;
 }
 
-.act.liked{color:#e11d48}
-.act.reposted{color:#12b76a}
-
-.empty{
-  text-align:center;
-  padding:65px 25px;
-  color:var(--muted)
+.likes{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:7px;
 }
 
-.empty h3{
-  color:var(--ink);
-  margin:8px 0 5px;
-  font-size:17px
+.caption{
+    font-size:14px;
+    line-height:1.5;
 }
 
-.empty p{font-size:12px}
-
-/* PROFILE */
-
-.profile-cover{
-  height:145px;
-  background:linear-gradient(135deg,#1688ff,#8b5cf6)
+.caption b{
+    margin-right:5px;
 }
 
-.profile-top{
-  padding:0 16px 15px
+.comments{
+    color:#777;
+    font-size:13px;
+    margin-top:8px;
 }
 
-.profile-avatar{
-  margin-top:-45px;
-  width:88px;
-  height:88px;
-  border:4px solid #fff;
-  font-size:20px
+/* =========================
+   CREATE
+========================= */
+
+.create-card{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:20px;
 }
 
-.profile-name{
-  font-size:21px;
-  font-weight:900;
-  margin-top:8px
+.create-tabs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    margin-bottom:15px;
 }
 
-.profile-bio{
-  font-size:13px;
-  margin:5px 0;
-  color:#475467
+.create-tabs button{
+    border:1px solid #ddd;
+    background:#fafafa;
+    border-radius:9px;
+    padding:10px;
 }
 
-.stats{
-  display:flex;
-  gap:20px;
-  font-size:12px;
-  margin-top:10px
+.create-tabs button.active{
+    background:#111;
+    color:#fff;
 }
 
-.stats b{font-size:13px}
-
-.profile-actions{
-  float:right;
-  margin-top:-35px
+.create-options{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.profile-tabs{
-  display:flex;
-  border-bottom:1px solid var(--line)
+.action-btn{
+    border:1px solid #ddd;
+    background:#fff;
+    border-radius:9px;
+    padding:9px 12px;
 }
 
-.profile-tabs button{
-  flex:1;
-  border:0;
-  background:none;
-  padding:12px;
-  color:var(--muted);
-  font-weight:700
+.action-btn:hover{
+    background:#f3f3f3;
 }
 
-.profile-tabs button.active{
-  color:var(--blue);
-  border-bottom:2px solid var(--blue)
-}
-
-/* SEARCH */
-
-.search-page{padding:10px}
-
-.bigsearch{
-  border:1px solid #d9dee8;
-  border-radius:22px;
-  height:42px;
-  padding:0 14px;
-  display:flex;
-  align-items:center;
-  gap:8px
-}
-
-.bigsearch input{
-  border:0;
-  outline:0;
-  width:100%
-}
-
-.result-user{
-  padding:13px 5px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  gap:10px
-}
-
-.result-user .grow{flex:1}
-
-/* SETTINGS */
-
-.settings{padding-bottom:30px}
-
-.setting-group{
-  padding:16px;
-  border-bottom:1px solid var(--line)
-}
-
-.setting-group h3{
-  font-size:13px;
-  color:var(--muted);
-  margin:0 0 10px
-}
-
-.setting-item{
-  width:100%;
-  border:0;
-  background:none;
-  padding:13px 2px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  text-align:left
-}
-
-.setting-item:hover{background:#fafafa}
-
-.setting-item b{font-size:13px}
-
-.setting-item small{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:3px
-}
-
-.switch{
-  width:40px;
-  height:22px;
-  border-radius:20px;
-  background:#d0d5dd;
-  padding:2px
-}
-
-.switch i{
-  display:block;
-  width:18px;
-  height:18px;
-  background:#fff;
-  border-radius:50%;
-  transition:.2s
-}
-
-.switch.on{background:var(--blue)}
-
-.switch.on i{
-  transform:translateX(18px)
-}
-
-.account-list{
-  display:grid;
-  gap:8px
-}
-
-.account-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:13px
-}
-
-.account-row .grow{flex:1}
-
-.danger{color:var(--danger)}
-
-/* MODAL */
-
-.modal-bg{
-  position:fixed;
-  inset:0;
-  background:#10182880;
-  display:none;
-  place-items:center;
-  z-index:30;
-  padding:18px
-}
+/* =========================
+   MODAL
+========================= */
 
 .modal{
-  width:min(560px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:20px;
-  padding:18px;
-  box-shadow:0 30px 80px #0003
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:500;
 }
 
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(760px,100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
 }
 
 .close{
-  border:0;
-  background:#f2f4f7;
-  border-radius:50%;
-  width:32px;
-  height:32px
+    width:35px;
+    height:35px;
+    border:0;
+    background:#eee;
+    border-radius:50%;
 }
 
+.hidden{
+    display:none!important;
+}
+
+/* =========================
+   CAMERA
+========================= */
+
+.camera-area{
+    background:#111;
+    border-radius:14px;
+    overflow:hidden;
+    position:relative;
+}
+
+#cameraVideo{
+    width:100%;
+    display:block;
+    max-height:55vh;
+    object-fit:cover;
+}
+
+.camera-controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:12px;
+    background:#111;
+}
+
+.camera-controls button{
+    border:1px solid #555;
+    background:#222;
+    color:#fff;
+    padding:10px 14px;
+    border-radius:9px;
+}
+
+/* =========================
+   EDITOR
+========================= */
+
+.editor-preview{
+    width:100%;
+    max-height:500px;
+    display:flex;
+    justify-content:center;
+    background:#111;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.editor-preview img,
+.editor-preview video{
+    max-height:500px;
+    width:100%;
+    object-fit:contain;
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:14px;
+}
+
+.filter-btn{
+    border:1px solid #ddd;
+    background:#fff;
+    border-radius:8px;
+    padding:9px 5px;
+    font-size:12px;
+}
+
+.filter-btn.active{
+    border-color:#111;
+    background:#111;
+    color:white;
+}
+
+.adjustments{
+    margin-top:15px;
+}
+
+.adjustments label{
+    display:block;
+    font-size:13px;
+    margin:10px 0 4px;
+}
+
+.adjustments input{
+    width:100%;
+}
+
+.option-section{
+    margin-top:18px;
+}
+
+.option-section h4{
+    margin-bottom:9px;
+    font-size:14px;
+}
+
+.option-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.option{
+    padding:10px 5px;
+    border:1px solid #ddd;
+    background:white;
+    border-radius:8px;
+    text-align:center;
+    font-size:12px;
+}
+
+.option.active{
+    background:#111;
+    color:#fff;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-group{
+    margin-top:14px;
+}
+
+.form-group label{
+    display:block;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    width:100%;
+    padding:11px;
+    border:1px solid #ddd;
+    border-radius:9px;
+    outline:none;
+}
+
+.form-group textarea{
+    resize:vertical;
+    min-height:85px;
+}
+
+.primary{
+    width:100%;
+    border:0;
+    background:#111;
+    color:white;
+    padding:12px;
+    border-radius:9px;
+    margin-top:17px;
+}
+
+/* =========================
+   MOBILE NAV
+========================= */
+
+.mobile-nav{
+    display:none;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-page{
+    display:none;
+}
+
+.profile-header{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:25px;
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.profile-avatar{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#ddd;
+}
+
+.profile-stats{
+    display:flex;
+    gap:25px;
+    margin-top:13px;
+}
+
+.profile-stat b{
+    display:block;
+}
+
+.profile-stat span{
+    color:#777;
+    font-size:12px;
+}
+
+.profile-grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:3px;
+}
+
+.profile-grid img,
+.profile-grid video{
+    width:100%;
+    aspect-ratio:1;
+    object-fit:cover;
+}
+
+/* =========================
+   TOAST
+========================= */
+
 .toast{
-  position:fixed;
-  bottom:24px;
-  left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:#111827;
-  color:#fff;
-  padding:10px 15px;
-  border-radius:12px;
-  font-size:12px;
-  opacity:0;
-  pointer-events:none;
-  transition:.2s;
-  z-index:50
+    position:fixed;
+    left:50%;
+    bottom:80px;
+    transform:translateX(-50%) translateY(20px);
+    background:#111;
+    color:#fff;
+    padding:11px 16px;
+    border-radius:9px;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:1000;
+    font-size:13px;
 }
 
 .toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0)
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
 }
 
-@media(max-width:980px){
-  .shell{
-    grid-template-columns:75px minmax(430px,1fr)
-  }
+/* =========================
+   RESPONSIVE
+========================= */
 
-  .right{display:none}
+@media(max-width:950px){
+    .layout{
+        grid-template-columns:190px minmax(0,1fr);
+    }
 
-  .sidebar{padding:18px 8px}
+    .right-column{
+        display:none;
+    }
 
-  .side-brand{padding-left:8px}
-
-  .side-brand .brandtext{display:none}
-
-  .nav button{
-    justify-content:center;
-    font-size:0
-  }
-
-  .nav .ico{font-size:20px}
-
-  .newpost{
-    font-size:0;
-    width:45px;
-    padding:12px
-  }
-
-  .side-account .account-text{display:none}
+    .search{
+        width:230px;
+    }
 }
 
-@media(max-width:650px){
-  .shell{display:block}
+@media(max-width:700px){
+    body{
+        background:#fafafa;
+    }
 
-  .sidebar{
-    position:fixed;
-    bottom:0;
-    top:auto;
-    left:0;
-    right:0;
-    width:100%;
-    height:60px;
-    z-index:20;
-    padding:3px 6px;
-    border-right:0;
-    border-top:1px solid var(--line)
-  }
+    .topbar{
+        height:56px;
+        padding:0 12px;
+    }
 
-  .side-brand,
-  .newpost,
-  .side-account{
-    display:none
-  }
+    .brand{
+        font-size:19px;
+    }
 
-  .nav{
-    display:flex;
-    justify-content:space-around;
-    height:100%
-  }
+    .brand img{
+        width:32px;
+        height:32px;
+    }
 
-  .nav button{padding:8px 13px}
+    .search{
+        display:none;
+    }
 
-  .main{
-    padding-bottom:60px;
-    border:0
-  }
+    .top-actions{
+        gap:1px;
+    }
 
-  .composer{padding:10px}
-  .storybar{padding-left:10px}
-  .post{padding:11px 10px}
-  .profile-cover{height:125px}
+    .icon-btn{
+        width:37px;
+        height:37px;
+    }
+
+    .layout{
+        display:block;
+        width:100%;
+        padding:10px 0 75px;
+    }
+
+    .sidebar,
+    .right-column{
+        display:none;
+    }
+
+    .main{
+        width:100%;
+    }
+
+    .stories{
+        padding:4px 12px 13px;
+        background:#fff;
+        border-bottom:1px solid #ddd;
+    }
+
+    .post{
+        border-radius:0;
+        border-left:0;
+        border-right:0;
+        margin-bottom:8px;
+    }
+
+    .post-media img,
+    .post-media video{
+        max-height:none;
+        aspect-ratio:1/1;
+        object-fit:cover;
+    }
+
+    .create-card{
+        border-radius:0;
+        border-left:0;
+        border-right:0;
+        margin-bottom:8px;
+    }
+
+    .mobile-nav{
+        display:flex;
+        position:fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        height:62px;
+        background:#fff;
+        border-top:1px solid #ddd;
+        z-index:300;
+        padding-bottom:env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav button{
+        flex:1;
+        border:0;
+        background:#fff;
+        font-size:12px;
+    }
+
+    .mobile-nav button.active{
+        font-weight:700;
+    }
+
+    .modal{
+        padding:0;
+        align-items:flex-end;
+    }
+
+    .modal-box{
+        width:100%;
+        max-height:94vh;
+        border-radius:18px 18px 0 0;
+        padding:16px;
+    }
+
+    .filter-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .option-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .profile-header{
+        border-radius:0;
+        border-left:0;
+        border-right:0;
+        padding:18px;
+    }
+
+    .profile-avatar{
+        width:75px;
+        height:75px;
+    }
+
+    .profile-stats{
+        gap:14px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div id="root"></div>
-<div class="toast" id="toast"></div>
-<div class="modal-bg" id="modalBg"></div>
+<div class="app">
 
-<script>
+<!-- TOP BAR -->
+<header class="topbar">
 
-/* =========================================
-   MICROBLOG — SINGLE FILE APP
-   No fake users / no demo data.
-   Data is stored in browser localStorage.
-========================================= */
-
-const KEY='microblog_complete_v3';
-
-function fresh(){
-  return {
-    current:null,
-    accounts:[],
-    posts:[],
-    stories:[],
-    reels:[],
-    follows:{},
-    likes:{},
-    reposts:{},
-    settings:{}
-  };
-}
-
-let db=JSON.parse(localStorage.getItem(KEY)||'null')||fresh();
-
-function save(){
-  localStorage.setItem(KEY,JSON.stringify(db));
-}
-
-function me(){
-  return db.accounts.find(x=>x.username===db.current);
-}
-
-function initials(a){
-  return (a||'?').slice(0,2).toUpperCase();
-}
-
-function user(u){
-  return db.accounts.find(x=>x.username===u);
-}
-
-function esc(s){
-  return String(s??'').replace(
-    /[&<>"']/g,
-    c=>({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#039;'
-    }[c])
-  );
-}
-
-function avatar(u,cls='avatar'){
-  let x=typeof u==='string'?user(u):u;
-
-  if(!x){
-    return `<div class="${cls}">?</div>`;
-  }
-
-  return `
-    <div class="${cls}">
-      ${
-        x.avatar?.startsWith('data:')
-        ? `<img src="${x.avatar}">`
-        : esc(x.avatar||initials(x.name))
-      }
-    </div>
-  `;
-}
-
-function toast(t){
-  let e=document.getElementById('toast');
-
-  e.textContent=t;
-  e.classList.add('show');
-
-  clearTimeout(window.tt);
-
-  window.tt=setTimeout(
-    ()=>e.classList.remove('show'),
-    2200
-  );
-}
-
-function setRoot(x){
-  document.getElementById('root').innerHTML=x;
-}
-
-function openModal(content){
-  document.getElementById('modalBg').innerHTML=
-    `<div class="modal">${content}</div>`;
-
-  document.getElementById('modalBg').style.display='grid';
-}
-
-function closeModal(){
-  document.getElementById('modalBg').style.display='none';
-  document.getElementById('modalBg').innerHTML='';
-}
-
-
-/* =========================================
-   AUTHENTICATION
-========================================= */
-
-function auth(){
-
-  setRoot(`
-    <div class="auth">
-
-      <div class="auth-card">
-
-        <div class="brand">
-
-  <img src="logo.png" class="logo">
-
-  <span class="brandtext">
-    MicroBlog
-  </span>
-
-</div>
-        <h1>Welcome back</h1>
-
-        <p class="sub">
-          Connect, share posts, watch reels and keep your own profile.
-        </p>
-
-        <div class="tabs">
-
-          <button
-            id="loginTab"
-            class="active"
-            onclick="authTab('login')">
-            Log in
-          </button>
-
-          <button
-            id="signupTab"
-            onclick="authTab('signup')">
-            Create account
-          </button>
-
-        </div>
-
-        <div id="authForm"></div>
-
-        <p class="tiny" style="margin-top:15px">
-          No demo or fake users are included.
-          Create an account to start.
-          You can create multiple accounts on this device.
-        </p>
-
-      </div>
-
-    </div>
-  `);
-
-  authTab('login');
-}
-
-
-function authTab(mode){
-
-  document
-    .getElementById('loginTab')
-    .classList
-    .toggle('active',mode==='login');
-
-  document
-    .getElementById('signupTab')
-    .classList
-    .toggle('active',mode==='signup');
-
-  document.getElementById('authForm').innerHTML=
-    mode==='login'
-
-    ? `
-
-      <div id="authErr"></div>
-
-      <div class="field">
-        <label>Username</label>
-        <input
-          id="loginUser"
-          autocomplete="username"
-          placeholder="Enter username">
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <input
-          id="loginPass"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Enter password">
-      </div>
-
-      <button
-        class="primary wide"
-        onclick="login()">
-        Log in
-      </button>
-
-      <button
-        class="secondary wide"
-        style="margin-top:9px"
-        onclick="accountPicker()">
-        Choose another saved account
-      </button>
-
-    `
-
-    : `
-
-      <div id="authErr"></div>
-
-      <div class="row">
-
-        <div class="field">
-          <label>Your name</label>
-          <input
-            id="signName"
-            placeholder="Full name">
-        </div>
-
-        <div class="field">
-          <label>Username</label>
-          <input
-            id="signUser"
-            placeholder="username">
-        </div>
-
-      </div>
-
-      <div class="field">
-        <label>Email (optional)</label>
-        <input
-          id="signEmail"
-          type="email"
-          placeholder="you@example.com">
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <input
-          id="signPass"
-          type="password"
-          placeholder="Create a password">
-      </div>
-
-      <div class="field">
-        <label>Confirm password</label>
-        <input
-          id="signPass2"
-          type="password"
-          placeholder="Repeat password">
-      </div>
-
-      <div class="field">
-        <label>Bio (optional)</label>
-        <textarea
-          id="signBio"
-          rows="3"
-          placeholder="Tell people about yourself"></textarea>
-      </div>
-
-      <button
-        class="primary wide"
-        onclick="signup()">
-        Create account
-      </button>
-
-    `;
-}
-
-
-function login(){
-
-  let u=document
-    .getElementById('loginUser')
-    .value
-    .trim()
-    .replace(/^@/,'');
-
-  let p=document
-    .getElementById('loginPass')
-    .value;
-
-  let a=db.accounts.find(
-    x =>
-      x.username.toLowerCase()===u.toLowerCase() &&
-      x.password===p
-  );
-
-  if(!a){
-
-    document.getElementById('authErr').innerHTML=
-      '<div class="error">Username or password is incorrect.</div>';
-
-    return;
-  }
-
-  db.current=a.username;
-
-  save();
-
-  app('home');
-}
-
-
-function signup(){
-
-  let name=document
-    .getElementById('signName')
-    .value
-    .trim();
-
-  let u=document
-    .getElementById('signUser')
-    .value
-    .trim()
-    .replace(/^@/,'')
-    .replace(/\s/g,'');
-
-  let p=document
-    .getElementById('signPass')
-    .value;
-
-  let p2=document
-    .getElementById('signPass2')
-    .value;
-
-  let bio=document
-    .getElementById('signBio')
-    .value
-    .trim();
-
-  let err=document.getElementById('authErr');
-
-  if(!name||!u||!p){
-
-    err.innerHTML=
-      '<div class="error">Name, username and password are required.</div>';
-
-    return;
-  }
-
-  if(p.length<6){
-
-    err.innerHTML=
-      '<div class="error">Use at least 6 characters for the password.</div>';
-
-    return;
-  }
-
-  if(p!==p2){
-
-    err.innerHTML=
-      '<div class="error">Passwords do not match.</div>';
-
-    return;
-  }
-
-  if(
-    db.accounts.some(
-      x=>x.username.toLowerCase()===u.toLowerCase()
-    )
-  ){
-
-    err.innerHTML=
-      '<div class="error">That username is already taken.</div>';
-
-    return;
-  }
-
-  db.accounts.push({
-    username:u,
-    name:name,
-    password:p,
-    bio:bio,
-    avatar:initials(name),
-    followers:0,
-    following:0,
-    email:document
-      .getElementById('signEmail')
-      .value
-      .trim()
-  });
-
-  db.current=u;
-
-  db.follows[u]=[];
-
-  save();
-
-  app('home');
-
-  toast('Account created successfully!');
-}
-
-
-function accountPicker(){
-
-  openModal(`
-
-    <div class="modal-head">
-      <b>Saved accounts</b>
-      <button
-        class="close"
-        onclick="closeModal()">×</button>
+    <div class="brand">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+        <span>SocialSpace</span>
     </div>
 
-    <div class="account-list">
+    <div class="search">
+        <input id="searchInput" type="search" placeholder="Search">
+    </div>
 
-      ${
-        db.accounts.map(a=>`
+    <div class="top-actions">
+        <button class="icon-btn" onclick="openCreate()">+</button>
+        <button class="icon-btn" onclick="showToast('Notifications opened')">Notifications</button>
+    </div>
 
-          <div class="account-row">
+</header>
 
-            ${avatar(a)}
 
-            <div class="grow">
-              <b>${esc(a.name)}</b>
+<div class="layout">
 
-              <small
-                style="display:block;color:#667085">
-                @${esc(a.username)}
-              </small>
+    <!-- LEFT -->
+    <aside class="sidebar">
+
+        <button class="nav-item active" onclick="showHome()">Home</button>
+        <button class="nav-item" onclick="openCreate('post')">Create Post</button>
+        <button class="nav-item" onclick="openCreate('reel')">Create Reel</button>
+        <button class="nav-item" onclick="openCreate('story')">Create Story</button>
+        <button class="nav-item" onclick="showProfile()">Profile</button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- FEED -->
+        <section id="homePage">
+
+            <!-- STORIES -->
+            <div class="stories" id="storiesContainer">
+
+                <div class="story add-story" onclick="openCreate('story')">
+                    <div class="story-ring">+</div>
+                    <span>Your Story</span>
+                </div>
+
             </div>
 
-            <button
-              class="secondary"
-              onclick="fillLogin('${esc(a.username)}')">
-              Use
+
+            <!-- CREATE -->
+            <div class="create-card">
+
+                <div class="create-tabs">
+
+                    <button onclick="openCreate('post')">
+                        Photo
+                    </button>
+
+                    <button onclick="openCreate('reel')">
+                        Reel
+                    </button>
+
+                    <button onclick="openCreate('story')">
+                        Story
+                    </button>
+
+                </div>
+
+                <div class="create-options">
+
+                    <button class="action-btn" onclick="openCamera('post')">
+                        Camera
+                    </button>
+
+                    <button class="action-btn" onclick="chooseFile('post')">
+                        Gallery
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- POSTS -->
+            <div id="feed"></div>
+
+        </section>
+
+
+        <!-- PROFILE -->
+        <section id="profilePage" class="profile-page">
+
+            <div class="profile-header">
+
+                <img id="profileAvatar"
+                     class="profile-avatar"
+                     src=""
+                     alt="Profile">
+
+                <div>
+
+                    <h2 id="profileName">Your Profile</h2>
+
+                    <div class="profile-stats">
+
+                        <div class="profile-stat">
+                            <b id="postCount">0</b>
+                            <span>Posts</span>
+                        </div>
+
+                        <div class="profile-stat">
+                            <b>0</b>
+                            <span>Followers</span>
+                        </div>
+
+                        <div class="profile-stat">
+                            <b>0</b>
+                            <span>Following</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="profile-grid" id="profileGrid"></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- RIGHT -->
+    <aside class="right-column">
+
+        <div class="right-card">
+
+            <h3>Suggestions</h3>
+
+            <div class="suggestion">
+
+                <div class="avatar"></div>
+
+                <div class="suggestion-info">
+                    <b>Discover</b>
+                    <span>Find people to follow</span>
+                </div>
+
+                <button class="follow-btn"
+                        onclick="showToast('Search people to follow')">
+                    View
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+
+    <button onclick="showHome()">Home</button>
+
+    <button onclick="openCreate('story')">Story</button>
+
+    <button onclick="openCreate('post')">Create</button>
+
+    <button onclick="openCreate('reel')">Reel</button>
+
+    <button onclick="showProfile()">Profile</button>
+
+</nav>
+
+</div>
+
+
+<!-- =========================
+     CREATE MODAL
+========================= -->
+
+<div class="modal" id="createModal">
+
+<div class="modal-box">
+
+    <div class="modal-header">
+
+        <h2 id="createTitle">Create Post</h2>
+
+        <button class="close" onclick="closeModal('createModal')">
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="create-tabs">
+
+        <button id="tabPost" onclick="setCreateType('post')">
+            Photo
+        </button>
+
+        <button id="tabReel" onclick="setCreateType('reel')">
+            Reel
+        </button>
+
+        <button id="tabStory" onclick="setCreateType('story')">
+            Story
+        </button>
+
+    </div>
+
+
+    <div class="create-options">
+
+        <button class="action-btn"
+                onclick="openCamera(currentCreateType)">
+            Use Camera
+        </button>
+
+        <button class="action-btn"
+                onclick="chooseFile(currentCreateType)">
+            Choose From Gallery
+        </button>
+
+    </div>
+
+
+    <input
+        id="fileInput"
+        class="hidden"
+        type="file"
+        accept="image/*,video/*"
+        onchange="handleFile(event)"
+    >
+
+
+    <div id="editor" class="hidden">
+
+        <div class="editor-preview">
+
+            <img id="editorImage"
+                 class="hidden"
+                 alt="Preview">
+
+            <video id="editorVideo"
+                   class="hidden"
+                   controls
+                   playsinline>
+            </video>
+
+        </div>
+
+
+        <!-- FILTERS -->
+        <div class="option-section">
+
+            <h4>Filters</h4>
+
+            <div class="filter-grid">
+
+                <button class="filter-btn active"
+                        onclick="applyFilter('none',this)">
+                    Original
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('grayscale(1)',this)">
+                    Mono
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('sepia(.7)',this)">
+                    Vintage
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('contrast(1.25)',this)">
+                    Contrast
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('saturate(1.7)',this)">
+                    Vivid
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('brightness(1.2)',this)">
+                    Bright
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('hue-rotate(35deg)',this)">
+                    Warm
+                </button>
+
+                <button class="filter-btn"
+                        onclick="applyFilter('blur(.4px)',this)">
+                    Soft
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADJUSTMENTS -->
+        <div class="adjustments">
+
+            <label>Brightness</label>
+            <input id="brightness"
+                   type="range"
+                   min="50"
+                   max="150"
+                   value="100"
+                   oninput="updateAdjustments()">
+
+            <label>Contrast</label>
+            <input id="contrast"
+                   type="range"
+                   min="50"
+                   max="150"
+                   value="100"
+                   oninput="updateAdjustments()">
+
+            <label>Saturation</label>
+            <input id="saturation"
+                   type="range"
+                   min="0"
+                   max="200"
+                   value="100"
+                   oninput="updateAdjustments()">
+
+        </div>
+
+
+        <!-- LAYOUTS -->
+        <div class="option-section">
+
+            <h4>Layout</h4>
+
+            <div class="option-grid">
+
+                <button class="option active"
+                        onclick="chooseLayout('square',this)">
+                    Square
+                </button>
+
+                <button class="option"
+                        onclick="chooseLayout('portrait',this)">
+                    Portrait
+                </button>
+
+                <button class="option"
+                        onclick="chooseLayout('landscape',this)">
+                    Landscape
+                </button>
+
+                <button class="option"
+                        onclick="chooseLayout('full',this)">
+                    Full Screen
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- STYLE -->
+        <div class="option-section">
+
+            <h4>Style</h4>
+
+            <div class="option-grid">
+
+                <button class="option active"
+                        onclick="chooseStyle('clean',this)">
+                    Clean
+                </button>
+
+                <button class="option"
+                        onclick="chooseStyle('rounded',this)">
+                    Rounded
+                </button>
+
+                <button class="option"
+                        onclick="chooseStyle('border',this)">
+                    Border
+                </button>
+
+                <button class="option"
+                        onclick="chooseStyle('shadow',this)">
+                    Shadow
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- MUSIC -->
+        <div class="form-group">
+
+            <label>Music</label>
+
+            <select id="musicSelect">
+
+                <option value="">No Music</option>
+                <option value="Original Audio">Original Audio</option>
+                <option value="Acoustic">Acoustic</option>
+                <option value="Chill">Chill</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Cinematic">Cinematic</option>
+
+            </select>
+
+            <small style="display:block;color:#777;margin-top:6px">
+                Music names are selectable placeholders. Real songs require licensed audio files or a music service.
+            </small>
+
+        </div>
+
+
+        <!-- CAPTION -->
+        <div class="form-group">
+
+            <label>Caption</label>
+
+            <textarea id="captionInput"
+                      placeholder="Write a caption... Use @username to mention someone"></textarea>
+
+        </div>
+
+
+        <!-- MENTION -->
+        <div class="form-group">
+
+            <label>Mention</label>
+
+            <input id="mentionInput"
+                   placeholder="@username">
+
+        </div>
+
+
+        <!-- STORY DURATION -->
+        <div class="form-group" id="storyOptions">
+
+            <label>Story Duration</label>
+
+            <select id="storyDuration">
+
+                <option value="24">24 hours</option>
+                <option value="12">12 hours</option>
+                <option value="6">6 hours</option>
+
+            </select>
+
+        </div>
+
+
+        <button class="primary"
+                onclick="publishContent()">
+            Publish
+        </button>
+
+    </div>
+
+</div>
+</div>
+
+
+<!-- =========================
+     CAMERA MODAL
+========================= -->
+
+<div class="modal" id="cameraModal">
+
+<div class="modal-box">
+
+    <div class="modal-header">
+
+        <h2>Camera</h2>
+
+        <button class="close"
+                onclick="stopCamera()">
+            ×
+        </button>
+
+    </div>
+
+    <div class="camera-area">
+
+        <video id="cameraVideo"
+               autoplay
+               muted
+               playsinline>
+        </video>
+
+        <div class="camera-controls">
+
+            <button onclick="switchCamera()">
+                Switch Camera
             </button>
 
-          </div>
+            <button onclick="takePhoto()">
+                Take Photo
+            </button>
 
-        `).join('')
-      }
+        </div>
 
     </div>
 
-  `);
+    <canvas id="cameraCanvas" class="hidden"></canvas>
+
+</div>
+
+</div>
+
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+
+<script>
+/* =========================================
+   STATE
+========================================= */
+
+let currentCreateType = "post";
+let currentMedia = null;
+let currentMediaType = null;
+let currentFilter = "none";
+let currentLayout = "square";
+let currentStyle = "clean";
+
+let cameraStream = null;
+let cameraFacing = "environment";
+
+let posts = JSON.parse(localStorage.getItem("socialspace_posts") || "[]");
+let stories = JSON.parse(localStorage.getItem("socialspace_stories") || "[]");
+
+
+/* =========================================
+   INIT
+========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    renderFeed();
+    renderStories();
+    renderProfile();
+
+});
+
+
+/* =========================================
+   MODALS
+========================================= */
+
+function openModal(id){
+    document.getElementById(id).classList.add("show");
 }
 
+function closeModal(id){
+    document.getElementById(id).classList.remove("show");
+}
 
-function fillLogin(u){
+function openCreate(type="post"){
 
-  closeModal();
+    currentCreateType = type;
 
-  authTab('login');
+    resetEditor();
 
-  document.getElementById('loginUser').value=u;
+    setCreateType(type);
 
-  document.getElementById('loginPass').focus();
+    openModal("createModal");
+
+}
+
+function setCreateType(type){
+
+    currentCreateType = type;
+
+    document.getElementById("createTitle").textContent =
+        type === "post" ? "Create Photo Post" :
+        type === "reel" ? "Create Reel" :
+        "Create Story";
+
+    document.getElementById("tabPost").classList.toggle(
+        "active", type === "post"
+    );
+
+    document.getElementById("tabReel").classList.toggle(
+        "active", type === "reel"
+    );
+
+    document.getElementById("tabStory").classList.toggle(
+        "active", type === "story"
+    );
+
+    document.getElementById("storyOptions")
+        .classList.toggle("hidden", type !== "story");
+
 }
 
 
 /* =========================================
-   APP SHELL
+   FILE PICKER
 ========================================= */
 
-const nav=[
-  ['home','⌂','Home'],
-  ['search','⌕','Search'],
-  ['notifications','♡','Notifications'],
-  ['messages','✉','Messages'],
-  ['reels','▶','Reels'],
-  ['profile','◉','Profile'],
-  ['settings','⚙','Settings']
-];
+function chooseFile(type){
 
+    currentCreateType = type;
 
-function shell(page,title,content){
+    const input = document.getElementById("fileInput");
 
-  let a=me();
+    input.value = "";
 
-  setRoot(`
+    if(type === "reel"){
+        input.accept = "video/*,image/*";
+    }else{
+        input.accept = "image/*,video/*";
+    }
 
-    <div class="shell">
+    input.click();
 
-      <aside class="sidebar">
-
-        <div class="side-brand">
-
-          <div class="brand">
-
-            <span class="brandmark">M</span>
-
-            <span class="brandtext">
-              MicroBlog
-            </span>
-
-          </div>
-
-        </div>
-
-        <nav class="nav">
-
-          ${
-            nav.map(n=>`
-
-              <button
-                class="${page===n[0]?'active':''}"
-                onclick="app('${n[0]}')">
-
-                <span class="ico">
-                  ${n[1]}
-                </span>
-
-                <span>
-                  ${n[2]}
-                </span>
-
-              </button>
-
-            `).join('')
-          }
-
-        </nav>
-
-        <button
-          class="primary newpost"
-          onclick="composer()">
-          ＋ <span>Post</span>
-        </button>
-
-        <button
-          class="side-account"
-          onclick="profile('${a.username}')">
-
-          ${avatar(a)}
-
-          <span class="account-text">
-
-            <b>${esc(a.name)}</b>
-
-            <span>
-              @${esc(a.username)}
-            </span>
-
-          </span>
-
-          <span>⋯</span>
-
-        </button>
-
-      </aside>
-
-      <main class="main">
-        ${content}
-      </main>
-
-      <aside class="right">
-
-        <div class="search">
-
-          <span>⌕</span>
-
-          <input
-            placeholder="Search"
-            onkeydown="if(event.key==='Enter')doSearch(this.value)">
-
-        </div>
-
-        <div class="r-card">
-
-          <h3>People to follow</h3>
-
-          ${
-            db.accounts
-              .filter(x=>x.username!==a.username)
-              .slice(0,3)
-              .map(x=>rightUser(x))
-              .join('')
-            ||
-            '<small style="color:#667085">No suggestions yet.</small>'
-          }
-
-        </div>
-
-        <div class="r-card">
-
-          <h3>MicroBlog</h3>
-
-          <small style="color:#667085">
-            Posts · Stories · Reels · Messages · Multiple accounts
-          </small>
-
-        </div>
-
-      </aside>
-
-    </div>
-
-  `);
 }
 
+function handleFile(event){
 
-function rightUser(a){
+    const file = event.target.files[0];
 
-  let on=(db.follows[me().username]||[])
-    .includes(a.username);
+    if(!file) return;
 
-  return `
+    if(file.type.startsWith("image/")){
 
-    <div class="r-user">
+        currentMediaType = "image";
 
-      ${avatar(a)}
+    }else if(file.type.startsWith("video/")){
 
-      <div class="grow">
+        currentMediaType = "video";
 
-        <b>${esc(a.name)}</b>
+    }else{
 
-        <small>@${esc(a.username)}</small>
+        showToast("Unsupported file");
+        return;
 
-      </div>
+    }
 
-      <button
-        class="follow ${on?'on':''}"
-        onclick="toggleFollow('${a.username}')">
+    const reader = new FileReader();
 
-        ${on?'Following':'Follow'}
+    reader.onload = function(e){
 
-      </button>
+        currentMedia = e.target.result;
 
-    </div>
+        showEditor();
 
-  `;
+    };
+
+    reader.readAsDataURL(file);
+
 }
 
 
 /* =========================================
-   HOME
+   EDITOR
 ========================================= */
 
-function home(){
+function showEditor(){
 
-  let a=me();
+    document.getElementById("editor").classList.remove("hidden");
 
-  let story=[
-    a,
-    ...db.accounts
-      .filter(x=>x.username!==a.username)
-      .slice(0,5)
-  ];
+    const image = document.getElementById("editorImage");
+    const video = document.getElementById("editorVideo");
 
-  let posts=db.posts.slice().reverse();
+    image.classList.add("hidden");
+    video.classList.add("hidden");
 
-  shell(
-    'home',
-    'Home',
+    if(currentMediaType === "image"){
 
-    `
+        image.src = currentMedia;
 
-    <div class="header header-spread">
+        image.classList.remove("hidden");
 
-      <h2>Home</h2>
+    }else{
 
-      <div class="header-actions">
+        video.src = currentMedia;
 
-        <button
-          class="circle"
-          onclick="app('search')">
-          ⌕
-        </button>
+        video.classList.remove("hidden");
 
-        <button
-          class="circle"
-          onclick="settings()">
-          ⚙
-        </button>
+    }
 
-      </div>
+    updateAdjustments();
 
-    </div>
-
-    <div class="storybar">
-
-      ${
-        story.map((s,i)=>`
-
-          <div
-            class="story ${i===0?'add':''}"
-            onclick="viewStory('${s.username}')">
-
-            ${avatar(s)}
-
-            <p>
-              ${i===0?'Your story':esc(s.name.split(' ')[0])}
-            </p>
-
-          </div>
-
-        `).join('')
-      }
-
-    </div>
-
-    <div class="composer">
-
-      <div>
-        ${avatar(a)}
-      </div>
-
-      <div class="composer-body">
-
-        <textarea
-          id="homeText"
-          placeholder="What's happening, ${esc(a.name.split(' ')[0])}?"></textarea>
-
-        <div class="composer-bottom">
-
-          <div class="tools">
-
-            <button>🖼</button>
-            <button>GIF</button>
-            <button>😊</button>
-
-          </div>
-
-          <button
-            class="primary"
-            onclick="createPost()">
-            Post
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div>
-      ${posts.map(postCard).join('')}
-    </div>
-
-    `
-  );
 }
 
+function resetEditor(){
 
-function postCard(p){
+    currentMedia = null;
+    currentMediaType = null;
+    currentFilter = "none";
+    currentLayout = "square";
+    currentStyle = "clean";
 
-  let a=user(p.author);
+    document.getElementById("editor").classList.add("hidden");
 
-  if(!a)return '';
+    document.getElementById("captionInput").value = "";
+    document.getElementById("mentionInput").value = "";
+    document.getElementById("musicSelect").value = "";
 
-  let mine=me().username;
+    document.getElementById("brightness").value = 100;
+    document.getElementById("contrast").value = 100;
+    document.getElementById("saturation").value = 100;
 
-  let l=db.likes[mine]?.includes(p.id);
-
-  let r=db.reposts[mine]?.includes(p.id);
-
-  return `
-
-    <article
-      class="post"
-      id="post-${p.id}">
-
-      ${avatar(a)}
-
-      <div class="postbody">
-
-        <div class="posthead">
-
-          <b>
-            ${esc(a.name)}
-          </b>
-
-          <span class="muted">
-            @${esc(a.username)} · ${esc(p.time)}
-          </span>
-
-        </div>
-
-        <div class="posttext">
-          ${linkMentions(esc(p.text))}
-        </div>
-
-        ${
-          p.media
-          ? `<div class="post-media">
-               🎬 ${esc(p.media)}
-             </div>`
-          : ''
-        }
-
-        <div class="post-actions">
-
-          <button
-            class="act"
-            onclick="commentPost(${p.id})">
-
-            💬 ${p.comments||0}
-
-          </button>
-
-          <button
-            class="act ${r?'reposted':''}"
-            onclick="toggleRepost(${p.id})">
-
-            🔁 ${(p.reposts||0)+(r?1:0)}
-
-          </button>
-
-          <button
-            class="act ${l?'liked':''}"
-            onclick="toggleLike(${p.id})">
-
-            ♥ ${(p.likes||0)+(l?1:0)}
-
-          </button>
-
-          <button
-            class="act"
-            onclick="sharePost(${p.id})">
-
-            ↗ Share
-
-          </button>
-
-        </div>
-
-      </div>
-
-    </article>
-
-  `;
-}
-
-
-function linkMentions(s){
-
-  return s.replace(
-    /@([a-zA-Z0-9_]+)/g,
-
-    (m,u)=>
-      `<span
-        style="color:var(--blue);cursor:pointer"
-        onclick="profile('${u}')">
-        ${m}
-      </span>`
-  );
-}
-
-
-function createPost(){
-
-  let e=document.getElementById('homeText');
-
-  let t=e.value.trim();
-
-  if(!t){
-    return toast('Write something first');
-  }
-
-  db.posts.push({
-    id:Date.now(),
-    author:me().username,
-    text:t,
-    time:'just now',
-    likes:0,
-    reposts:0,
-    comments:0
-  });
-
-  save();
-
-  home();
-
-  toast('Post published!');
-}
-
-
-function composer(){
-
-  openModal(`
-
-    <div class="modal-head">
-
-      <b>Create a post</b>
-
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
-
-    </div>
-
-    <textarea
-      id="modalPost"
-      style="
-        width:100%;
-        min-height:140px;
-        border:1px solid #d9dee8;
-        border-radius:14px;
-        padding:12px;
-        resize:vertical;
-        outline:0"
-      placeholder="What's happening?"></textarea>
-
-    <div
-      style="
-        display:flex;
-        justify-content:space-between;
-        margin-top:10px">
-
-      <button
-        class="secondary"
-        onclick="closeModal()">
-        Cancel
-      </button>
-
-      <button
-        class="primary"
-        onclick="modalPost()">
-        Post
-      </button>
-
-    </div>
-
-  `);
-}
-
-
-function modalPost(){
-
-  let t=document
-    .getElementById('modalPost')
-    .value
-    .trim();
-
-  if(!t)return;
-
-  db.posts.push({
-    id:Date.now(),
-    author:me().username,
-    text:t,
-    time:'just now',
-    likes:0,
-    reposts:0,
-    comments:0
-  });
-
-  save();
-
-  closeModal();
-
-  home();
-
-  toast('Posted!');
 }
 
 
 /* =========================================
-   INTERACTIONS
+   FILTERS
 ========================================= */
 
-function toggleLike(id){
+function applyFilter(filter,button){
 
-  let u=me().username;
+    currentFilter = filter;
 
-  db.likes[u]??=[];
+    document.querySelectorAll(".filter-btn")
+        .forEach(b => b.classList.remove("active"));
 
-  let i=db.likes[u].indexOf(id);
+    button.classList.add("active");
 
-  if(i>=0){
-    db.likes[u].splice(i,1);
-  }else{
-    db.likes[u].push(id);
-  }
+    updateAdjustments();
 
-  save();
+}
 
-  home();
+function updateAdjustments(){
+
+    const brightness =
+        document.getElementById("brightness").value;
+
+    const contrast =
+        document.getElementById("contrast").value;
+
+    const saturation =
+        document.getElementById("saturation").value;
+
+    const filter =
+        currentFilter === "none" ? "" : currentFilter;
+
+    const finalFilter =
+        `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) ${filter}`;
+
+    document.getElementById("editorImage").style.filter = finalFilter;
+    document.getElementById("editorVideo").style.filter = finalFilter;
+
 }
 
 
-function toggleRepost(id){
+/* =========================================
+   LAYOUTS
+========================================= */
 
-  let u=me().username;
+function chooseLayout(layout,button){
 
-  db.reposts[u]??=[];
+    currentLayout = layout;
 
-  let i=db.reposts[u].indexOf(id);
+    document.querySelectorAll(".option")
+        .forEach(b => {
 
-  if(i>=0){
-    db.reposts[u].splice(i,1);
-  }else{
-    db.reposts[u].push(id);
-  }
+            if(
+                b.parentElement === button.parentElement
+            ){
+                b.classList.remove("active");
+            }
 
-  save();
+        });
 
-  home();
+    button.classList.add("active");
+
 }
 
+
+/* =========================================
+   STYLES
+========================================= */
+
+function chooseStyle(style,button){
+
+    currentStyle = style;
+
+    document.querySelectorAll(".option")
+        .forEach(b => {
+
+            if(
+                b.parentElement === button.parentElement
+            ){
+                b.classList.remove("active");
+            }
+
+        });
+
+    button.classList.add("active");
+
+}
+
+
+/* =========================================
+   CAMERA
+========================================= */
+
+async function openCamera(type="post"){
+
+    currentCreateType = type;
+
+    closeModal("createModal");
+
+    openModal("cameraModal");
+
+    try{
+
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+
+            video:{
+                facingMode:cameraFacing
+            },
+
+            audio:false
+
+        });
+
+        document.getElementById("cameraVideo").srcObject =
+            cameraStream;
+
+    }catch(error){
+
+        closeModal("cameraModal");
+
+        showToast(
+            "Camera permission was denied or camera is unavailable"
+        );
+
+    }
+
+}
+
+async function switchCamera(){
+
+    if(cameraStream){
+
+        cameraStream.getTracks().forEach(
+            track => track.stop()
+        );
+
+    }
+
+    cameraFacing =
+        cameraFacing === "environment"
+        ? "user"
+        : "environment";
+
+    try{
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video:{
+                    facingMode:cameraFacing
+                },
+
+                audio:false
+
+            });
+
+        document.getElementById("cameraVideo").srcObject =
+            cameraStream;
+
+    }catch(error){
+
+        showToast("Unable to switch camera");
+
+    }
+
+}
+
+function takePhoto(){
+
+    const video =
+        document.getElementById("cameraVideo");
+
+    const canvas =
+        document.getElementById("cameraCanvas");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+
+    if(cameraFacing === "user"){
+
+        ctx.translate(canvas.width,0);
+        ctx.scale(-1,1);
+
+    }
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    currentMedia =
+        canvas.toDataURL("image/jpeg",0.9);
+
+    currentMediaType = "image";
+
+    stopCamera(false);
+
+    openCreate(currentCreateType);
+
+    showEditor();
+
+}
+
+function stopCamera(close=true){
+
+    if(cameraStream){
+
+        cameraStream.getTracks().forEach(
+            track => track.stop()
+        );
+
+        cameraStream = null;
+
+    }
+
+    if(close){
+        closeModal("cameraModal");
+    }
+
+}
+
+
+/* =========================================
+   PUBLISH
+========================================= */
+
+function publishContent(){
+
+    if(!currentMedia){
+
+        showToast("Choose a photo or video first");
+
+        return;
+
+    }
+
+    const caption =
+        document.getElementById("captionInput").value.trim();
+
+    const mention =
+        document.getElementById("mentionInput").value.trim();
+
+    const music =
+        document.getElementById("musicSelect").value;
+
+    const item = {
+
+        id:Date.now(),
+
+        type:currentCreateType,
+
+        mediaType:currentMediaType,
+
+        media:currentMedia,
+
+        caption:caption,
+
+        mention:mention,
+
+        music:music,
+
+        layout:currentLayout,
+
+        style:currentStyle,
+
+        likes:0,
+
+        comments:[],
+
+        createdAt:new Date().toISOString()
+
+    };
+
+
+    if(currentCreateType === "story"){
+
+        item.expiresAt =
+            Date.now() +
+            Number(
+                document.getElementById("storyDuration").value
+            ) * 60 * 60 * 1000;
+
+        stories.unshift(item);
+
+        localStorage.setItem(
+            "socialspace_stories",
+            JSON.stringify(stories)
+        );
+
+        renderStories();
+
+        showToast("Story added");
+
+    }else{
+
+        posts.unshift(item);
+
+        localStorage.setItem(
+            "socialspace_posts",
+            JSON.stringify(posts)
+        );
+
+        renderFeed();
+
+        renderProfile();
+
+        showToast(
+            currentCreateType === "reel"
+            ? "Reel published"
+            : "Post published"
+        );
+
+    }
+
+    closeModal("createModal");
+
+    resetEditor();
+
+}
+
+
+/* =========================================
+   FEED
+========================================= */
+
+function renderFeed(){
+
+    const feed =
+        document.getElementById("feed");
+
+    feed.innerHTML = "";
+
+    if(posts.length === 0){
+
+        feed.innerHTML = `
+
+            <div class="post">
+
+                <div style="
+                    padding:45px 20px;
+                    text-align:center;
+                    color:#777;
+                ">
+
+                    No posts yet.<br>
+                    Create your first photo, reel or story.
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    posts.forEach(post => {
+
+        const article =
+            document.createElement("article");
+
+        article.className = "post";
+
+        article.innerHTML = `
+
+            <div class="post-head">
+
+                <div class="avatar"
+                     style="display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-size:12px;">
+                    You
+                </div>
+
+                <div class="post-user">
+
+                    <b>Your Account</b>
+
+                    <span>
+                        ${post.type === "reel" ? "Reel" : "Post"}
+                    </span>
+
+                </div>
+
+                <button class="post-more"
+                        onclick="deletePost(${post.id})">
+                    ...
+                </button>
+
+            </div>
+
+            <div class="post-media"
+                 style="${getMediaStyle(post)}">
+
+                ${
+                    post.mediaType === "image"
+
+                    ?
+
+                    `<img
+                        src="${post.media}"
+                        style="${getImageStyle(post)}"
+                        alt="Post"
+                    >`
+
+                    :
+
+                    `<video
+                        src="${post.media}"
+                        controls
+                        playsinline
+                        style="${getImageStyle(post)}"
+                    ></video>`
+                }
+
+            </div>
+
+            <div class="post-actions">
+
+                <button onclick="likePost(${post.id})">
+                    Like
+                </button>
+
+                <button onclick="commentPost(${post.id})">
+                    Comment
+                </button>
+
+                <button onclick="sharePost(${post.id})">
+                    Share
+                </button>
+
+            </div>
+
+            <div class="post-body">
+
+                <div class="likes">
+                    ${post.likes} likes
+                </div>
+
+                <div class="caption">
+
+                    <b>Your Account</b>
+
+                    ${escapeHTML(post.caption)}
+
+                    ${
+                        post.mention
+                        ? ` <b>${escapeHTML(post.mention)}</b>`
+                        : ""
+                    }
+
+                </div>
+
+                ${
+                    post.music
+                    ? `<div style="
+                        margin-top:8px;
+                        color:#777;
+                        font-size:12px;">
+                        Music: ${escapeHTML(post.music)}
+                       </div>`
+                    : ""
+                }
+
+                <div class="comments">
+                    ${post.comments.length} comments
+                </div>
+
+            </div>
+
+        `;
+
+        feed.appendChild(article);
+
+    });
+
+}
+
+
+/* =========================================
+   MEDIA STYLE
+========================================= */
+
+function getMediaStyle(post){
+
+    let style = "";
+
+    if(post.style === "rounded"){
+        style += "border-radius:18px;";
+    }
+
+    if(post.style === "border"){
+        style += "padding:10px;";
+    }
+
+    if(post.style === "shadow"){
+        style += "box-shadow:inset 0 0 25px rgba(0,0,0,.3);";
+    }
+
+    return style;
+
+}
+
+function getImageStyle(post){
+
+    let style =
+        "width:100%;display:block;object-fit:cover;";
+
+    if(post.layout === "square"){
+        style += "aspect-ratio:1/1;";
+    }
+
+    if(post.layout === "portrait"){
+        style += "aspect-ratio:4/5;";
+    }
+
+    if(post.layout === "landscape"){
+        style += "aspect-ratio:16/9;";
+    }
+
+    if(post.layout === "full"){
+        style += "aspect-ratio:auto;max-height:750px;";
+    }
+
+    return style;
+
+}
+
+
+/* =========================================
+   LIKE
+========================================= */
+
+function likePost(id){
+
+    const post =
+        posts.find(p => p.id === id);
+
+    if(!post) return;
+
+    post.likes++;
+
+    localStorage.setItem(
+        "socialspace_posts",
+        JSON.stringify(posts)
+    );
+
+    renderFeed();
+
+}
+
+
+/* =========================================
+   COMMENT
+========================================= */
 
 function commentPost(id){
 
-  let p=db.posts.find(x=>x.id===id);
+    const comment =
+        prompt("Write a comment:");
 
-  openModal(`
+    if(!comment) return;
 
-    <div class="modal-head">
+    const post =
+        posts.find(p => p.id === id);
 
-      <b>Comments</b>
+    if(!post) return;
 
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
+    post.comments.push(comment);
 
-    </div>
+    localStorage.setItem(
+        "socialspace_posts",
+        JSON.stringify(posts)
+    );
 
-    <p style="font-size:13px">
-      ${esc(p.text)}
-    </p>
+    renderFeed();
 
-    <div class="field">
-
-      <textarea
-        id="comment"
-        rows="3"
-        placeholder="Write a comment..."></textarea>
-
-    </div>
-
-    <button
-      class="primary wide"
-      onclick="addComment(${id})">
-      Comment
-    </button>
-
-  `);
-}
-
-
-function addComment(id){
-
-  let t=document
-    .getElementById('comment')
-    .value
-    .trim();
-
-  if(!t)return;
-
-  let p=db.posts.find(x=>x.id===id);
-
-  p.comments=(p.comments||0)+1;
-
-  save();
-
-  closeModal();
-
-  toast('Comment added');
-}
-
-
-function sharePost(id){
-
-  navigator.clipboard?.writeText(
-    location.href+'#post-'+id
-  );
-
-  toast('Post link copied');
-}
-
-
-function toggleFollow(u){
-
-  let meU=me().username;
-
-  db.follows[meU]??=[];
-
-  let arr=db.follows[meU];
-
-  let i=arr.indexOf(u);
-
-  if(i>=0){
-    arr.splice(i,1);
-  }else{
-    arr.push(u);
-  }
-
-  save();
-
-  app('home');
-
-  toast(i>=0?'Unfollowed':'Following');
-}
-
-
-function viewStory(u){
-
-  let a=user(u);
-
-  let s=db.stories.find(
-    x=>x.author===u
-  );
-
-  openModal(`
-
-    <div class="modal-head">
-
-      <b>${esc(a.name)}'s story</b>
-
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
-
-    </div>
-
-    <div
-      style="
-        height:330px;
-        border-radius:16px;
-        background:linear-gradient(135deg,#101828,#635bff);
-        color:#fff;
-        display:grid;
-        place-items:center;
-        text-align:center;
-        padding:30px">
-
-      <div>
-
-        ${avatar(a,'avatar')}
-
-        <h2>
-          ${esc(s?.text||'Your story')}
-        </h2>
-
-        <p style="opacity:.8">
-          Story
-        </p>
-
-      </div>
-
-    </div>
-
-  `);
 }
 
 
 /* =========================================
-   SEARCH
+   SHARE
 ========================================= */
 
-function doSearch(q){
-  app('search',q);
+async function sharePost(id){
+
+    const post =
+        posts.find(p => p.id === id);
+
+    if(!post) return;
+
+    if(navigator.share){
+
+        try{
+
+            await navigator.share({
+                title:"SocialSpace Post",
+                text:post.caption || "Check out this post"
+            });
+
+        }catch(e){}
+
+    }else{
+
+        showToast("Sharing is not supported by this browser");
+
+    }
+
 }
 
 
-function searchPage(q=''){
+/* =========================================
+   DELETE
+========================================= */
 
-  shell(
-    'search',
-    'Search',
+function deletePost(id){
 
-    `
+    const confirmed =
+        confirm("Delete this post?");
 
-    <div class="header">
-      <h2>Search</h2>
-    </div>
+    if(!confirmed) return;
 
-    <div class="search-page">
+    posts =
+        posts.filter(p => p.id !== id);
 
-      <div class="bigsearch">
+    localStorage.setItem(
+        "socialspace_posts",
+        JSON.stringify(posts)
+    );
 
-        ⌕
+    renderFeed();
+    renderProfile();
 
-        <input
-          id="searchInput"
-          value="${esc(q)}"
-          placeholder="Search username, name or posts"
-          oninput="renderSearch(this.value)">
-
-      </div>
-
-      <div id="searchResults"></div>
-
-    </div>
-
-    `
-  );
-
-  renderSearch(q);
 }
 
 
-function renderSearch(q){
+/* =========================================
+   STORIES
+========================================= */
 
-  let box=document.getElementById('searchResults');
+function renderStories(){
 
-  if(!box)return;
+    const container =
+        document.getElementById("storiesContainer");
 
-  q=q.trim().toLowerCase();
+    container.innerHTML = `
 
-  if(!q){
+        <div class="story add-story"
+             onclick="openCreate('story')">
 
-    box.innerHTML=`
+            <div class="story-ring">+</div>
 
-      <div class="empty">
+            <span>Your Story</span>
 
-        <h3>
-          Find people and posts
-        </h3>
-
-        <p>
-          Search for a username, name,
-          or something someone posted.
-        </p>
-
-      </div>
+        </div>
 
     `;
 
-    return;
-  }
+    const now = Date.now();
 
-  let us=db.accounts.filter(
-    a =>
-      (
-        a.username+
-        ' '+
-        a.name+
-        ' '+
-        (a.bio||'')
-      )
-      .toLowerCase()
-      .includes(q)
-  );
+    stories =
+        stories.filter(
+            story =>
+            !story.expiresAt ||
+            story.expiresAt > now
+        );
 
-  let ps=db.posts.filter(
-    p =>
-      p.text.toLowerCase().includes(q) ||
-      p.author.toLowerCase().includes(q)
-  );
+    localStorage.setItem(
+        "socialspace_stories",
+        JSON.stringify(stories)
+    );
 
-  box.innerHTML=`
 
-    <h3
-      style="
-        font-size:13px;
-        margin:18px 4px 5px">
-      People
-    </h3>
+    stories.forEach(story => {
 
-    ${
-      us.length
+        const div =
+            document.createElement("div");
 
-      ? us.map(a=>`
+        div.className = "story";
 
-          <div class="result-user">
+        div.innerHTML = `
 
-            ${avatar(a)}
+            <div class="story-ring">
 
-            <div class="grow">
+                ${
+                    story.mediaType === "image"
 
-              <b>
-                ${esc(a.name)}
-              </b>
+                    ?
 
-              <small
-                style="
-                  display:block;
-                  color:#667085">
-                @${esc(a.username)}
-              </small>
+                    `<img src="${story.media}" alt="Story">`
+
+                    :
+
+                    `<video src="${story.media}"
+                            muted
+                            playsinline>
+                     </video>`
+                }
 
             </div>
 
-            <button
-              class="follow"
-              onclick="profile('${a.username}')">
-              View
-            </button>
+            <span>Your Story</span>
 
-          </div>
+        `;
 
-        `).join('')
+        div.onclick = () => viewStory(story);
 
-      : '<div class="tiny">No people found.</div>'
+        container.appendChild(div);
+
+    });
+
+}
+
+function viewStory(story){
+
+    if(story.mediaType === "image"){
+
+        const w =
+            window.open("");
+
+        if(w){
+
+            w.document.write(`
+                <body style="
+                    margin:0;
+                    background:#000;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    min-height:100vh;
+                ">
+                    <img src="${story.media}"
+                         style="
+                         max-width:100%;
+                         max-height:100vh;
+                         object-fit:contain;
+                         ">
+                </body>
+            `);
+
+        }
+
+    }else{
+
+        const w =
+            window.open("");
+
+        if(w){
+
+            w.document.write(`
+                <body style="
+                    margin:0;
+                    background:#000;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    min-height:100vh;
+                ">
+                    <video src="${story.media}"
+                           controls
+                           autoplay
+                           playsinline
+                           style="
+                           max-width:100%;
+                           max-height:100vh;
+                           ">
+                    </video>
+                </body>
+            `);
+
+        }
+
     }
 
-    <h3
-      style="
-        font-size:13px;
-        margin:18px 4px 5px">
-      Posts
-    </h3>
-
-    ${
-      ps.length
-      ? ps.map(postCard).join('')
-      : '<div class="tiny">No posts found.</div>'
-    }
-
-  `;
 }
 
 
@@ -2190,1097 +2340,183 @@ function renderSearch(q){
    PROFILE
 ========================================= */
 
-function profile(u=me().username){
+function showProfile(){
 
-  let a=user(u);
+    document.getElementById("homePage")
+        .style.display = "none";
 
-  if(!a){
-    return app('search');
-  }
+    document.getElementById("profilePage")
+        .style.display = "block";
 
-  let own=u===me().username;
+    renderProfile();
 
-  let count=db.posts.filter(
-    p=>p.author===u
-  ).length;
+}
 
-  let following=(db.follows[me().username]||[])
-    .includes(u);
+function showHome(){
 
-  shell(
-    'profile',
-    a.name,
+    document.getElementById("homePage")
+        .style.display = "block";
 
-    `
+    document.getElementById("profilePage")
+        .style.display = "none";
 
-    <div class="header">
+}
 
-      <button
-        class="back"
-        onclick="backFromProfile()">
-        ‹
-      </button>
+function renderProfile(){
 
-      <h2>${esc(a.name)}</h2>
+    const count =
+        document.getElementById("postCount");
 
-    </div>
+    if(count){
+        count.textContent = posts.length;
+    }
 
-    <div class="profile-cover"></div>
+    const grid =
+        document.getElementById("profileGrid");
 
-    <div class="profile-top">
+    if(!grid) return;
 
-      ${avatar(a,'avatar profile-avatar')}
+    grid.innerHTML = "";
 
-      <div class="profile-actions">
+    posts.forEach(post => {
 
-        ${
-          own
+        if(post.mediaType === "image"){
 
-          ? `
-            <button
-              class="secondary"
-              onclick="editProfile()">
-              Edit profile
-            </button>
-          `
+            const img =
+                document.createElement("img");
 
-          : `
+            img.src = post.media;
 
-            <button
-              class="follow ${following?'on':''}"
-              onclick="toggleFollow('${esc(u)}')">
+            grid.appendChild(img);
 
-              ${following?'Following':'Follow'}
+        }else{
 
-            </button>
+            const video =
+                document.createElement("video");
 
-          `
+            video.src = post.media;
+            video.muted = true;
+
+            grid.appendChild(video);
+
         }
 
-      </div>
+    });
 
-      <div class="profile-name">
-        ${esc(a.name)}
-      </div>
-
-      <div
-        style="
-          color:#667085;
-          font-size:12px">
-        @${esc(a.username)}
-      </div>
-
-      <div class="profile-bio">
-        ${esc(a.bio||'No bio yet.')}
-      </div>
-
-      <div class="stats">
-
-        <span>
-          <b>${count}</b> Posts
-        </span>
-
-        <span>
-          <b>${a.followers||0}</b> Followers
-        </span>
-
-        <span>
-          <b>${a.following||0}</b> Following
-        </span>
-
-      </div>
-
-    </div>
-
-    <div class="profile-tabs">
-
-      <button class="active">
-        Posts
-      </button>
-
-      <button onclick="app('reels')">
-        Reels
-      </button>
-
-      <button
-        onclick="toast('Likes are private to your account')">
-        Likes
-      </button>
-
-    </div>
-
-    <div>
-
-      ${
-        db.posts
-          .filter(p=>p.author===u)
-          .slice()
-          .reverse()
-          .map(postCard)
-          .join('')
-
-        ||
-
-        `
-          <div class="empty">
-
-            <h3>
-              No posts yet
-            </h3>
-
-            <p>
-              Posts from this profile
-              will appear here.
-            </p>
-
-          </div>
-        `
-      }
-
-    </div>
-
-    `
-  );
-}
-
-
-function backFromProfile(){
-  app('home');
-}
-
-
-function editProfile(){
-
-  let a=me();
-
-  openModal(`
-
-    <div class="modal-head">
-
-      <b>Edit profile</b>
-
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
-
-    </div>
-
-    <div class="field">
-
-      <label>Name</label>
-
-      <input
-        id="editName"
-        value="${esc(a.name)}">
-
-    </div>
-
-    <div class="field">
-
-      <label>Bio</label>
-
-      <textarea
-        id="editBio"
-        rows="4">${esc(a.bio||'')}</textarea>
-
-    </div>
-
-    <div class="field">
-
-      <label>Email</label>
-
-      <input
-        id="editEmail"
-        value="${esc(a.email||'')}">
-
-    </div>
-
-    <button
-      class="primary wide"
-      onclick="saveProfile()">
-      Save changes
-    </button>
-
-  `);
-}
-
-
-function saveProfile(){
-
-  let a=me();
-
-  a.name=
-    document
-      .getElementById('editName')
-      .value
-      .trim()
-    ||a.name;
-
-  a.bio=
-    document
-      .getElementById('editBio')
-      .value
-      .trim();
-
-  a.email=
-    document
-      .getElementById('editEmail')
-      .value
-      .trim();
-
-  save();
-
-  closeModal();
-
-  profile(a.username);
-
-  toast('Profile updated');
 }
 
 
 /* =========================================
-   REELS
+   SEARCH
 ========================================= */
 
-function reels(){
+document.getElementById("searchInput")
+    .addEventListener("input", function(){
 
-  shell(
-    'reels',
-    'Reels',
+        const query =
+            this.value.toLowerCase().trim();
 
-    `
+        document.querySelectorAll(".post")
+            .forEach(post => {
 
-    <div class="header header-spread">
+                if(!query){
 
-      <h2>Reels</h2>
+                    post.style.display = "";
 
-      <button
-        class="circle"
-        onclick="composer()">
-        ＋
-      </button>
+                    return;
 
-    </div>
+                }
 
-    <div>
+                post.style.display =
+                    post.innerText
+                    .toLowerCase()
+                    .includes(query)
+                    ? ""
+                    : "none";
 
-      ${
-        db.reels.map(
-          r=>`
+            });
 
-            <div
-              class="post"
-              style="display:block">
+    });
 
-              <div class="posthead">
 
-                <b>
-                  ${esc(user(r.author)?.name||r.author)}
-                </b>
+/* =========================================
+   TOAST
+========================================= */
 
-                <span class="muted">
-                  @${esc(r.author)}
-                </span>
+function showToast(message){
 
-              </div>
+    const toast =
+        document.getElementById("toast");
 
-              <div
-                class="post-media"
-                style="
-                  height:420px;
-                  margin-top:10px;
-                  font-size:40px;
-                  flex-direction:column">
+    toast.textContent = message;
 
-                ▶
+    toast.classList.add("show");
 
-                <span
-                  style="font-size:14px">
-                  ${esc(r.title)}
-                </span>
+    clearTimeout(window.toastTimer);
 
-              </div>
+    window.toastTimer =
+        setTimeout(() => {
 
-              <div class="post-actions">
+            toast.classList.remove("show");
 
-                <button
-                  class="act"
-                  onclick="toast('Liked reel')">
-                  ♥ ${r.likes}
-                </button>
+        },2500);
 
-                <button
-                  class="act"
-                  onclick="toast('Comments opened')">
-                  💬 Comment
-                </button>
-
-                <button
-                  class="act"
-                  onclick="sharePost(r.id)">
-                  ↗ Share
-                </button>
-
-              </div>
-
-            </div>
-
-          `
-        ).join('')
-      }
-
-    </div>
-
-    `
-  );
 }
 
 
 /* =========================================
-   NOTIFICATIONS
+   SECURITY / TEXT
 ========================================= */
 
-function notifications(){
+function escapeHTML(text){
 
-  shell(
-    'notifications',
-    'Notifications',
+    const div =
+        document.createElement("div");
 
-    `
+    div.textContent =
+        text || "";
 
-    <div class="header">
-      <h2>Notifications</h2>
-    </div>
+    return div.innerHTML;
 
-    <div class="post">
-
-      <div class="avatar">
-        ♡
-      </div>
-
-      <div class="postbody">
-
-        <b>
-          Welcome to MicroBlog
-        </b>
-
-        <div
-          class="muted"
-          style="margin-top:4px">
-
-          Your notifications will appear here.
-
-        </div>
-
-      </div>
-
-    </div>
-
-    `
-  );
 }
 
 
 /* =========================================
-   MESSAGES
+   SERVICE WORKER / PWA
 ========================================= */
 
-function messages(){
+if("serviceWorker" in navigator){
 
-  shell(
-    'messages',
-    'Messages',
+    window.addEventListener("load", () => {
 
-    `
+        /*
+         * A service worker requires a separate file
+         * and HTTPS/localhost in normal browsers.
+         *
+         * This single-file version intentionally does
+         * not register a fake service worker.
+         */
 
-    <div class="header header-spread">
+    });
 
-      <h2>Messages</h2>
-
-      <button
-        class="circle"
-        onclick="toast('New message')">
-        ＋
-      </button>
-
-    </div>
-
-    <div class="empty">
-
-      <div style="font-size:35px">
-        ✉
-      </div>
-
-      <h3>
-        Your messages
-      </h3>
-
-      <p>
-        Start a conversation
-        with someone you follow.
-      </p>
-
-      <button
-        class="primary"
-        onclick="app('search')">
-        Find people
-      </button>
-
-    </div>
-
-    `
-  );
 }
 
 
 /* =========================================
-   SETTINGS
+   CAMERA SUPPORT CHECK
 ========================================= */
 
-function settings(){
+if(!navigator.mediaDevices ||
+   !navigator.mediaDevices.getUserMedia){
 
-  shell(
-    'settings',
-    'Settings',
+    console.log(
+        "Camera API is unavailable in this browser/context."
+    );
 
-    `
-
-    <div class="header">
-
-      <button
-        class="back"
-        onclick="app('home')">
-        ‹
-      </button>
-
-      <h2>
-        Settings
-      </h2>
-
-    </div>
-
-    <div class="settings">
-
-      <div class="setting-group">
-
-        <h3>
-          ACCOUNT
-        </h3>
-
-        <button
-          class="setting-item"
-          onclick="editProfile()">
-
-          <span>
-
-            <b>
-              Account information
-            </b>
-
-            <small>
-              Name, email and username
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-        <button
-          class="setting-item"
-          onclick="changePassword()">
-
-          <span>
-
-            <b>
-              Password & security
-            </b>
-
-            <small>
-              Change your password
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-        <button
-          class="setting-item"
-          onclick="manageAccounts()">
-
-          <span>
-
-            <b>
-              Manage accounts
-            </b>
-
-            <small>
-              Add, switch or remove local accounts
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-      </div>
-
-
-      <div class="setting-group">
-
-        <h3>
-          PRIVACY & SAFETY
-        </h3>
-
-        ${settingToggle(
-          'private',
-          'Private account',
-          'Only people you approve can follow you.'
-        )}
-
-        ${settingToggle(
-          'mentions',
-          'Allow mentions',
-          'Let people mention you in posts.'
-        )}
-
-        ${settingToggle(
-          'messages',
-          'Message requests',
-          'Allow messages from people you do not follow.'
-        )}
-
-      </div>
-
-
-      <div class="setting-group">
-
-        <h3>
-          CONTENT
-        </h3>
-
-        ${settingToggle(
-          'autoplay',
-          'Autoplay reels',
-          'Play reel previews automatically.'
-        )}
-
-        ${settingToggle(
-          'sensitive',
-          'Show sensitive content',
-          'Control potentially sensitive media.'
-        )}
-
-        <button
-          class="setting-item"
-          onclick="toast('Language: English')">
-
-          <span>
-
-            <b>
-              Language
-            </b>
-
-            <small>
-              English
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-      </div>
-
-
-      <div class="setting-group">
-
-        <h3>
-          APP
-        </h3>
-
-        <button
-          class="setting-item"
-          onclick="toggleTheme()">
-
-          <span>
-
-            <b>
-              Appearance
-            </b>
-
-            <small id="themeText">
-
-              ${
-                db.settings[me().username]?.dark
-                ? 'Dark mode'
-                : 'Light mode'
-              }
-
-            </small>
-
-          </span>
-
-          <span>◐</span>
-
-        </button>
-
-        <button
-          class="setting-item"
-          onclick="toast('Your preferences are stored on this device.')">
-
-          <span>
-
-            <b>
-              Data & storage
-            </b>
-
-            <small>
-              Local storage controls
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-      </div>
-
-
-      <div class="setting-group">
-
-        <h3>
-          SESSION
-        </h3>
-
-        <button
-          class="setting-item"
-          onclick="logout()">
-
-          <span>
-
-            <b>
-              Log out
-            </b>
-
-            <small>
-              Log out of @${esc(me().username)}
-            </small>
-
-          </span>
-
-          <span class="danger">
-            ↪
-          </span>
-
-        </button>
-
-        <button
-          class="setting-item"
-          onclick="resetAll()">
-
-          <span>
-
-            <b class="danger">
-              Delete all local app data
-            </b>
-
-            <small>
-              This removes all accounts and posts from this browser.
-            </small>
-
-          </span>
-
-          <span>›</span>
-
-        </button>
-
-      </div>
-
-    </div>
-
-    `
-  );
 }
-
-
-function settingToggle(key,title,desc){
-
-  let on=!!db.settings[me().username]?.[key];
-
-  return `
-
-    <button
-      class="setting-item"
-      onclick="toggleSetting('${key}')">
-
-      <span>
-
-        <b>
-          ${title}
-        </b>
-
-        <small>
-          ${desc}
-        </small>
-
-      </span>
-
-      <span
-        class="switch ${on?'on':''}">
-
-        <i></i>
-
-      </span>
-
-    </button>
-
-  `;
-}
-
-
-function toggleSetting(k){
-
-  let u=me().username;
-
-  db.settings[u]??={};
-
-  db.settings[u][k]=!db.settings[u][k];
-
-  save();
-
-  settings();
-}
-
-
-function toggleTheme(){
-
-  let u=me().username;
-
-  db.settings[u]??={};
-
-  db.settings[u].dark=!db.settings[u].dark;
-
-  save();
-
-  document.body.style.background=
-    db.settings[u].dark
-    ? '#101828'
-    : 'var(--bg)';
-
-  toast('Appearance updated');
-}
-
-
-function changePassword(){
-
-  openModal(`
-
-    <div class="modal-head">
-
-      <b>
-        Change password
-      </b>
-
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
-
-    </div>
-
-    <div id="passErr"></div>
-
-    <div class="field">
-
-      <label>
-        Current password
-      </label>
-
-      <input
-        id="oldPass"
-        type="password">
-
-    </div>
-
-    <div class="field">
-
-      <label>
-        New password
-      </label>
-
-      <input
-        id="newPass"
-        type="password">
-
-    </div>
-
-    <div class="field">
-
-      <label>
-        Confirm new password
-      </label>
-
-      <input
-        id="newPass2"
-        type="password">
-
-    </div>
-
-    <button
-      class="primary wide"
-      onclick="savePassword()">
-      Update password
-    </button>
-
-  `);
-}
-
-
-function savePassword(){
-
-  let a=me();
-
-  let o=document
-    .getElementById('oldPass')
-    .value;
-
-  let n=document
-    .getElementById('newPass')
-    .value;
-
-  let n2=document
-    .getElementById('newPass2')
-    .value;
-
-  let e=document
-    .getElementById('passErr');
-
-  if(o!==a.password){
-
-    e.innerHTML=
-      '<div class="error">Current password is incorrect.</div>';
-
-    return;
-  }
-
-  if(n.length<6||n!==n2){
-
-    e.innerHTML=
-      '<div class="error">New passwords must match and contain at least 6 characters.</div>';
-
-    return;
-  }
-
-  a.password=n;
-
-  save();
-
-  closeModal();
-
-  toast('Password changed');
-}
-
-
-function manageAccounts(){
-
-  openModal(`
-
-    <div class="modal-head">
-
-      <b>
-        Manage accounts
-      </b>
-
-      <button
-        class="close"
-        onclick="closeModal()">
-        ×
-      </button>
-
-    </div>
-
-    <p class="tiny">
-      You can keep multiple accounts on this device.
-      Each account has separate profile/content preferences.
-    </p>
-
-    <div class="account-list">
-
-      ${
-        db.accounts.map(a=>`
-
-          <div class="account-row">
-
-            ${avatar(a)}
-
-            <div class="grow">
-
-              <b>
-                ${esc(a.name)}
-              </b>
-
-              <small
-                style="display:block;color:#667085">
-
-                @${esc(a.username)}
-
-              </small>
-
-            </div>
-
-            ${
-              a.username===me().username
-
-              ? `
-                <b
-                  style="
-                    font-size:11px;
-                    color:#12b76a">
-                  Current
-                </b>
-              `
-
-              : `
-
-                <button
-                  class="secondary"
-                  onclick="switchAccount('${esc(a.username)}')">
-                  Switch
-                </button>
-
-              `
-            }
-
-          </div>
-
-        `).join('')
-      }
-
-    </div>
-
-    <button
-      class="primary wide"
-      style="margin-top:12px"
-      onclick="closeModal();openCreateAccount()">
-
-      ＋ Create another account
-
-    </button>
-
-  `);
-}
-
-
-function openCreateAccount(){
-
-  auth();
-
-  authTab('signup');
-}
-
-
-function switchAccount(u){
-
-  db.current=u;
-
-  save();
-
-  closeModal();
-
-  app('home');
-
-  toast('Switched to @'+u);
-}
-
-
-function logout(){
-
-  db.current=null;
-
-  save();
-
-  auth();
-
-  toast('Logged out');
-}
-
-
-function resetAll(){
-
-  if(
-    confirm(
-      'Delete all MicroBlog data on this browser?'
-    )
-  ){
-
-    localStorage.removeItem(KEY);
-
-    db=fresh();
-
-    auth();
-  }
-}
-
-
-/* =========================================
-   ROUTER
-========================================= */
-
-function app(page,arg=''){
-
-  if(!db.current){
-
-    auth();
-
-    return;
-  }
-
-  if(page==='home')
-    home();
-
-  else if(page==='search')
-    searchPage(arg);
-
-  else if(page==='notifications')
-    notifications();
-
-  else if(page==='messages')
-    messages();
-
-  else if(page==='reels')
-    reels();
-
-  else if(page==='profile')
-    profile(arg||me().username);
-
-  else if(page==='settings')
-    settings();
-}
-
-
-/* =========================================
-   START APP
-========================================= */
-
-if(db.current&&!me())
-  db.current=null;
-
-if(db.current)
-  app('home');
-else
-  auth();
 
 </script>
 
 </body>
 </html>
+```
