@@ -1627,7 +1627,7 @@ button{
 
         <input
           id="searchPageInput"
-          placeholder="Search username or post..."
+          placeholder="Search username e.g. @official_viber"
           oninput="searchPage()">
 
       </div>
@@ -2056,41 +2056,41 @@ let currentUser =
 
 
 function getAccounts(){
-  try{
-    let accounts = JSON.parse(localStorage.getItem("vibe_accounts") || "[]");
-    if(!Array.isArray(accounts)) accounts = [];
+  const map = new Map();
 
-    /* Migrate accounts from the older shared MicroBlog database. */
-    try{
-      const legacy = JSON.parse(localStorage.getItem("microblog_complete_v3") || "null");
-      if(legacy && Array.isArray(legacy.accounts)){
-        legacy.accounts.forEach(a=>{
-          if(!a || !a.username) return;
-          const exists = accounts.some(x =>
-            String(x.username || "").toLowerCase() === String(a.username).toLowerCase()
-          );
-          if(!exists){
-            accounts.push({
-              id:a.id || Date.now()+Math.random(),
-              name:a.name || a.username,
-              username:String(a.username).trim(),
-              email:a.email || "",
-              dob:a.dob || "",
-              profilePhoto:a.profilePhoto || a.avatar || "",
-              isPrivate:!!a.isPrivate,
-              settings:a.settings || {},
-              createdAt:a.createdAt || new Date().toISOString()
-            });
-          }
-        });
-        localStorage.setItem("vibe_accounts", JSON.stringify(accounts));
+  function add(list){
+    if(!Array.isArray(list)) return;
+    list.forEach(a=>{
+      if(!a || !a.username) return;
+      const username = String(a.username).trim().replace(/^@+/, "");
+      if(!username) return;
+      const key = username.toLowerCase();
+      if(!map.has(key)){
+        map.set(key, Object.assign({}, a, {
+          username,
+          name: a.name || username,
+          email: a.email || "",
+          profilePhoto: a.profilePhoto || a.avatar || "",
+          isPrivate: !!a.isPrivate,
+          settings: a.settings || {}
+        }));
       }
-    }catch(e){}
-
-    return accounts;
-  }catch(e){
-    return [];
+    });
   }
+
+  try{
+    add(JSON.parse(localStorage.getItem("vibe_accounts") || "[]"));
+  }catch(e){}
+
+  /* Import accounts made by the older version of the app. */
+  try{
+    const legacy = JSON.parse(localStorage.getItem("microblog_complete_v3") || "null");
+    if(legacy) add(legacy.accounts);
+  }catch(e){}
+
+  const accounts = Array.from(map.values());
+  try{ localStorage.setItem("vibe_accounts", JSON.stringify(accounts)); }catch(e){}
+  return accounts;
 }
 
 
@@ -3166,184 +3166,73 @@ function globalSearch(event){
 
 
 function searchPage(){
+  const input = document.getElementById("searchPageInput");
+  const results = document.getElementById("searchResults");
+  if(!input || !results) return;
 
-  const query =
-    document
-      .getElementById("searchPageInput")
-      .value
-      .toLowerCase()
-      .trim();
+  const raw = String(input.value || "").trim();
+  const q = raw.replace(/^@+/, "").trim().toLowerCase();
 
-
-  const results =
-    document.getElementById(
-      "searchResults"
-    );
-
-
-  if(!query){
-
+  if(!q){
     results.innerHTML = `
-
       <div class="empty">
-
-        <div class="empty-icon">
-          S
-        </div>
-
-        <h2>
-          Search Vibe
-        </h2>
-
-        <p>
-          Search real usernames or posts.
-        </p>
-
-      </div>
-
-    `;
-
+        <div class="empty-icon">S</div>
+        <h2>Search Vibe</h2>
+        <p>Search by username. Try @username or username.</p>
+      </div>`;
     return;
-
   }
 
-
-  const accounts =
-    getAccounts();
-
-
-  // Search is USERNAME ONLY. Name is intentionally not searchable.
-  // This also supports typing @official_viber.
-  const usernameQuery = query.replace(/^@/, "").trim().toLowerCase();
-
-  /* Account search is ONLY by username. Exact username is shown first;
-     partial username search is also supported. Display name is never searched. */
-  const matchingAccounts = accounts
-    .filter(account => String(account.username || "").toLowerCase().includes(usernameQuery))
-    .sort((a,b)=>{
-      const au=String(a.username||"").toLowerCase();
-      const bu=String(b.username||"").toLowerCase();
-      return (au===usernameQuery? -1:0) - (bu===usernameQuery? -1:0);
+  /* IMPORTANT: account discovery is username-only. Display names are never used. */
+  const accounts = getAccounts();
+  const matches = accounts
+    .filter(a => String(a.username || "").trim().toLowerCase().includes(q))
+    .sort((a,b) => {
+      const au = String(a.username || "").toLowerCase();
+      const bu = String(b.username || "").toLowerCase();
+      const ae = au === q ? 0 : au.startsWith(q) ? 1 : 2;
+      const be = bu === q ? 0 : bu.startsWith(q) ? 1 : 2;
+      return ae - be || au.localeCompare(bu);
     });
-
-
-  const posts =
-    getPosts().filter(post =>
-
-      post.type !== "story" &&
-      canViewContent(post.username) &&
-
-      (
-        post.username
-          .toLowerCase()
-          .includes(query)
-
-        ||
-
-        (post.caption || "")
-          .toLowerCase()
-          .includes(query)
-
-      )
-
-    );
-
 
   let html = "";
 
-
-  matchingAccounts.forEach(account => {
-
-    const photo =
-      account.profilePhoto
-      ?
-      `
-        <img
-          src="${account.profilePhoto}"
-          style="
-            width:45px;
-            height:45px;
-            border-radius:50%;
-            object-fit:cover;
-          ">
-      `
-      :
-      `
-        <div class="avatar">
-          ${escapeHTML(
-            account.username
-              .charAt(0)
-              .toUpperCase()
-          )}
-        </div>
-      `;
-
+  matches.forEach(account => {
+    const isSelf = String(account.username).toLowerCase() === String(currentUser || "").toLowerCase();
+    const following = !isSelf && isFollowing(account.username);
+    const photo = account.profilePhoto
+      ? `<img src="${account.profilePhoto}" alt="Profile" style="width:48px;height:48px;border-radius:50%;object-fit:cover">`
+      : `<div class="avatar">${escapeHTML(String(account.username).charAt(0).toUpperCase())}</div>`;
 
     html += `
-
-      <div
-        class="post search-user-card"
-        style="padding:15px;cursor:pointer"
-        onclick="viewUserProfile('${escapeHTML(account.username)}')">
-
+      <div class="post search-user-card" style="padding:15px;cursor:pointer" onclick="viewUserProfile('${escapeHTML(account.username)}')">
         <div class="user-info">
-
           ${photo}
-
-          <div style="flex:1">
-
-            <div class="username">
-              ${escapeHTML(account.username)}
-            </div>
-
-            <div class="post-type">
-              ${escapeHTML(account.name)}
-            </div>
-
+          <div style="flex:1;min-width:0">
+            <div class="username">@${escapeHTML(account.username)}</div>
+            <div class="post-type">${isSelf ? "Your account" : (account.isPrivate ? "Private account" : "Public account")}</div>
           </div>
-
-          ${account.username.toLowerCase() !== currentUser.toLowerCase()
-            ? `<button class="follow-button ${isFollowing(account.username) ? 'following' : ''}" onclick="event.stopPropagation();toggleFollow('${escapeHTML(account.username)}')">${isFollowing(account.username) ? 'Following' : 'Follow'}</button>`
-            : `<span class="post-type">You</span>`}
-
+          ${!isSelf ? `<button class="follow-button ${following ? 'following' : ''}" onclick="event.stopPropagation();toggleFollow('${escapeHTML(account.username)}')">${following ? 'Following' : 'Follow'}</button>` : `<span class="post-type">You</span>`}
         </div>
-
-      </div>
-
-    `;
-
+      </div>`;
   });
 
+  /* Post discovery is separate and can use caption/username. It never changes account search. */
+  const posts = getPosts().filter(post =>
+    post.type !== "story" &&
+    canViewContent(post.username) &&
+    (String(post.username || "").toLowerCase().includes(q) || String(post.caption || "").toLowerCase().includes(q))
+  );
 
-  html +=
-    posts
-      .map(postHTML)
-      .join("");
-
-
-  if(!html){
-
-    html = `
-
-      <div class="empty">
-
-        <h2>
-          No results
-        </h2>
-
-        <p>
-          No matching accounts or posts found.
-        </p>
-
-      </div>
-
-    `;
-
+  if(posts.length){
+    html += posts.map(postHTML).join("");
   }
 
+  if(!html){
+    html = `<div class="empty"><h2>No results</h2><p>No account was found for username <strong>@${escapeHTML(q)}</strong>.</p></div>`;
+  }
 
   results.innerHTML = html;
-
 }
 
 
