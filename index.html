@@ -2045,6 +2045,7 @@ button{
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
 /* =====================================================
@@ -3996,11 +3997,252 @@ function escapeHTML(value){
 }
 
 
+
+
+/* =====================================================
+   SUPABASE ONLINE BACKEND
+   This bridge keeps the existing UI while making accounts,
+   login, search and follows shared between devices.
+===================================================== */
+
+const SUPABASE_URL = "https://xswdgkrsfsuhrqtrjrml.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_afv2imFHc7Ll4r5gUteDYg_xB0DtYdp";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function onlineProfileToAccount(p){
+  if(!p) return null;
+  return {
+    id:p.id,
+    name:p.name || p.username,
+    username:p.username,
+    email:p.email || "",
+    dob:p.dob || "",
+    profilePhoto:p.profile_photo || "",
+    isPrivate:!!p.is_private,
+    settings:p.settings || {},
+    createdAt:p.created_at || new Date().toISOString()
+  };
+}
+
+function cacheOnlineAccounts(list){
+  const old=getAccounts();
+  const map=new Map(old.map(a=>[String(a.username).toLowerCase(),a]));
+  (list||[]).forEach(p=>{
+    const a=onlineProfileToAccount(p);
+    if(a) map.set(a.username.toLowerCase(),a);
+  });
+  const all=Array.from(map.values());
+  try{localStorage.setItem("vibe_accounts",JSON.stringify(all));}catch(e){}
+  return all;
+}
+
+async function syncOnlineAccounts(){
+  const {data,error}=await sb.from('profiles').select('id,username,name,email,dob,profile_photo,is_private,settings,created_at').order('created_at',{ascending:true});
+  if(!error && data) cacheOnlineAccounts(data);
+  return data||[];
+}
+
+async function onlineCurrentProfile(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user) return null;
+  const {data,error}=await sb.from('profiles').select('id,username,name,email,dob,profile_photo,is_private,settings,created_at').eq('id',user.id).maybeSingle();
+  if(error) return null;
+  if(data){
+    currentUser=data.username;
+    localStorage.setItem('vibe_current_user',currentUser);
+    cacheOnlineAccounts([data]);
+  }
+  return data;
+}
+
+/* Real signup: Supabase Auth stores the password securely. */
+async function finishAccountCreation(name, username, email, dob, password, profilePhoto){
+  const error=document.getElementById('signupError');
+  if(error) error.textContent='Creating your account...';
+  try{
+    const {data,error:authError}=await sb.auth.signUp({email,password});
+    if(authError) throw authError;
+    if(!data.user) throw new Error('Could not create the account.');
+
+    if(!data.session){
+      if(error) error.textContent='Account created. Check your email to verify it, then log in.';
+      showLogin();
+      return;
+    }
+
+    const {data:profile,error:profileError}=await sb.from('profiles').insert({
+      id:data.user.id,
+      username:username,
+      name:name,
+      email:email,
+      dob:dob,
+      profile_photo:profilePhoto || null,
+      is_private:false
+    }).select().single();
+    if(profileError) throw profileError;
+
+    cacheOnlineAccounts([profile]);
+    currentUser=profile.username;
+    localStorage.setItem('vibe_current_user',currentUser);
+    if(error) error.textContent='';
+    openApplication();
+    await syncOnlineAccounts();
+  }catch(e){
+    console.error(e);
+    if(error) error.textContent=e.message || 'Could not create account.';
+  }
+}
+
+/* Real login: username/email is resolved to the account email, then Supabase verifies the password. */
+async function login(){
+  const identifier=(document.getElementById('loginIdentifier')?.value||'').trim();
+  const password=document.getElementById('loginPassword')?.value||'';
+  const error=document.getElementById('loginError');
+  if(error) error.textContent='';
+  if(!identifier || !password){
+    if(error) error.textContent='Enter username/email and password.';
+    return;
+  }
+  try{
+    let email=identifier;
+    if(!identifier.includes('@')){
+      const {data}=await sb.from('profiles').select('email,username').ilike('username',identifier).limit(1).maybeSingle();
+      if(!data || !data.email) throw new Error('Account not found.');
+      email=data.email;
+    }
+    const {data,error:authError}=await sb.auth.signInWithPassword({email,password});
+    if(authError) throw authError;
+    const profile=await onlineCurrentProfile();
+    if(!profile) throw new Error('Account profile is missing. Please contact the app owner.');
+    cacheOnlineAccounts([profile]);
+    if(error) error.textContent='';
+    openApplication();
+    await syncOnlineAccounts();
+  }catch(e){
+    console.error(e);
+    if(error) error.textContent=e.message || 'Login failed. Check your username/email and password.';
+  }
+}
+
+/* Search now queries the shared Supabase profiles table, not another phone's localStorage. */
+let searchTimer=null;
+async function searchPage(){
+  const input=document.getElementById('searchPageInput');
+  const results=document.getElementById('searchResults');
+  if(!input || !results) return;
+  const q=String(input.value||'').trim().replace(/^@+/,'').trim();
+  if(!q){
+    results.innerHTML='<div class="empty"><div class="empty-icon">S</div><h2>Search Vibe</h2><p>Search by username. Try @username or username.</p></div>';
+    return;
+  }
+  results.innerHTML='<div class="empty"><h2>Searching...</h2><p>Checking real Vibe accounts.</p></div>';
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(async()=>{
+    try{
+      const {data,error}=await sb.from('profiles').select('id,username,name,profile_photo,is_private,settings,created_at').ilike('username','%'+q+'%').order('username',{ascending:true}).limit(50);
+      if(error) throw error;
+      cacheOnlineAccounts(data||[]);
+      let html='';
+      (data||[]).forEach(account=>{
+        const isSelf=String(account.username).toLowerCase()===String(currentUser||'').toLowerCase();
+        const following=!isSelf && isFollowing(account.username);
+        const photo=account.profile_photo
+          ? '<img src="'+escapeHTML(account.profile_photo)+'" alt="Profile" style="width:48px;height:48px;border-radius:50%;object-fit:cover">'
+          : '<div class="avatar">'+escapeHTML(String(account.username).charAt(0).toUpperCase())+'</div>';
+        html+='<div class="post search-user-card" style="padding:15px;cursor:pointer" onclick="viewUserProfile(\''+escapeHTML(account.username)+'\')"><div class="user-info">'+photo+'<div style="flex:1;min-width:0"><div class="username">@'+escapeHTML(account.username)+'</div><div class="post-type">'+(isSelf?'Your account':(account.is_private?'Private account':'Public account'))+'</div></div>'+(!isSelf?'<button class="follow-button '+(following?'following':'')+'" onclick="event.stopPropagation();toggleFollow(\''+escapeHTML(account.username)+'\')">'+(following?'Following':'Follow')+'</button>':'<span class="post-type">You</span>')+'</div></div>';
+      });
+      if(!html) html='<div class="empty"><h2>No results</h2><p>No account was found for username <strong>@'+escapeHTML(q)+'</strong>.</p></div>';
+      results.innerHTML=html;
+    }catch(e){
+      console.error(e);
+      results.innerHTML='<div class="empty"><h2>Search unavailable</h2><p>Make sure you are logged in and the Supabase database is connected.</p></div>';
+    }
+  },180);
+}
+
+async function toggleFollow(username){
+  if(!currentUser || username.toLowerCase()===currentUser.toLowerCase()) return;
+  try{
+    const me=await onlineCurrentProfile();
+    if(!me) throw new Error('Please log in again.');
+    const {data:target,error:targetError}=await sb.from('profiles').select('id,username,name,profile_photo,is_private,settings,created_at').ilike('username',username).limit(1).maybeSingle();
+    if(targetError||!target) return;
+    const {data:existing}=await sb.from('follows').select('follower_id').eq('follower_id',me.id).eq('following_id',target.id).maybeSingle();
+    if(existing){
+      await sb.from('follows').delete().eq('follower_id',me.id).eq('following_id',target.id);
+      toast('Unfollowed @'+target.username);
+    }else{
+      const {error}=await sb.from('follows').insert({follower_id:me.id,following_id:target.id});
+      if(error) throw error;
+      await sb.from('notifications').insert({recipient_id:target.id,actor_id:me.id,type:'follow'});
+      toast('Following @'+target.username);
+    }
+    await syncOnlineFollows();
+    viewUserProfile(target.username);
+  }catch(e){
+    console.error(e);
+    toast(e.message || 'Could not update follow.');
+  }
+}
+
+async function syncOnlineFollows(){
+  const {data,error}=await sb.from('follows').select('follower_id,following_id');
+  if(error || !data) return;
+  const profiles=getAccounts();
+  const byId={}; profiles.forEach(p=>{if(p.id) byId[p.id]=p.username;});
+  const out={};
+  data.forEach(f=>{
+    const a=byId[f.follower_id], b=byId[f.following_id];
+    if(a&&b){if(!out[a]) out[a]=[]; out[a].push(b);}
+  });
+  saveFollows(out);
+}
+
+async function syncOnlinePosts(){
+  const {data,error}=await sb.from('posts').select('id,user_id,type,media_url,caption,mention,music,likes,created_at').order('created_at',{ascending:false}).limit(200);
+  if(error || !data) return;
+  const accounts=getAccounts();
+  const byId={}; accounts.forEach(a=>{if(a.id) byId[a.id]=a.username;});
+  const posts=data.map(p=>({id:p.id,user_id:p.user_id,username:byId[p.user_id]||'',type:p.type,media:p.media_url,caption:p.caption||'',mention:p.mention||'',music:p.music||'',likes:p.likes||0,createdAt:p.created_at})).filter(p=>p.username);
+  savePosts(posts);
+}
+
+async function bootOnline(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(session){
+      const p=await onlineCurrentProfile();
+      if(p){
+        currentUser=p.username;
+        localStorage.setItem('vibe_current_user',currentUser);
+        await syncOnlineAccounts();
+        await syncOnlineFollows();
+        await syncOnlinePosts();
+        openApplication();
+      }
+    }else{
+      currentUser=null;
+      localStorage.removeItem('vibe_current_user');
+      const auth=document.getElementById('authScreen');
+      if(auth) auth.classList.remove('hidden');
+    }
+  }catch(e){console.error('Supabase boot error',e);}
+}
+
+sb.auth.onAuthStateChange((event,session)=>{
+  if(event==='SIGNED_OUT'){
+    currentUser=null;
+    localStorage.removeItem('vibe_current_user');
+  }
+});
+
+setTimeout(bootOnline,0);
+
 /* =====================================================
    START
 ===================================================== */
 
-if(currentUser){
+if(false && currentUser){
 
   openApplication();
 
