@@ -3,22 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Social App</title>
+<title>Social</title>
 
 <style>
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#f7f7f8;
+    --card:#ffffff;
+    --text:#111111;
+    --muted:#777;
+    --border:#e7e7e7;
+    --black:#111;
 }
 
 body{
     font-family:Arial,Helvetica,sans-serif;
-    background:#fafafa;
-    color:#111;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
 }
 
-button,input,textarea,select{
+button,
+input,
+textarea,
+select{
     font:inherit;
 }
 
@@ -26,171 +39,218 @@ button{
     cursor:pointer;
 }
 
+/* ================= TOP BAR ================= */
+
 .topbar{
-    height:64px;
-    background:white;
-    border-bottom:1px solid #ddd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
+    height:68px;
     position:fixed;
     top:0;
     left:0;
     right:0;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid var(--border);
     z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
 }
 
-.logo{
+.brand{
     font-size:25px;
     font-weight:800;
+    letter-spacing:-1px;
 }
 
-.search{
-    width:280px;
-    padding:11px 15px;
-    border:1px solid #ddd;
-    border-radius:10px;
+.search-box{
+    width:310px;
+    height:40px;
+    border:1px solid var(--border);
+    background:#f3f3f4;
+    border-radius:12px;
+    padding:0 15px;
     outline:none;
-    background:#f5f5f5;
 }
 
-.top-actions{
+.search-box:focus{
+    background:#fff;
+    border-color:#bbb;
+}
+
+.top-right{
     display:flex;
-    gap:10px;
+    align-items:center;
+    gap:8px;
 }
 
-.top-actions button{
+.top-btn{
     border:0;
-    background:white;
-    padding:10px 14px;
-    font-weight:600;
-}
-
-.sidebar{
-    position:fixed;
-    top:64px;
-    bottom:0;
-    left:0;
-    width:230px;
-    background:white;
-    border-right:1px solid #ddd;
-    padding:25px 15px;
-}
-
-.nav-btn{
-    width:100%;
-    text-align:left;
-    padding:14px;
-    border:0;
-    background:white;
+    background:transparent;
+    padding:10px 13px;
     border-radius:10px;
-    margin-bottom:7px;
-    font-size:15px;
     font-weight:600;
 }
 
-.nav-btn:hover{
+.top-btn:hover{
     background:#f1f1f1;
 }
 
-.main{
-    max-width:720px;
-    margin:90px auto 80px;
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    top:68px;
+    left:0;
+    bottom:0;
+    width:245px;
+    background:#fff;
+    border-right:1px solid var(--border);
+    padding:25px 15px;
+    z-index:90;
 }
 
-.stories{
-    background:white;
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:16px;
+.nav-item{
+    width:100%;
+    height:48px;
+    border:0;
+    background:transparent;
+    border-radius:11px;
     display:flex;
-    gap:15px;
+    align-items:center;
+    gap:14px;
+    padding:0 15px;
+    margin-bottom:6px;
+    text-align:left;
+    font-weight:600;
+    color:#222;
+}
+
+.nav-item:hover{
+    background:#f2f2f3;
+}
+
+.nav-item.active{
+    background:#111;
+    color:#fff;
+}
+
+.nav-icon{
+    width:21px;
+    height:21px;
+    border:2px solid currentColor;
+    border-radius:6px;
+    flex-shrink:0;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    width:min(680px,calc(100% - 40px));
+    margin:0 auto;
+    padding-top:95px;
+    padding-bottom:100px;
+}
+
+/* ================= STORIES ================= */
+
+.stories{
+    display:flex;
+    gap:17px;
     overflow-x:auto;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:17px;
     margin-bottom:20px;
 }
 
-.story-item{
-    min-width:70px;
+.stories::-webkit-scrollbar{
+    display:none;
+}
+
+.story{
+    min-width:68px;
     text-align:center;
     font-size:12px;
 }
 
-.story-circle{
-    width:58px;
-    height:58px;
+.story-avatar{
+    width:60px;
+    height:60px;
     border-radius:50%;
-    margin:auto auto 6px;
     background:#111;
-    color:white;
+    color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:bold;
-    border:3px solid white;
-    outline:2px solid #111;
-}
-
-.create-box{
-    background:white;
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:20px;
-}
-
-.create-title{
+    margin:0 auto 7px;
     font-size:18px;
     font-weight:700;
-    margin-bottom:15px;
-}
-
-.create-buttons{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
-.create-main-btn{
-    border:1px solid #ccc;
-    background:white;
-    padding:17px 10px;
-    border-radius:10px;
-    font-weight:700;
-    transition:.2s;
-}
-
-.create-main-btn:hover{
-    background:#111;
-    color:white;
-}
-
-.create-main-btn.primary{
-    background:#111;
-    color:white;
-    border-color:#111;
-}
-
-.create-main-btn.primary:hover{
-    background:#333;
-}
-
-.post{
-    background:white;
-    border:1px solid #ddd;
-    border-radius:12px;
-    margin-bottom:22px;
     overflow:hidden;
 }
 
-.post-head{
-    padding:14px 16px;
+.story-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ================= CREATE PLUS BAR ================= */
+
+.create-bar{
+    height:65px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    margin-bottom:20px;
+    padding:10px 15px;
     display:flex;
     align-items:center;
     justify-content:space-between;
 }
 
-.user-info{
+.create-text{
+    font-size:14px;
+    color:#777;
+}
+
+.plus-button{
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:13px;
+    background:#111;
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    transition:.2s;
+}
+
+.plus-button:hover{
+    transform:scale(1.05);
+    background:#333;
+}
+
+/* ================= POST ================= */
+
+.post{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    margin-bottom:22px;
+}
+
+.post-header{
+    height:65px;
+    padding:10px 15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.user{
     display:flex;
     align-items:center;
     gap:10px;
@@ -201,120 +261,237 @@ button{
     height:40px;
     border-radius:50%;
     background:#111;
-    color:white;
+    color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:bold;
+    font-weight:700;
+    overflow:hidden;
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
 .username{
+    font-size:14px;
     font-weight:700;
 }
 
-.post-media{
+.post-type{
+    font-size:11px;
+    color:#888;
+    margin-top:3px;
+}
+
+.more-btn{
+    border:0;
+    background:transparent;
+    font-size:20px;
+}
+
+.media{
     width:100%;
-    background:#111;
-    display:block;
     max-height:720px;
+    display:block;
     object-fit:contain;
+    background:#111;
 }
 
 .post-actions{
-    padding:12px 15px;
     display:flex;
-    gap:12px;
+    gap:18px;
+    padding:13px 15px 7px;
 }
 
-.action-btn{
+.post-action{
     border:0;
-    background:white;
+    background:transparent;
     font-weight:600;
+    padding:3px 0;
 }
 
-.caption{
-    padding:0 16px 16px;
+.post-action:hover{
+    color:#555;
+}
+
+.post-content{
+    padding:5px 15px 17px;
     line-height:1.5;
+    font-size:14px;
 }
 
-.delete-btn{
-    border:0;
-    background:white;
-    color:#d00;
+.post-content strong{
+    margin-right:5px;
+}
+
+.post-music{
+    color:#666;
+    margin-top:6px;
     font-size:12px;
 }
 
+.delete{
+    color:#c00;
+}
+
+/* ================= EMPTY ================= */
+
 .empty{
-    background:white;
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:40px 20px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
     text-align:center;
+    padding:55px 20px;
     color:#777;
 }
+
+.empty h2{
+    color:#111;
+    margin-bottom:10px;
+}
+
+/* ================= RIGHT PANEL ================= */
+
+.right-panel{
+    position:fixed;
+    top:100px;
+    left:calc(50% + 370px);
+    width:280px;
+}
+
+.panel{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:15px;
+}
+
+.panel-title{
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.suggestion{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:13px 0;
+}
+
+.suggestion-left{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.follow{
+    border:0;
+    background:transparent;
+    color:#111;
+    font-weight:700;
+    font-size:12px;
+}
+
+/* ================= MOBILE NAV ================= */
 
 .mobile-nav{
     display:none;
 }
 
-/* MODAL */
+/* ================= MODAL ================= */
 
-.modal{
+.overlay{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.65);
+    background:rgba(0,0,0,.62);
     z-index:500;
     align-items:center;
     justify-content:center;
-    padding:15px;
+    padding:18px;
 }
 
-.modal.show{
+.overlay.show{
     display:flex;
 }
 
-.modal-box{
-    background:white;
-    width:100%;
-    max-width:650px;
+.modal{
+    width:min(650px,100%);
     max-height:92vh;
     overflow:auto;
-    border-radius:16px;
-    padding:22px;
+    background:#fff;
+    border-radius:20px;
+    padding:23px;
 }
 
-.modal-head{
+.modal-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:18px;
-}
-
-.close{
-    border:0;
-    background:white;
-    font-size:25px;
-}
-
-.type-buttons{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
     margin-bottom:20px;
 }
 
-.type-btn{
-    padding:13px;
-    border:1px solid #ccc;
-    background:white;
-    border-radius:8px;
-    font-weight:700;
+.modal-header h2{
+    font-size:21px;
 }
 
-.type-btn.active{
+.close{
+    width:35px;
+    height:35px;
+    border:0;
+    background:#f1f1f1;
+    border-radius:50%;
+    font-size:20px;
+}
+
+/* ================= CREATE MENU ================= */
+
+.create-menu{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.create-option{
+    min-height:135px;
+    border:1px solid var(--border);
+    background:#fafafa;
+    border-radius:15px;
+    padding:20px 10px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.create-option:hover{
     background:#111;
-    color:white;
+    color:#fff;
+    transform:translateY(-2px);
+}
+
+.option-symbol{
+    width:45px;
+    height:45px;
+    border:2px solid currentColor;
+    border-radius:12px;
+    margin:0 auto 13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+}
+
+/* ================= EDITOR ================= */
+
+.editor{
+    display:none;
+}
+
+.editor.show{
+    display:block;
 }
 
 .media-choice{
@@ -323,34 +500,33 @@ button{
     gap:12px;
 }
 
-.media-choice button{
-    padding:20px 10px;
-    border:1px solid #ccc;
+.choice-btn{
+    padding:18px 10px;
+    border:1px solid var(--border);
     background:#fafafa;
-    border-radius:10px;
+    border-radius:12px;
     font-weight:700;
 }
 
-.media-preview{
-    margin-top:18px;
-    text-align:center;
+.choice-btn:hover{
+    background:#f0f0f0;
 }
 
-.media-preview img,
-.media-preview video{
-    width:100%;
-    max-height:430px;
-    object-fit:contain;
-    background:#111;
-    border-radius:10px;
-}
-
-.editor{
+.file-input{
     display:none;
 }
 
-.editor.show{
-    display:block;
+.preview{
+    margin-top:17px;
+}
+
+.preview img,
+.preview video{
+    width:100%;
+    max-height:450px;
+    object-fit:contain;
+    background:#111;
+    border-radius:12px;
 }
 
 .field{
@@ -368,10 +544,11 @@ button{
 .field textarea,
 .field select{
     width:100%;
+    border:1px solid var(--border);
+    border-radius:10px;
     padding:12px;
-    border:1px solid #ccc;
-    border-radius:8px;
     outline:none;
+    background:#fff;
 }
 
 .field textarea{
@@ -382,98 +559,131 @@ button{
 .publish{
     width:100%;
     margin-top:18px;
-    padding:13px;
-    background:#111;
-    color:white;
+    padding:14px;
     border:0;
-    border-radius:8px;
-    font-weight:700;
-}
-
-.camera-area{
-    display:none;
-}
-
-.camera-area.show{
-    display:block;
-}
-
-#cameraVideo,
-#reelCameraVideo{
-    width:100%;
+    border-radius:11px;
     background:#111;
-    border-radius:10px;
-}
-
-.camera-buttons{
-    display:flex;
-    gap:10px;
-    margin-top:12px;
-}
-
-.camera-buttons button{
-    flex:1;
-    padding:12px;
-    border:1px solid #ccc;
-    background:white;
-    border-radius:8px;
+    color:#fff;
     font-weight:700;
 }
 
-.recording{
-    background:#b00000 !important;
-    color:white !important;
+.publish:hover{
+    background:#333;
 }
+
+/* ================= FILTERS ================= */
 
 .filters{
     display:flex;
     gap:7px;
     overflow-x:auto;
+    margin-top:13px;
+}
+
+.filter{
+    white-space:nowrap;
+    border:1px solid #ddd;
+    background:#fff;
+    border-radius:20px;
+    padding:8px 12px;
+    font-size:12px;
+}
+
+.filter.active{
+    background:#111;
+    color:#fff;
+}
+
+/* ================= CAMERA ================= */
+
+.camera{
+    display:none;
+}
+
+.camera.show{
+    display:block;
+}
+
+.camera video{
+    width:100%;
+    max-height:500px;
+    background:#111;
+    border-radius:12px;
+}
+
+.camera-controls{
+    display:flex;
+    gap:10px;
     margin-top:12px;
 }
 
-.filter-btn{
-    white-space:nowrap;
-    border:1px solid #ccc;
-    background:white;
-    padding:8px 12px;
-    border-radius:20px;
+.camera-controls button{
+    flex:1;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    background:#fff;
+    font-weight:700;
 }
 
-.filter-btn.active{
-    background:#111;
-    color:white;
+.recording{
+    background:#b00000 !important;
+    color:#fff !important;
 }
 
-.controls{
-    margin-top:15px;
-}
+/* ================= PROFILE ================= */
 
-.range{
-    margin-bottom:12px;
-}
-
-.range label{
+.profile-head{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:25px;
     display:flex;
-    justify-content:space-between;
-    font-size:13px;
-    margin-bottom:5px;
+    gap:20px;
+    align-items:center;
 }
 
-.range input{
-    width:100%;
+.profile-avatar{
+    width:90px;
+    height:90px;
+    background:#111;
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:700;
 }
 
-/* MOBILE */
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1100px){
+
+    .right-panel{
+        display:none;
+    }
+
+}
 
 @media(max-width:850px){
 
     .topbar{
-        padding:0 14px;
+        height:62px;
+        padding:0 13px;
     }
 
-    .search{
+    .brand{
+        font-size:21px;
+    }
+
+    .top-right{
         display:none;
+    }
+
+    .search-box{
+        width:145px;
+        height:37px;
     }
 
     .sidebar{
@@ -482,65 +692,86 @@ button{
 
     .main{
         width:100%;
-        margin:75px auto 85px;
-        padding:0 10px;
+        padding:78px 9px 90px;
     }
 
-    .create-box{
-        border-radius:10px;
+    .stories{
+        border-radius:13px;
     }
 
-    .create-buttons{
-        grid-template-columns:1fr;
+    .create-bar{
+        border-radius:13px;
     }
 
-    .create-main-btn{
-        padding:16px;
+    .post{
+        border-radius:13px;
     }
 
     .mobile-nav{
-        position:fixed;
         display:grid;
-        grid-template-columns:repeat(5,1fr);
-        bottom:0;
+        grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;
+        position:fixed;
         left:0;
         right:0;
-        height:65px;
-        background:white;
-        border-top:1px solid #ddd;
+        bottom:0;
+        height:68px;
+        background:#fff;
+        border-top:1px solid var(--border);
         z-index:300;
+        padding:8px 5px;
     }
 
     .mobile-nav button{
         border:0;
-        background:white;
-        font-size:11px;
+        background:transparent;
+        font-size:10px;
         font-weight:700;
+        border-radius:10px;
     }
 
-    .mobile-nav .add{
+    .mobile-nav .mobile-plus{
         background:#111;
-        color:white;
-        margin:10px;
-        border-radius:8px;
+        color:#fff;
+        margin:3px 10px;
+        font-size:25px;
     }
 
-    .post-media{
-        max-height:600px;
-    }
-
-    .modal{
+    .overlay{
         align-items:flex-end;
         padding:0;
     }
 
-    .modal-box{
-        max-height:94vh;
-        border-radius:18px 18px 0 0;
+    .modal{
+        max-height:93vh;
+        border-radius:20px 20px 0 0;
+        padding:20px 15px;
     }
 
-    .type-buttons{
-        grid-template-columns:1fr 1fr 1fr;
+    .create-menu{
+        grid-template-columns:1fr;
+    }
+
+    .create-option{
+        min-height:75px;
+        display:flex;
+        align-items:center;
+        gap:15px;
+        padding:12px 15px;
+    }
+
+    .option-symbol{
+        margin:0;
+        width:42px;
+        height:42px;
+        flex-shrink:0;
+    }
+
+    .media-choice{
+        grid-template-columns:1fr;
+    }
+
+    .camera-controls{
+        flex-direction:column;
     }
 }
 </style>
@@ -548,146 +779,307 @@ button{
 
 <body>
 
+<!-- ================= TOP BAR ================= -->
+
 <header class="topbar">
-    <div class="logo">Social</div>
+
+    <div class="brand">Social</div>
 
     <input
-        class="search"
         id="searchInput"
+        class="search-box"
+        type="search"
         placeholder="Search"
-        oninput="searchPosts()"
+        oninput="searchUsers()"
     >
 
-    <div class="top-actions">
-        <button onclick="openCreate('photo')">Create</button>
+    <div class="top-right">
+
+        <button class="top-btn" onclick="showNotifications()">
+            Notifications
+        </button>
+
+        <button class="top-btn" onclick="showMessages()">
+            Messages
+        </button>
+
     </div>
+
 </header>
+
+
+<!-- ================= SIDEBAR ================= -->
 
 <aside class="sidebar">
 
-    <button class="nav-btn" onclick="showHome()">Home</button>
-    <button class="nav-btn" onclick="openCreate('photo')">Create Photo</button>
-    <button class="nav-btn" onclick="openCreate('reel')">Create Reel</button>
-    <button class="nav-btn" onclick="openCreate('story')">Create Story</button>
-    <button class="nav-btn" onclick="showProfile()">Profile</button>
+    <button class="nav-item active" onclick="showHome(this)">
+        <span class="nav-icon"></span>
+        Home
+    </button>
+
+    <button class="nav-item" onclick="focusSearch()">
+        <span class="nav-icon"></span>
+        Search
+    </button>
+
+    <button class="nav-item" onclick="showExplore(this)">
+        <span class="nav-icon"></span>
+        Explore
+    </button>
+
+    <button class="nav-item" onclick="showReels(this)">
+        <span class="nav-icon"></span>
+        Reels
+    </button>
+
+    <button class="nav-item" onclick="showMessages(this)">
+        <span class="nav-icon"></span>
+        Messages
+    </button>
+
+    <button class="nav-item" onclick="showNotifications(this)">
+        <span class="nav-icon"></span>
+        Notifications
+    </button>
+
+    <button class="nav-item" onclick="showProfile(this)">
+        <span class="nav-icon"></span>
+        Profile
+    </button>
 
 </aside>
 
+
+<!-- ================= MAIN ================= -->
+
 <main class="main">
 
+    <!-- STORIES -->
+
     <section class="stories" id="stories">
-        <div class="story-item">
-            <div class="story-circle">+</div>
-            <div>Add Story</div>
-        </div>
-    </section>
 
-    <section class="create-box">
-
-        <div class="create-title">Create something</div>
-
-        <div class="create-buttons">
-
-            <button
-                class="create-main-btn primary"
-                onclick="openCreate('photo')">
-                Create Photo Post
-            </button>
-
-            <button
-                class="create-main-btn"
-                onclick="openCreate('reel')">
-                Create Reel
-            </button>
-
-            <button
-                class="create-main-btn"
-                onclick="openCreate('story')">
-                Add Story
-            </button>
-
+        <div class="story">
+            <div
+                class="story-avatar"
+                onclick="openCreateMenu()">
+                +
+            </div>
+            <span>Add Story</span>
         </div>
 
     </section>
 
-    <section id="feed"></section>
+
+    <!-- CLEAN CREATE BAR -->
+
+    <section class="create-bar">
+
+        <div class="create-text">
+            Create a new post
+        </div>
+
+        <button
+            class="plus-button"
+            onclick="openCreateMenu()">
+            +
+        </button>
+
+    </section>
+
+
+    <!-- CONTENT -->
+
+    <section id="content"></section>
 
 </main>
 
+
+<!-- ================= RIGHT PANEL ================= -->
+
+<aside class="right-panel">
+
+    <div class="panel">
+
+        <div class="panel-title">
+            Suggestions
+        </div>
+
+        <div class="suggestion">
+
+            <div class="suggestion-left">
+                <div class="avatar">A</div>
+                <span>User</span>
+            </div>
+
+            <button class="follow">
+                Follow
+            </button>
+
+        </div>
+
+        <div class="suggestion">
+
+            <div class="suggestion-left">
+                <div class="avatar">S</div>
+                <span>Creator</span>
+            </div>
+
+            <button class="follow">
+                Follow
+            </button>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MOBILE NAV ================= -->
+
 <nav class="mobile-nav">
 
-    <button onclick="showHome()">Home</button>
+    <button onclick="showHome()">
+        Home
+    </button>
 
-    <button onclick="openCreate('story')">Story</button>
+    <button onclick="focusSearch()">
+        Search
+    </button>
 
-    <button class="add" onclick="openCreate('photo')">Create</button>
+    <button
+        class="mobile-plus"
+        onclick="openCreateMenu()">
+        +
+    </button>
 
-    <button onclick="openCreate('reel')">Reel</button>
+    <button onclick="showNotifications()">
+        Notifications
+    </button>
 
-    <button onclick="showProfile()">Profile</button>
+    <button onclick="showProfile()">
+        Profile
+    </button>
 
 </nav>
 
 
-<!-- CREATE MODAL -->
+<!-- ================= CREATE MENU ================= -->
 
-<div class="modal" id="createModal">
+<div class="overlay" id="createOverlay">
 
-    <div class="modal-box">
+    <div class="modal">
 
-        <div class="modal-head">
+        <div class="modal-header">
+
             <h2>Create</h2>
-            <button class="close" onclick="closeCreate()">×</button>
-        </div>
-
-        <div class="type-buttons">
 
             <button
-                class="type-btn active"
-                id="photoTypeBtn"
-                onclick="setType('photo')">
-                Photo
-            </button>
-
-            <button
-                class="type-btn"
-                id="reelTypeBtn"
-                onclick="setType('reel')">
-                Reel
-            </button>
-
-            <button
-                class="type-btn"
-                id="storyTypeBtn"
-                onclick="setType('story')">
-                Story
+                class="close"
+                onclick="closeAllModals()">
+                ×
             </button>
 
         </div>
 
 
-        <!-- PHOTO/REEL/STORY SELECT -->
+        <div class="create-menu">
+
+            <button
+                class="create-option"
+                onclick="startCreate('photo')">
+
+                <div class="option-symbol">
+                    +
+                </div>
+
+                <div>
+                    Photo Post
+                </div>
+
+            </button>
+
+
+            <button
+                class="create-option"
+                onclick="startCreate('reel')">
+
+                <div class="option-symbol">
+                    R
+                </div>
+
+                <div>
+                    Reel
+                </div>
+
+            </button>
+
+
+            <button
+                class="create-option"
+                onclick="startCreate('story')">
+
+                <div class="option-symbol">
+                    S
+                </div>
+
+                <div>
+                    Story
+                </div>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= EDITOR ================= -->
+
+<div class="overlay" id="editorOverlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2 id="editorTitle">
+                Create Photo
+            </h2>
+
+            <button
+                class="close"
+                onclick="closeAllModals()">
+                ×
+            </button>
+
+        </div>
+
 
         <div id="choiceArea">
 
             <div class="media-choice">
 
-                <button onclick="chooseGallery()">
+                <button
+                    class="choice-btn"
+                    onclick="chooseMedia()">
                     Choose From Gallery
                 </button>
 
-                <button onclick="openCamera()">
+                <button
+                    class="choice-btn"
+                    onclick="openCamera()">
                     Use Camera
                 </button>
 
             </div>
 
             <input
+                class="file-input"
+                id="mediaInput"
                 type="file"
-                id="fileInput"
-                hidden
-                accept="image/*"
-                onchange="handleFile(event)"
+                onchange="handleMedia(event)"
             >
 
         </div>
@@ -695,17 +1087,27 @@ button{
 
         <!-- CAMERA -->
 
-        <div class="camera-area" id="cameraArea">
+        <div
+            class="camera"
+            id="cameraArea">
 
-            <video id="cameraVideo" autoplay playsinline></video>
+            <video
+                id="cameraVideo"
+                autoplay
+                playsinline>
+            </video>
 
-            <div class="camera-buttons">
+            <div class="camera-controls">
 
-                <button onclick="capturePhoto()">
+                <button
+                    id="captureBtn"
+                    onclick="capturePhoto()">
                     Take Photo
                 </button>
 
-                <button onclick="startReelRecording()" id="recordBtn">
+                <button
+                    id="recordBtn"
+                    onclick="toggleRecording()">
                     Start Recording
                 </button>
 
@@ -720,112 +1122,77 @@ button{
 
         <!-- EDITOR -->
 
-        <div class="editor" id="editor">
+        <div
+            class="editor"
+            id="editor">
 
-            <div class="media-preview" id="preview"></div>
+            <div
+                class="preview"
+                id="preview">
+            </div>
 
-            <div class="filters">
 
-                <button class="filter-btn active" onclick="applyFilter('none',this)">
+            <div
+                class="filters">
+
+                <button
+                    class="filter active"
+                    onclick="setFilter('none',this)">
                     Original
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('grayscale(1)',this)">
+                <button
+                    class="filter"
+                    onclick="setFilter('grayscale(1)',this)">
                     Mono
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('sepia(.7)',this)">
+                <button
+                    class="filter"
+                    onclick="setFilter('sepia(.7)',this)">
                     Vintage
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('contrast(1.4)',this)">
+                <button
+                    class="filter"
+                    onclick="setFilter('contrast(1.4)',this)">
                     Contrast
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('saturate(1.7)',this)">
+                <button
+                    class="filter"
+                    onclick="setFilter('saturate(1.7)',this)">
                     Vivid
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('brightness(1.25)',this)">
+                <button
+                    class="filter"
+                    onclick="setFilter('brightness(1.25)',this)">
                     Bright
                 </button>
 
-                <button class="filter-btn" onclick="applyFilter('warm',this)">
-                    Warm
-                </button>
-
-            </div>
-
-
-            <div class="controls">
-
-                <div class="range">
-                    <label>
-                        <span>Brightness</span>
-                        <span id="brightnessValue">100%</span>
-                    </label>
-
-                    <input
-                        type="range"
-                        min="50"
-                        max="150"
-                        value="100"
-                        oninput="changeBrightness(this.value)"
-                    >
-                </div>
-
-                <div class="range">
-
-                    <label>
-                        <span>Contrast</span>
-                        <span id="contrastValue">100%</span>
-                    </label>
-
-                    <input
-                        type="range"
-                        min="50"
-                        max="150"
-                        value="100"
-                        oninput="changeContrast(this.value)"
-                    >
-
-                </div>
-
-                <div class="range">
-
-                    <label>
-                        <span>Saturation</span>
-                        <span id="saturationValue">100%</span>
-                    </label>
-
-                    <input
-                        type="range"
-                        min="0"
-                        max="200"
-                        value="100"
-                        oninput="changeSaturation(this.value)"
-                    >
-
-                </div>
-
             </div>
 
 
             <div class="field">
 
-                <label>Caption</label>
+                <label>
+                    Caption
+                </label>
 
                 <textarea
                     id="caption"
-                    placeholder="Write a caption..."
-                ></textarea>
+                    placeholder="Write a caption...">
+                </textarea>
 
             </div>
 
 
             <div class="field">
 
-                <label>Mention</label>
+                <label>
+                    Mention
+                </label>
 
                 <input
                     id="mention"
@@ -837,15 +1204,31 @@ button{
 
             <div class="field">
 
-                <label>Music</label>
+                <label>
+                    Music
+                </label>
 
                 <select id="music">
 
-                    <option value="">No Music</option>
-                    <option value="Summer">Summer</option>
-                    <option value="Night">Night</option>
-                    <option value="Dream">Dream</option>
-                    <option value="Energy">Energy</option>
+                    <option value="">
+                        No Music
+                    </option>
+
+                    <option value="Summer">
+                        Summer
+                    </option>
+
+                    <option value="Night">
+                        Night
+                    </option>
+
+                    <option value="Dream">
+                        Dream
+                    </option>
+
+                    <option value="Energy">
+                        Energy
+                    </option>
 
                 </select>
 
@@ -854,7 +1237,7 @@ button{
 
             <button
                 class="publish"
-                onclick="publishContent()">
+                onclick="publish()">
                 Publish
             </button>
 
@@ -867,29 +1250,38 @@ button{
 
 <script>
 
-let currentType = "photo";
-let currentMedia = null;
-let currentMediaURL = null;
+/* =====================================================
+   VARIABLES
+===================================================== */
 
-let stream = null;
-let mediaRecorder = null;
-let recordedChunks = [];
+let currentType = "photo";
+let currentFile = null;
+let currentURL = null;
+
+let cameraStream = null;
+let recorder = null;
+let chunks = [];
 let recording = false;
 
-let brightness = 100;
-let contrast = 100;
-let saturation = 100;
 let selectedFilter = "none";
 
 
-/* STORAGE */
+/* =====================================================
+   STORAGE
+===================================================== */
 
 function getPosts(){
 
     try{
-        return JSON.parse(localStorage.getItem("social_posts")) || [];
+
+        return JSON.parse(
+            localStorage.getItem("social_posts") || "[]"
+        );
+
     }catch{
+
         return [];
+
     }
 
 }
@@ -904,112 +1296,139 @@ function savePosts(posts){
 }
 
 
-/* CREATE */
+/* =====================================================
+   CREATE MENU
+===================================================== */
 
-function openCreate(type="photo"){
+function openCreateMenu(){
 
-    document.getElementById("createModal")
+    document
+        .getElementById("createOverlay")
         .classList.add("show");
 
-    setType(type);
-
 }
 
 
-function closeCreate(){
-
-    document.getElementById("createModal")
-        .classList.remove("show");
-
-    stopCamera();
-
-    resetCreate();
-
-}
-
-
-function resetCreate(){
-
-    currentMedia = null;
-    currentMediaURL = null;
-
-    document.getElementById("choiceArea").style.display = "block";
-
-    document.getElementById("cameraArea").classList.remove("show");
-
-    document.getElementById("editor").classList.remove("show");
-
-    document.getElementById("preview").innerHTML = "";
-
-    document.getElementById("caption").value = "";
-
-    document.getElementById("mention").value = "";
-
-    document.getElementById("music").value = "";
-
-    brightness = 100;
-    contrast = 100;
-    saturation = 100;
-    selectedFilter = "none";
-
-}
-
-
-function setType(type){
+function startCreate(type){
 
     currentType = type;
 
     document
-        .getElementById("photoTypeBtn")
-        .classList.toggle("active",type==="photo");
+        .getElementById("createOverlay")
+        .classList.remove("show");
 
-    document
-        .getElementById("reelTypeBtn")
-        .classList.toggle("active",type==="reel");
+    const title =
+        document.getElementById("editorTitle");
 
-    document
-        .getElementById("storyTypeBtn")
-        .classList.toggle("active",type==="story");
+    if(type === "photo"){
 
+        title.textContent = "Create Photo";
 
-    const fileInput =
-        document.getElementById("fileInput");
-
-
-    if(type==="photo" || type==="story"){
-
-        fileInput.accept = "image/*";
-
-    }else{
-
-        fileInput.accept = "video/*";
+        document
+            .getElementById("mediaInput")
+            .accept = "image/*";
 
     }
+
+    if(type === "reel"){
+
+        title.textContent = "Create Reel";
+
+        document
+            .getElementById("mediaInput")
+            .accept = "video/*";
+
+    }
+
+    if(type === "story"){
+
+        title.textContent = "Add Story";
+
+        document
+            .getElementById("mediaInput")
+            .accept = "image/*";
+
+    }
+
+
+    resetEditor();
+
+    document
+        .getElementById("editorOverlay")
+        .classList.add("show");
 
 }
 
 
-/* GALLERY */
+/* =====================================================
+   RESET
+===================================================== */
 
-function chooseGallery(){
+function resetEditor(){
+
+    currentFile = null;
+    currentURL = null;
+    selectedFilter = "none";
 
     document
-        .getElementById("fileInput")
+        .getElementById("choiceArea")
+        .style.display = "block";
+
+    document
+        .getElementById("cameraArea")
+        .classList.remove("show");
+
+    document
+        .getElementById("editor")
+        .classList.remove("show");
+
+    document
+        .getElementById("preview")
+        .innerHTML = "";
+
+    document
+        .getElementById("caption")
+        .value = "";
+
+    document
+        .getElementById("mention")
+        .value = "";
+
+    document
+        .getElementById("music")
+        .value = "";
+
+}
+
+
+/* =====================================================
+   GALLERY
+===================================================== */
+
+function chooseMedia(){
+
+    document
+        .getElementById("mediaInput")
         .click();
 
 }
 
 
-function handleFile(event){
+function handleMedia(event){
 
-    const file = event.target.files[0];
+    const file =
+        event.target.files[0];
 
     if(!file) return;
 
 
-    if(currentType==="reel" && !file.type.startsWith("video/")){
+    if(
+        currentType === "reel"
+        &&
+        !file.type.startsWith("video/")
+    ){
 
-        alert("Please select a video for Reel.");
+        alert("Please select a video.");
 
         return;
 
@@ -1017,7 +1436,7 @@ function handleFile(event){
 
 
     if(
-        (currentType==="photo" || currentType==="story")
+        currentType !== "reel"
         &&
         !file.type.startsWith("image/")
     ){
@@ -1029,66 +1448,31 @@ function handleFile(event){
     }
 
 
-    currentMedia = file;
+    currentFile = file;
 
-    currentMediaURL = URL.createObjectURL(file);
+    currentURL =
+        URL.createObjectURL(file);
 
     showEditor();
 
 }
 
 
-/* EDITOR */
-
-function showEditor(){
-
-    document.getElementById("choiceArea").style.display = "none";
-
-    document.getElementById("cameraArea")
-        .classList.remove("show");
-
-    document.getElementById("editor")
-        .classList.add("show");
-
-
-    const preview =
-        document.getElementById("preview");
-
-
-    if(currentMedia.type.startsWith("video/")){
-
-        preview.innerHTML =
-            `<video
-                id="editorVideo"
-                src="${currentMediaURL}"
-                controls
-                playsinline>
-            </video>`;
-
-    }else{
-
-        preview.innerHTML =
-            `<img
-                id="editorImage"
-                src="${currentMediaURL}"
-                alt="Preview">`;
-
-    }
-
-}
-
-
-/* CAMERA */
+/* =====================================================
+   CAMERA
+===================================================== */
 
 async function openCamera(){
 
     try{
 
-        stream =
+        cameraStream =
             await navigator.mediaDevices.getUserMedia({
 
                 video:true,
-                audio: currentType==="reel"
+
+                audio:
+                    currentType === "reel"
 
             });
 
@@ -1096,33 +1480,48 @@ async function openCamera(){
         const video =
             document.getElementById("cameraVideo");
 
-        video.srcObject = stream;
+        video.srcObject =
+            cameraStream;
 
-        document.getElementById("choiceArea")
+
+        document
+            .getElementById("choiceArea")
             .style.display = "none";
 
-        document.getElementById("cameraArea")
+        document
+            .getElementById("cameraArea")
             .classList.add("show");
 
 
-        const recordBtn =
+        const capture =
+            document.getElementById("captureBtn");
+
+        const record =
             document.getElementById("recordBtn");
 
 
-        if(currentType==="photo" || currentType==="story"){
+        if(
+            currentType === "photo"
+            ||
+            currentType === "story"
+        ){
 
-            recordBtn.style.display = "none";
+            capture.style.display = "block";
+
+            record.style.display = "none";
 
         }else{
 
-            recordBtn.style.display = "block";
+            capture.style.display = "none";
+
+            record.style.display = "block";
 
         }
 
     }catch(error){
 
         alert(
-            "Camera permission is required. Please allow camera access in your browser."
+            "Camera permission allow karo. Reel record karne ke liye microphone permission bhi allow karo."
         );
 
     }
@@ -1130,9 +1529,13 @@ async function openCamera(){
 }
 
 
+/* =====================================================
+   PHOTO CAPTURE
+===================================================== */
+
 function capturePhoto(){
 
-    if(!stream) return;
+    if(!cameraStream) return;
 
 
     const video =
@@ -1143,9 +1546,11 @@ function capturePhoto(){
         document.createElement("canvas");
 
 
-    canvas.width = video.videoWidth;
+    canvas.width =
+        video.videoWidth;
 
-    canvas.height = video.videoHeight;
+    canvas.height =
+        video.videoHeight;
 
 
     const ctx =
@@ -1161,17 +1566,19 @@ function capturePhoto(){
     );
 
 
-    canvas.toBlob(function(blob){
+    canvas.toBlob(blob => {
 
-        currentMedia =
+        currentFile =
             new File(
                 [blob],
-                "camera-photo.jpg",
-                {type:"image/jpeg"}
+                "photo.jpg",
+                {
+                    type:"image/jpeg"
+                }
             );
 
 
-        currentMediaURL =
+        currentURL =
             URL.createObjectURL(blob);
 
 
@@ -1184,22 +1591,31 @@ function capturePhoto(){
 }
 
 
-/* REEL RECORDING */
+/* =====================================================
+   REEL RECORDING
+===================================================== */
 
-function startReelRecording(){
-
-    if(!stream) return;
+function toggleRecording(){
 
     if(recording){
 
-        stopReelRecording();
+        stopRecording();
 
-        return;
+    }else{
+
+        startRecording();
 
     }
 
+}
 
-    recordedChunks = [];
+
+function startRecording(){
+
+    if(!cameraStream) return;
+
+
+    chunks = [];
 
 
     let options = {};
@@ -1218,46 +1634,58 @@ function startReelRecording(){
 
     try{
 
-        mediaRecorder =
-            new MediaRecorder(stream,options);
+        recorder =
+            new MediaRecorder(
+                cameraStream,
+                options
+            );
 
     }catch{
 
-        mediaRecorder =
-            new MediaRecorder(stream);
+        recorder =
+            new MediaRecorder(
+                cameraStream
+            );
 
     }
 
 
-    mediaRecorder.ondataavailable = function(e){
+    recorder.ondataavailable =
+        event => {
 
-        if(e.data.size > 0){
+            if(event.data.size > 0){
 
-            recordedChunks.push(e.data);
+                chunks.push(event.data);
 
-        }
+            }
 
-    };
+        };
 
 
-    mediaRecorder.onstop = function(){
+    recorder.onstop = () => {
 
         const blob =
             new Blob(
-                recordedChunks,
-                {type:mediaRecorder.mimeType || "video/webm"}
+                chunks,
+                {
+                    type:
+                        recorder.mimeType ||
+                        "video/webm"
+                }
             );
 
 
-        currentMedia =
+        currentFile =
             new File(
                 [blob],
-                "recorded-reel.webm",
-                {type:blob.type}
+                "reel.webm",
+                {
+                    type:blob.type
+                }
             );
 
 
-        currentMediaURL =
+        currentURL =
             URL.createObjectURL(blob);
 
 
@@ -1268,29 +1696,30 @@ function startReelRecording(){
     };
 
 
-    mediaRecorder.start();
+    recorder.start();
 
     recording = true;
 
 
-    const btn =
+    const button =
         document.getElementById("recordBtn");
 
-    btn.textContent = "Stop Recording";
+    button.textContent =
+        "Stop Recording";
 
-    btn.classList.add("recording");
+    button.classList.add("recording");
 
 }
 
 
-function stopReelRecording(){
+function stopRecording(){
 
     if(
-        mediaRecorder &&
+        recorder &&
         recording
     ){
 
-        mediaRecorder.stop();
+        recorder.stop();
 
         recording = false;
 
@@ -1299,17 +1728,21 @@ function stopReelRecording(){
 }
 
 
-/* CAMERA STOP */
+/* =====================================================
+   STOP CAMERA
+===================================================== */
 
 function stopCamera(){
 
-    if(stream){
+    if(cameraStream){
 
-        stream.getTracks().forEach(
-            track => track.stop()
-        );
+        cameraStream
+            .getTracks()
+            .forEach(track =>
+                track.stop()
+            );
 
-        stream = null;
+        cameraStream = null;
 
     }
 
@@ -1326,156 +1759,143 @@ function stopCamera(){
 
     recording = false;
 
-    const btn =
+
+    const button =
         document.getElementById("recordBtn");
 
-    if(btn){
+    if(button){
 
-        btn.textContent = "Start Recording";
+        button.textContent =
+            "Start Recording";
 
-        btn.classList.remove("recording");
+        button.classList.remove(
+            "recording"
+        );
 
     }
 
 }
 
 
-/* FILTERS */
+/* =====================================================
+   EDITOR
+===================================================== */
 
-function applyFilter(filter,button){
+function showEditor(){
+
+    document
+        .getElementById("choiceArea")
+        .style.display = "none";
+
+    document
+        .getElementById("cameraArea")
+        .classList.remove("show");
+
+    document
+        .getElementById("editor")
+        .classList.add("show");
+
+
+    const preview =
+        document.getElementById("preview");
+
+
+    if(
+        currentFile.type.startsWith("video/")
+    ){
+
+        preview.innerHTML = `
+
+            <video
+                id="previewMedia"
+                src="${currentURL}"
+                controls
+                playsinline>
+            </video>
+
+        `;
+
+    }else{
+
+        preview.innerHTML = `
+
+            <img
+                id="previewMedia"
+                src="${currentURL}"
+                alt="Preview">
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function setFilter(filter,button){
 
     selectedFilter = filter;
 
 
     document
-        .querySelectorAll(".filter-btn")
-        .forEach(
-            b => b.classList.remove("active")
+        .querySelectorAll(".filter")
+        .forEach(item =>
+            item.classList.remove("active")
         );
 
 
     button.classList.add("active");
 
 
-    updatePreviewStyle();
-
-}
-
-
-function changeBrightness(value){
-
-    brightness = value;
-
-    document.getElementById("brightnessValue")
-        .textContent = value + "%";
-
-    updatePreviewStyle();
-
-}
-
-
-function changeContrast(value){
-
-    contrast = value;
-
-    document.getElementById("contrastValue")
-        .textContent = value + "%";
-
-    updatePreviewStyle();
-
-}
-
-
-function changeSaturation(value){
-
-    saturation = value;
-
-    document.getElementById("saturationValue")
-        .textContent = value + "%";
-
-    updatePreviewStyle();
-
-}
-
-
-function updatePreviewStyle(){
-
     const media =
-        document.querySelector(
-            "#preview img,#preview video"
+        document.getElementById(
+            "previewMedia"
         );
 
-    if(!media) return;
 
+    if(media){
 
-    let filter =
-        `brightness(${brightness}%)
-         contrast(${contrast}%)
-         saturate(${saturation}%)`;
-
-
-    if(selectedFilter==="none"){
-
-    }else{
-
-        filter += " " + selectedFilter;
+        media.style.filter =
+            filter === "none"
+            ? "none"
+            : filter;
 
     }
-
-
-    if(selectedFilter==="warm"){
-
-        filter =
-            `brightness(${brightness}%)
-             contrast(${contrast}%)
-             saturate(${saturation}%)
-             sepia(.25)
-             saturate(1.3)`;
-
-    }
-
-
-    media.style.filter = filter;
 
 }
 
 
-/* PUBLISH */
+/* =====================================================
+   PUBLISH
+===================================================== */
 
-async function publishContent(){
+function publish(){
 
-    if(!currentMedia){
+    if(!currentFile){
 
-        alert("Please select or create media first.");
+        alert(
+            "Pehle Photo, Reel ya Story select karo."
+        );
 
         return;
 
     }
 
 
-    const caption =
-        document.getElementById("caption").value.trim();
-
-
-    const mention =
-        document.getElementById("mention").value.trim();
-
-
-    const music =
-        document.getElementById("music").value;
-
-
     const reader =
         new FileReader();
 
 
-    reader.onload = function(){
+    reader.onload = () => {
 
         const posts =
             getPosts();
 
 
-        const post = {
+        posts.unshift({
 
             id:Date.now(),
 
@@ -1483,59 +1903,76 @@ async function publishContent(){
 
             media:reader.result,
 
-            caption:caption,
+            caption:
+                document
+                .getElementById("caption")
+                .value
+                .trim(),
 
-            mention:mention,
+            mention:
+                document
+                .getElementById("mention")
+                .value
+                .trim(),
 
-            music:music,
+            music:
+                document
+                .getElementById("music")
+                .value,
 
             likes:0,
 
             comments:[],
 
-            createdAt:new Date().toISOString()
+            createdAt:
+                new Date().toISOString()
 
-        };
+        });
 
-
-        posts.unshift(post);
 
         savePosts(posts);
 
+        closeAllModals();
 
-        closeCreate();
-
-        renderFeed();
+        renderHome();
 
         renderStories();
 
     };
 
 
-    reader.readAsDataURL(currentMedia);
+    reader.readAsDataURL(currentFile);
 
 }
 
 
-/* FEED */
+/* =====================================================
+   FEED
+===================================================== */
 
-function renderFeed(){
+function renderHome(){
 
-    const feed =
-        document.getElementById("feed");
-
+    const content =
+        document.getElementById("content");
 
     const posts =
         getPosts();
 
 
-    if(posts.length===0){
+    if(posts.length === 0){
 
-        feed.innerHTML = `
+        content.innerHTML = `
+
             <div class="empty">
-                No posts yet.<br><br>
-                Create your first photo, reel or story.
+
+                <h2>Your feed is empty</h2>
+
+                <p>
+                    Tap the + button to create your first post.
+                </p>
+
             </div>
+
         `;
 
         return;
@@ -1543,140 +1980,166 @@ function renderFeed(){
     }
 
 
-    feed.innerHTML = posts.map(post => {
-
-        let media = "";
-
-
-        if(post.type==="reel"){
-
-            media =
-                `<video
-                    class="post-media"
-                    src="${post.media}"
-                    controls
-                    playsinline
-                    loop>
-                </video>`;
-
-        }else{
-
-            media =
-                `<img
-                    class="post-media"
-                    src="${post.media}"
-                    alt="Post">`;
-
-        }
-
-
-        return `
-
-            <article class="post">
-
-                <div class="post-head">
-
-                    <div class="user-info">
-
-                        <div class="avatar">U</div>
-
-                        <div>
-
-                            <div class="username">
-                                Your Account
-                            </div>
-
-                            ${
-                                post.type==="reel"
-                                ? "<small>Reel</small>"
-                                : post.type==="story"
-                                ? "<small>Story</small>"
-                                : ""
-                            }
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        class="delete-btn"
-                        onclick="deletePost(${post.id})">
-                        Delete
-                    </button>
-
-                </div>
-
-
-                ${media}
-
-
-                <div class="post-actions">
-
-                    <button
-                        class="action-btn"
-                        onclick="likePost(${post.id})">
-                        Like
-                    </button>
-
-                    <button
-                        class="action-btn"
-                        onclick="commentPost(${post.id})">
-                        Comment
-                    </button>
-
-                    <button
-                        class="action-btn"
-                        onclick="sharePost(${post.id})">
-                        Share
-                    </button>
-
-                </div>
-
-
-                <div class="caption">
-
-                    <strong>
-                        Your Account
-                    </strong>
-
-                    ${escapeHTML(post.caption)}
-
-                    ${
-                        post.mention
-                        ?
-                        `<br>${escapeHTML(post.mention)}`
-                        :
-                        ""
-                    }
-
-                    ${
-                        post.music
-                        ?
-                        `<br><small>Music: ${escapeHTML(post.music)}</small>`
-                        :
-                        ""
-                    }
-
-                </div>
-
-            </article>
-
-        `;
-
-    }).join("");
+    content.innerHTML =
+        posts.map(createPostHTML).join("");
 
 }
 
 
-/* LIKE */
+function createPostHTML(post){
+
+    let media = "";
+
+
+    if(post.type === "reel"){
+
+        media = `
+
+            <video
+                class="media"
+                src="${post.media}"
+                controls
+                playsinline
+                loop>
+            </video>
+
+        `;
+
+    }else{
+
+        media = `
+
+            <img
+                class="media"
+                src="${post.media}"
+                alt="Post">
+
+        `;
+
+    }
+
+
+    return `
+
+        <article
+            class="post"
+            id="post-${post.id}">
+
+            <div class="post-header">
+
+                <div class="user">
+
+                    <div class="avatar">
+                        U
+                    </div>
+
+                    <div>
+
+                        <div class="username">
+                            Your Account
+                        </div>
+
+                        <div class="post-type">
+                            ${
+                                post.type === "reel"
+                                ? "Reel"
+                                : post.type === "story"
+                                ? "Story"
+                                : "Photo Post"
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="more-btn"
+                    onclick="deletePost(${post.id})">
+                    ...
+                </button>
+
+            </div>
+
+
+            ${media}
+
+
+            <div class="post-actions">
+
+                <button
+                    class="post-action"
+                    onclick="likePost(${post.id})">
+                    Like ${post.likes || 0}
+                </button>
+
+                <button
+                    class="post-action"
+                    onclick="commentPost(${post.id})">
+                    Comment
+                </button>
+
+                <button
+                    class="post-action"
+                    onclick="sharePost(${post.id})">
+                    Share
+                </button>
+
+            </div>
+
+
+            <div class="post-content">
+
+                <strong>
+                    Your Account
+                </strong>
+
+                ${escapeHTML(post.caption)}
+
+                ${
+                    post.mention
+                    ?
+                    `<br>${escapeHTML(post.mention)}`
+                    :
+                    ""
+                }
+
+                ${
+                    post.music
+                    ?
+                    `
+                    <div class="post-music">
+                        Music: ${escapeHTML(post.music)}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* =====================================================
+   LIKE
+===================================================== */
 
 function likePost(id){
 
-    const posts = getPosts();
+    const posts =
+        getPosts();
 
     const post =
-        posts.find(p => p.id===id);
+        posts.find(
+            item => item.id === id
+        );
+
 
     if(post){
 
@@ -1685,27 +2148,33 @@ function likePost(id){
 
         savePosts(posts);
 
-        renderFeed();
+        renderHome();
 
     }
 
 }
 
 
-/* COMMENT */
+/* =====================================================
+   COMMENT
+===================================================== */
 
 function commentPost(id){
 
     const comment =
-        prompt("Write a comment:");
+        prompt("Write a comment");
+
 
     if(!comment) return;
 
 
-    const posts = getPosts();
+    const posts =
+        getPosts();
 
     const post =
-        posts.find(p => p.id===id);
+        posts.find(
+            item => item.id === id
+        );
 
 
     if(post){
@@ -1713,7 +2182,9 @@ function commentPost(id){
         post.comments =
             post.comments || [];
 
-        post.comments.push(comment);
+        post.comments.push(
+            comment
+        );
 
         savePosts(posts);
 
@@ -1724,12 +2195,16 @@ function commentPost(id){
 }
 
 
-/* SHARE */
+/* =====================================================
+   SHARE
+===================================================== */
 
 async function sharePost(id){
 
-    const url =
-        location.href + "#post-" + id;
+    const link =
+        location.href +
+        "#post-" +
+        id;
 
 
     if(navigator.share){
@@ -1737,9 +2212,13 @@ async function sharePost(id){
         try{
 
             await navigator.share({
+
                 title:"Social Post",
+
                 text:"Check this post",
-                url:url
+
+                url:link
+
             });
 
         }catch{}
@@ -1748,13 +2227,14 @@ async function sharePost(id){
 
         try{
 
-            await navigator.clipboard.writeText(url);
+            await navigator.clipboard
+                .writeText(link);
 
             alert("Post link copied.");
 
         }catch{
 
-            alert(url);
+            alert(link);
 
         }
 
@@ -1763,28 +2243,38 @@ async function sharePost(id){
 }
 
 
-/* DELETE */
+/* =====================================================
+   DELETE
+===================================================== */
 
 function deletePost(id){
 
-    if(!confirm("Delete this post?")) return;
+    if(
+        !confirm(
+            "Delete this post?"
+        )
+    ) return;
 
 
     const posts =
         getPosts()
-        .filter(p => p.id!==id);
+        .filter(
+            post => post.id !== id
+        );
 
 
     savePosts(posts);
 
-    renderFeed();
+    renderHome();
 
     renderStories();
 
 }
 
 
-/* STORIES */
+/* =====================================================
+   STORIES
+===================================================== */
 
 function renderStories(){
 
@@ -1792,180 +2282,392 @@ function renderStories(){
         document.getElementById("stories");
 
 
-    const posts =
+    const stories =
         getPosts()
-        .filter(p => p.type==="story");
+        .filter(
+            post => post.type === "story"
+        );
 
 
     container.innerHTML = `
 
         <div
-            class="story-item"
-            onclick="openCreate('story')">
+            class="story"
+            onclick="openCreateMenu()">
 
-            <div class="story-circle">+</div>
-
-            <div>Add Story</div>
-
-        </div>
-
-    `;
-
-
-    posts.slice(0,10).forEach(post => {
-
-        container.innerHTML += `
-
-            <div class="story-item">
-
-                <img
-                    src="${post.media}"
-                    class="story-circle"
-                    style="object-fit:cover">
-
-                <div>Your Story</div>
-
+            <div class="story-avatar">
+                +
             </div>
 
-        `;
-
-    });
-
-}
-
-
-/* PROFILE */
-
-function showProfile(){
-
-    const feed =
-        document.getElementById("feed");
-
-
-    const posts =
-        getPosts();
-
-
-    feed.innerHTML = `
-
-        <div class="empty">
-
-            <h2>Your Profile</h2>
-
-            <br>
-
-            <p>
-                Posts: ${posts.length}
-            </p>
-
-            <br>
-
-            <button
-                class="create-main-btn"
-                onclick="renderFeed()">
-                Back to Home
-            </button>
+            <span>
+                Add Story
+            </span>
 
         </div>
 
     `;
 
+
+    stories
+        .slice(0,8)
+        .forEach(story => {
+
+            container.innerHTML += `
+
+                <div class="story">
+
+                    <div class="story-avatar">
+
+                        <img
+                            src="${story.media}"
+                            alt="Story">
+
+                    </div>
+
+                    <span>
+                        Your Story
+                    </span>
+
+                </div>
+
+            `;
+
+        });
+
 }
 
 
-/* HOME */
+/* =====================================================
+   SEARCH
+===================================================== */
 
-function showHome(){
+function focusSearch(){
 
-    renderFeed();
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+    input.focus();
 
 }
 
 
-/* SEARCH */
-
-function searchPosts(){
+function searchUsers(){
 
     const query =
         document
         .getElementById("searchInput")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
+
+
+    if(!query){
+
+        renderHome();
+
+        return;
+
+    }
 
 
     const posts =
         getPosts();
 
 
-    const filtered =
+    const results =
         posts.filter(post =>
 
-            post.caption
+            (post.caption || "")
                 .toLowerCase()
                 .includes(query)
 
             ||
 
-            post.mention
+            (post.mention || "")
                 .toLowerCase()
                 .includes(query)
 
         );
 
 
-    const feed =
-        document.getElementById("feed");
+    const content =
+        document.getElementById(
+            "content"
+        );
 
 
-    if(!query){
+    if(results.length === 0){
 
-        renderFeed();
+        content.innerHTML = `
+
+            <div class="empty">
+
+                <h2>No results</h2>
+
+                <p>
+                    No matching posts found.
+                </p>
+
+            </div>
+
+        `;
 
         return;
 
     }
 
 
-    if(filtered.length===0){
-
-        feed.innerHTML =
-            `<div class="empty">
-                No matching posts found.
-            </div>`;
-
-        return;
-
-    }
-
-
-    const old =
-        localStorage.getItem("social_posts");
-
-
-    localStorage.setItem(
-        "social_posts",
-        JSON.stringify(filtered)
-    );
-
-
-    renderFeed();
-
-
-    localStorage.setItem(
-        "social_posts",
-        old
-    );
+    content.innerHTML =
+        results.map(
+            createPostHTML
+        ).join("");
 
 }
 
 
-/* SECURITY */
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
 
-function escapeHTML(text){
+function showNotifications(){
 
-    if(!text) return "";
+    document.getElementById(
+        "content"
+    ).innerHTML = `
 
-    return text
+        <div class="empty">
+
+            <h2>Notifications</h2>
+
+            <p>
+                Your notifications will appear here.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+function showMessages(){
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <h2>Messages</h2>
+
+            <p>
+                Your messages will appear here.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   EXPLORE
+===================================================== */
+
+function showExplore(){
+
+    const posts =
+        getPosts();
+
+
+    document.getElementById(
+        "content"
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <h2>Explore</h2>
+
+            <p>
+                Discover photos, reels and creators.
+            </p>
+
+            <br>
+
+            <p>
+                ${posts.length} posts available.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   REELS PAGE
+===================================================== */
+
+function showReels(){
+
+    const reels =
+        getPosts()
+        .filter(
+            post => post.type === "reel"
+        );
+
+
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+
+    if(reels.length === 0){
+
+        content.innerHTML = `
+
+            <div class="empty">
+
+                <h2>Reels</h2>
+
+                <p>
+                    No reels yet.
+                </p>
+
+                <br>
+
+                <button
+                    class="publish"
+                    onclick="openCreateMenu()">
+                    Create Reel
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    content.innerHTML =
+        reels.map(
+            createPostHTML
+        ).join("");
+
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function showProfile(){
+
+    const posts =
+        getPosts();
+
+
+    const content =
+        document.getElementById(
+            "content"
+        );
+
+
+    content.innerHTML = `
+
+        <div class="profile-head">
+
+            <div class="profile-avatar">
+                U
+            </div>
+
+            <div>
+
+                <h2>
+                    Your Account
+                </h2>
+
+                <br>
+
+                <p>
+                    ${posts.length} Posts
+                </p>
+
+            </div>
+
+        </div>
+
+        <br>
+
+        ${
+            posts.length
+            ?
+            posts.map(createPostHTML).join("")
+            :
+            `
+            <div class="empty">
+                No posts yet.
+            </div>
+            `
+        }
+
+    `;
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function showHome(){
+
+    renderHome();
+
+}
+
+
+/* =====================================================
+   MODALS
+===================================================== */
+
+function closeAllModals(){
+
+    document
+        .getElementById("createOverlay")
+        .classList.remove("show");
+
+    document
+        .getElementById("editorOverlay")
+        .classList.remove("show");
+
+    stopCamera();
+
+    resetEditor();
+
+}
+
+
+/* =====================================================
+   SECURITY
+===================================================== */
+
+function escapeHTML(value){
+
+    if(!value) return "";
+
+    return String(value)
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
@@ -1975,26 +2677,47 @@ function escapeHTML(text){
 }
 
 
-/* START */
+/* =====================================================
+   START
+===================================================== */
 
-renderFeed();
+renderHome();
 
 renderStories();
 
 
-/* CLOSE MODAL WHEN CLICKING OUTSIDE */
+/* CLOSE MODAL OUTSIDE */
 
 document
-    .getElementById("createModal")
-    .addEventListener("click",function(e){
+    .getElementById("createOverlay")
+    .addEventListener(
+        "click",
+        function(event){
 
-        if(e.target===this){
+            if(event.target === this){
 
-            closeCreate();
+                closeAllModals();
+
+            }
 
         }
+    );
 
-    });
+
+document
+    .getElementById("editorOverlay")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(event.target === this){
+
+                closeAllModals();
+
+            }
+
+        }
+    );
 
 </script>
 
