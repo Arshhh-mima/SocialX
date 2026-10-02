@@ -612,6 +612,38 @@ button{
   color:var(--muted);
 }
 
+
+.follow-button{
+  border:0;
+  border-radius:12px;
+  padding:9px 15px;
+  font-weight:800;
+  color:#fff;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  cursor:pointer;
+}
+
+.follow-button.following{
+  color:#344054;
+  background:#eef2ff;
+  border:1px solid #d9d6fe;
+}
+
+.search-user-card{
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+
+.search-user-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(80,60,180,.10);
+}
+
+.profile-username{
+  color:#667085;
+  font-size:13px;
+  margin-top:3px;
+}
+
 /* =====================================================
    SEARCH
 ===================================================== */
@@ -1100,6 +1132,21 @@ button{
     justify-content:space-between;
   }
 }
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+.settings-card{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.settings-section{padding:20px;border-bottom:1px solid var(--border)}
+.settings-section:last-child{border-bottom:0}
+.settings-section h3{margin:0 0 14px;font-size:14px;color:var(--purple)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0}
+.setting-row strong{font-size:14px}.setting-row small{display:block;color:var(--muted);margin-top:4px;line-height:1.45}
+.toggle{position:relative;width:48px;height:28px;flex:none}.toggle input{display:none}.toggle span{position:absolute;inset:0;border-radius:20px;background:#d7dbe5;cursor:pointer;transition:.2s}.toggle span:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;border-radius:50%;background:white;box-shadow:0 2px 5px #0002;transition:.2s}.toggle input:checked+span{background:linear-gradient(135deg,var(--purple),var(--pink))}.toggle input:checked+span:before{transform:translateX(20px)}
+.settings-action{width:100%;padding:13px 0;border:0;background:transparent;text-align:left;font-weight:750;cursor:pointer;border-bottom:1px solid #eee}.settings-action:last-child{border-bottom:0}.settings-action.danger{color:#d92d20}
+.notification-list{display:grid;gap:10px}.notification-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:17px;background:white;box-shadow:0 8px 25px #1018280a}.notification-card.unread{border-color:#b692ff;background:#faf7ff}.notification-text{flex:1}.notification-text strong{font-size:14px}.notification-text small{display:block;color:var(--muted);margin-top:3px}.notification-actions{display:flex;gap:8px}.notification-actions button{border:0;border-radius:10px;padding:8px 12px;font-weight:750;cursor:pointer}.notification-actions .follow-back{background:linear-gradient(135deg,var(--purple),var(--pink));color:white}.notification-actions .following{background:#eef0f5;color:#667085}
+@media(max-width:700px){.settings-card{border-radius:18px}.setting-row{align-items:flex-start}}
+.privacy-badge{display:inline-block;margin-left:8px;padding:4px 8px;border-radius:999px;background:#f0eaff;color:#6d3bd1;font-size:10px;font-weight:800}.privacy-badge.public{background:#e8f8f1;color:#16815a}
 </style>
 </head>
 
@@ -1507,6 +1554,16 @@ button{
 
     </button>
 
+    <button
+      class="nav-item"
+      data-page="settings"
+      onclick="openPage('settings')">
+
+      <span class="nav-icon"></span>
+      Settings
+
+    </button>
+
   </aside>
 
 
@@ -1670,20 +1727,44 @@ button{
         Your latest activity.
       </p>
 
-      <div class="empty">
+      <div id="notificationList" class="notification-list"></div>
 
-        <div class="empty-icon">
-          N
+    </section>
+
+
+    <!-- SETTINGS -->
+
+    <section class="page" id="page-settings">
+
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Control your privacy, notifications and app experience.</p>
+
+      <div class="settings-card">
+        <div class="settings-section">
+          <h3>Privacy</h3>
+          <div class="setting-row">
+            <div><strong>Private account</strong><small>Only people who follow you can see your posts and stories.</small></div>
+            <label class="toggle"><input id="privateAccountToggle" type="checkbox" onchange="togglePrivateAccount(this.checked)"><span></span></label>
+          </div>
         </div>
 
-        <h2>
-          No notifications
-        </h2>
+        <div class="settings-section">
+          <h3>Notifications</h3>
+          <div class="setting-row"><div><strong>Follow notifications</strong><small>Get notified when someone follows you.</small></div><label class="toggle"><input id="followNotifToggle" type="checkbox" checked onchange="setSetting('followNotifications',this.checked)"><span></span></label></div>
+          <div class="setting-row"><div><strong>Activity notifications</strong><small>Likes, comments and other activity.</small></div><label class="toggle"><input id="activityNotifToggle" type="checkbox" checked onchange="setSetting('activityNotifications',this.checked)"><span></span></label></div>
+        </div>
 
-        <p>
-          Likes, comments and follows will appear here.
-        </p>
+        <div class="settings-section">
+          <h3>Content</h3>
+          <div class="setting-row"><div><strong>Autoplay reels</strong><small>Play reels automatically when available.</small></div><label class="toggle"><input id="autoplayToggle" type="checkbox" checked onchange="setSetting('autoplay',this.checked)"><span></span></label></div>
+          <div class="setting-row"><div><strong>Data saver</strong><small>Use lighter media loading on this device.</small></div><label class="toggle"><input id="dataSaverToggle" type="checkbox" onchange="setSetting('dataSaver',this.checked)"><span></span></label></div>
+        </div>
 
+        <div class="settings-section">
+          <h3>Account</h3>
+          <button class="settings-action" onclick="openPage('profile')">Edit profile</button>
+          <button class="settings-action danger" onclick="logout()">Log out</button>
+        </div>
       </div>
 
     </section>
@@ -2326,6 +2407,15 @@ function finishAccountCreation(
 
     profilePhoto:profilePhoto,
 
+    isPrivate:false,
+
+    settings:{
+      followNotifications:true,
+      activityNotifications:true,
+      autoplay:true,
+      dataSaver:false
+    },
+
     createdAt:
       new Date().toISOString()
 
@@ -2456,10 +2546,9 @@ function openApplication(){
 
 
   loadProfile();
-
   renderStories();
-
   renderHome();
+  renderNotifications();
 
 }
 
@@ -2533,13 +2622,68 @@ function openPage(page){
 
 
   if(page === "profile"){
-
     loadProfile();
+  }
 
+  if(page === "notifications"){
+    renderNotifications();
+  }
+
+  if(page === "settings"){
+    loadSettings();
   }
 
 }
 
+
+/* =====================================================
+   PRIVACY + NOTIFICATIONS + SETTINGS
+===================================================== */
+
+function getNotifications(){
+  try{return JSON.parse(localStorage.getItem("vibe_notifications")||"{}");}catch(e){return {}; }
+}
+function saveNotifications(n){localStorage.setItem("vibe_notifications",JSON.stringify(n));}
+function addNotification(to,from,type="follow"){
+  if(!to||!from||to.toLowerCase()===from.toLowerCase()) return;
+  const accounts=getAccounts();
+  const target=accounts.find(a=>a.username.toLowerCase()===to.toLowerCase());
+  if(!target) return;
+  if(target.settings && target.settings.followNotifications===false && type==="follow") return;
+  const all=getNotifications();
+  all[to]=Array.isArray(all[to])?all[to]:[];
+  all[to].unshift({id:Date.now()+Math.random(),type,from,timestamp:new Date().toISOString(),read:false});
+  all[to]=all[to].slice(0,100); saveNotifications(all);
+}
+function isPrivateAccount(username){
+  const a=getAccounts().find(x=>x.username.toLowerCase()===username.toLowerCase());
+  return !!(a&&a.isPrivate);
+}
+function canViewContent(username){
+  if(!currentUser) return false;
+  if(username.toLowerCase()===currentUser.toLowerCase()) return true;
+  if(!isPrivateAccount(username)) return true;
+  return isFollowing(username);
+}
+function getAccountSettings(account){
+  return Object.assign({followNotifications:true,activityNotifications:true,autoplay:true,dataSaver:false},account&&account.settings||{});
+}
+function togglePrivateAccount(value){
+  const accounts=getAccounts(); const a=accounts.find(x=>x.username.toLowerCase()===currentUser.toLowerCase());
+  if(!a)return; a.isPrivate=!!value; saveAccounts(accounts); renderHome(); renderStories(); renderExplore(); renderReels(); loadProfile(); toast(a.isPrivate?"Private account enabled":"Public account enabled");
+}
+function setSetting(key,value){
+  const accounts=getAccounts(); const a=accounts.find(x=>x.username.toLowerCase()===currentUser.toLowerCase());
+  if(!a)return; a.settings=Object.assign(getAccountSettings(a),{[key]:!!value}); saveAccounts(accounts);
+}
+function loadSettings(){
+  const a=getAccounts().find(x=>x.username.toLowerCase()===currentUser.toLowerCase()); if(!a)return; const st=getAccountSettings(a);
+  const ids={privateAccountToggle:!!a.isPrivate,followNotifToggle:st.followNotifications,activityNotifToggle:st.activityNotifications,autoplayToggle:st.autoplay,dataSaverToggle:st.dataSaver};
+  Object.entries(ids).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.checked=v;});
+}
+function logout(){
+  localStorage.removeItem("vibe_current_user"); currentUser=""; location.reload();
+}
 
 /* =====================================================
    POSTS
@@ -2583,8 +2727,8 @@ function renderHome(){
 
 
   const posts =
-    getPosts().filter(
-      post => post.type !== "story"
+    getPosts().filter(post =>
+      post.type !== "story" && canViewContent(post.username)
     );
 
 
@@ -2628,73 +2772,19 @@ function renderHome(){
 ===================================================== */
 
 function renderStories(){
-
-  const stories =
-    document.getElementById("stories");
-
-  if(!stories)
-    return;
-
-  const userStories =
-    getPosts().filter(
-      post =>
-        post.type === "story" &&
-        post.username === currentUser
-    );
-
-  stories.innerHTML = `
-
-    <div
-      class="story"
-      onclick="selectCreate('story')">
-
-      <div class="story-ring">
-
-        <div class="story-inner">
-          +
-        </div>
-
-      </div>
-
-      Add Story
-
-    </div>
-
-  `;
-
-  userStories
-    .slice(0,8)
-    .forEach(story => {
-
-      stories.innerHTML += `
-
-        <div
-          class="story"
-          role="button"
-          tabindex="0"
-          onclick="openStoryViewer(${story.id})"
-          onkeydown="if(event.key==='Enter' || event.key===' '){event.preventDefault();openStoryViewer(${story.id})}">
-
-          <div class="story-ring">
-
-            <div class="story-inner">
-
-              <img
-                src="${story.media}"
-                alt="Your Story">
-
-            </div>
-
-          </div>
-
-          Your Story
-
-        </div>
-
-      `;
-
-    });
-
+  const stories=document.getElementById("stories");
+  if(!stories)return;
+  const all=getPosts().filter(p=>p.type==="story" && canViewContent(p.username));
+  const grouped={};
+  all.forEach(st=>{(grouped[st.username]||(grouped[st.username]=[])).push(st);});
+  let html=`<div class="story" onclick="selectCreate('story')"><div class="story-ring"><div class="story-inner">+</div></div>Add Story</div>`;
+  Object.keys(grouped).forEach(username=>{
+    const account=getAccounts().find(a=>a.username.toLowerCase()===username.toLowerCase());
+    const first=grouped[username][0];
+    const label=username.toLowerCase()===currentUser.toLowerCase()?"Your Story":"@"+escapeHTML(username);
+    html+=`<div class="story" role="button" tabindex="0" onclick="openStoryViewer(${first.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryViewer(${first.id})}"><div class="story-ring"><div class="story-inner">${account&&account.profilePhoto?`<img src="${account.profilePhoto}" alt="Profile">`:`<img src="${first.media}" alt="Story">`}</div></div>${label}</div>`;
+  });
+  stories.innerHTML=html;
 }
 
 
@@ -2708,8 +2798,10 @@ let storyViewerTimer = null;
 
 function openStoryViewer(storyId){
 
+  const selected=getPosts().find(post=>Number(post.id)===Number(storyId) && post.type==="story");
+  if(!selected || !canViewContent(selected.username)) return;
   storyViewerList = getPosts().filter(
-    post => post.type === "story" && post.username === currentUser
+    post => post.type === "story" && post.username === selected.username && canViewContent(post.username)
   );
 
   storyViewerIndex = storyViewerList.findIndex(
@@ -3096,19 +3188,13 @@ function searchPage(){
     getAccounts();
 
 
+  // Search is USERNAME ONLY. Name is intentionally not searchable.
+  // This also supports typing @official_viber.
+  const usernameQuery = query.replace(/^@/, "");
+
   const matchingAccounts =
     accounts.filter(account =>
-
-      account.username
-        .toLowerCase()
-        .includes(query)
-
-      ||
-
-      account.name
-        .toLowerCase()
-        .includes(query)
-
+      account.username.toLowerCase().includes(usernameQuery)
     );
 
 
@@ -3116,6 +3202,7 @@ function searchPage(){
     getPosts().filter(post =>
 
       post.type !== "story" &&
+      canViewContent(post.username) &&
 
       (
         post.username
@@ -3166,24 +3253,29 @@ function searchPage(){
     html += `
 
       <div
-        class="post"
-        style="padding:15px">
+        class="post search-user-card"
+        style="padding:15px;cursor:pointer"
+        onclick="viewUserProfile('${escapeHTML(account.username)}')">
 
         <div class="user-info">
 
           ${photo}
 
-          <div>
+          <div style="flex:1">
 
             <div class="username">
-              ${escapeHTML(account.name)}
+              ${escapeHTML(account.username)}
             </div>
 
             <div class="post-type">
-              @${escapeHTML(account.username)}
+              ${escapeHTML(account.name)}
             </div>
 
           </div>
+
+          ${account.username.toLowerCase() !== currentUser.toLowerCase()
+            ? `<button class="follow-button ${isFollowing(account.username) ? 'following' : ''}" onclick="event.stopPropagation();toggleFollow('${escapeHTML(account.username)}')">${isFollowing(account.username) ? 'Following' : 'Follow'}</button>`
+            : `<span class="post-type">You</span>`}
 
         </div>
 
@@ -3239,9 +3331,7 @@ function renderExplore(){
 
 
   const posts =
-    getPosts().filter(
-      post => post.type !== "story"
-    );
+    getPosts().filter(post => post.type !== "story" && canViewContent(post.username));
 
 
   if(!posts.length){
@@ -3324,9 +3414,7 @@ function renderReels(){
 
 
   const reels =
-    getPosts().filter(
-      post => post.type === "reel"
-    );
+    getPosts().filter(post => post.type === "reel" && canViewContent(post.username));
 
 
   if(!reels.length){
@@ -3363,6 +3451,98 @@ function renderReels(){
 
 }
 
+
+
+/* =====================================================
+   USER SEARCH + FOLLOW SYSTEM
+===================================================== */
+
+function getFollows(){
+  try{
+    return JSON.parse(localStorage.getItem("vibe_follows") || "{}");
+  }catch(e){
+    return {};
+  }
+}
+
+function saveFollows(follows){
+  localStorage.setItem("vibe_follows", JSON.stringify(follows));
+}
+
+function isFollowing(username){
+  const follows = getFollows();
+  return Array.isArray(follows[currentUser]) && follows[currentUser].includes(username);
+}
+
+function toggleFollow(username){
+  if(!currentUser || username.toLowerCase()===currentUser.toLowerCase())return;
+  const accounts=getAccounts();
+  const target=accounts.find(a=>a.username.toLowerCase()===username.toLowerCase());
+  if(!target)return;
+  const follows=getFollows();
+  follows[currentUser]=Array.isArray(follows[currentUser])?follows[currentUser]:[];
+  const idx=follows[currentUser].findIndex(u=>u.toLowerCase()===target.username.toLowerCase());
+  if(idx>=0){
+    follows[currentUser].splice(idx,1);
+    toast("Unfollowed @"+target.username);
+  }else{
+    follows[currentUser].push(target.username);
+    addNotification(target.username,currentUser,"follow");
+    toast("Following @"+target.username);
+  }
+  saveFollows(follows);
+  viewUserProfile(target.username);
+}
+
+function followBack(username){
+  if(!isFollowing(username)) toggleFollow(username);
+}
+
+function followerCount(username){
+  const follows = getFollows();
+  return Object.values(follows).reduce((count,list) => {
+    return count + (Array.isArray(list) && list.some(u => u.toLowerCase() === username.toLowerCase()) ? 1 : 0);
+  },0);
+}
+
+function followingCount(username){
+  const follows = getFollows();
+  return Array.isArray(follows[username]) ? follows[username].length : 0;
+}
+
+function viewUserProfile(username){
+  const account=getAccounts().find(a=>a.username.toLowerCase()===username.toLowerCase());
+  if(!account)return;
+  const own=account.username.toLowerCase()===currentUser.toLowerCase();
+  const following=isFollowing(account.username);
+  const allowed=own||!account.isPrivate||following;
+  const posts=allowed?getPosts().filter(p=>p.username===account.username&&p.type!=="story"):[];
+  const profilePage=document.getElementById("page-profile"); if(!profilePage)return;
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  profilePage.classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(item=>item.classList.toggle("active",item.dataset.page==="profile"));
+  const photo=account.profilePhoto?`<img src="${account.profilePhoto}" alt="Profile Photo">`:escapeHTML(account.username.charAt(0).toUpperCase());
+  const privacyNotice=!allowed?`<div class="empty" style="margin-top:18px"><h2>Private account</h2><p>Follow @${escapeHTML(account.username)} to see their posts and stories.</p></div>`:"";
+  profilePage.innerHTML=`
+    <div class="page-header"><button class="back-button" onclick="openPage('search')">Back</button><h1>${escapeHTML(account.name)}</h1></div>
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="profile-avatar">${photo}</div>
+        <div class="profile-info">
+          <div class="profile-stats">
+            <div class="stat"><strong>${posts.length}</strong><span>Posts</span></div>
+            <div class="stat"><strong>${followerCount(account.username)}</strong><span>Followers</span></div>
+            <div class="stat"><strong>${followingCount(account.username)}</strong><span>Following</span></div>
+          </div>
+          ${own?`<button class="change-dp" onclick="changeDP()">Change Profile Photo</button>`:`<button class="follow-button ${following?'following':''}" onclick="toggleFollow('${escapeHTML(account.username)}')">${following?'Following':'Follow'}</button>`}
+        </div>
+      </div>
+      <div class="profile-name">${escapeHTML(account.name)}</div>
+      <div class="profile-username">@${escapeHTML(account.username)} ${account.isPrivate?`<span class="privacy-badge">Private</span>`:`<span class="privacy-badge public">Public</span>`}</div>
+      ${privacyNotice}
+      ${allowed?`<div class="profile-posts">${posts.length?posts.map(postHTML).join(""):`<div class="empty"><h2>No posts yet</h2><p>@${escapeHTML(account.username)} hasn't posted anything yet.</p></div>`}</div>`:""}
+    </div>`;
+}
 
 /* =====================================================
    PROFILE + DP
